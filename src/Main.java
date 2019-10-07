@@ -30,9 +30,9 @@ public class Main {
         Scanner in = new Scanner(System.in);
 
         Method[] methods = Database.class.getDeclaredMethods();
-        for(Method m : methods) {
-            if(m.isAnnotationPresent(withConnection.class)) {
-                System.out.println(m);
+        for(Method met : methods) {
+            if(met.isAnnotationPresent(withConnection.class)) {
+                System.out.println(met);
             }
         }
 

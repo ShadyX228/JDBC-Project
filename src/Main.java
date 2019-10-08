@@ -26,19 +26,23 @@ public class Main {
                 properties.getProperty("jdbc.dbname")
         );
 
-        String method;
         Scanner in = new Scanner(System.in);
 
         Method[] methods = Database.class.getDeclaredMethods();
+        System.out.println("Available methods: ");
         for(Method met : methods) {
             if(met.isAnnotationPresent(withConnection.class)) {
-                System.out.println(met);
+                System.out.println(met.getName());
             }
         }
 
-        System.out.println("Enter method name or exit to stop: ");
-        method = in.next();
-        testDatabase.execute(method);
+        String method = " ";
+        while(!method.equals("exit")) {
+            System.out.println("Enter method name or exit to stop: ");
+            method = in.next();
+            if(!method.equals("exit"))
+                testDatabase.execute(method);
+        }
 
 
     }

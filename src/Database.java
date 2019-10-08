@@ -315,10 +315,10 @@ public class Database<thorw> {
             PreparedStatement statement = connection.prepareStatement(query);
             Scanner in = new Scanner(System.in);
 
-            System.out.println("Delete row in table \"" + table + "\" by \"" + criterion + "\".");
+            System.out.println(query);
 
-            int id = in.nextInt();
-            statement.setInt(1, id);
+            String critValue = in.nextLine();
+            statement.setString(1, critValue);
 
             statement.executeUpdate();
             endingOperation(statement, in);

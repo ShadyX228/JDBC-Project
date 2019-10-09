@@ -35,6 +35,7 @@ public class Student extends Table {
         statement.setInt(5, this.group_id);
         doInsertQuery(statement);
     }
+    // need to fix
     public void selectByCriteria(String criteria, String critValue) throws SQLException {
         String query = "SELECT COUNT(*) FROM " + getDBName() + ".student " +
                 "WHERE student." + criteria + " = ?";

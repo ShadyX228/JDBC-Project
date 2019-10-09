@@ -10,11 +10,11 @@ public class Main {
     public static void main(String[] args) throws SQLException {
         Student s1 = new Student(
                 "I I",
-                LocalDate.of(2019, 01, 22),
+                LocalDate.of(2019, 1, 22),
                 'M',
                 1
         );
-        //s1.selectByCriteria("student_id", "1");
+        s1.selectByCriteria("student_id", "1");
 
     }
 }

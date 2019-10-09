@@ -41,9 +41,7 @@ public class Table {
     protected final ResultSet doSelectQuery(PreparedStatement statement)
             throws
             SQLException {
-        ResultSet result = statement.executeQuery();
-        statement.close();
-        return result;
+        return statement.executeQuery();
     }
     private Connection doConnection()
             throws

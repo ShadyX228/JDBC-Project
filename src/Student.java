@@ -33,19 +33,43 @@ public class Student extends Table {
         statement.setString(3, birthday);
         statement.setObject(4, this.sex, java.sql.Types.CHAR);
         statement.setInt(5, this.group_id);
-        doInsertQuery(statement);
+        doUpdateQuery(statement);
     }
-    // need to fix
+
     public void selectByCriteria(String criteria, String critValue) throws SQLException {
-        String query = "SELECT COUNT(*) FROM " + getDBName() + ".student " +
+        String query = "SELECT * FROM " + getDBName() + ".student " +
                 "WHERE student." + criteria + " = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setString(1, criteria);
+
+        if(criteria.equals("student_id") || criteria.equals("group_id")) {
+            statement.setInt(1, Integer.parseInt(critValue));
+        } else {
+            statement.setString(1, critValue);
+        }
+
         ResultSet res = doSelectQuery(statement);
         while(res.next()) {
-            System.out.println(res.getString(1));
+            for(int i = 1; i<=5; i++) {
+                System.out.print(res.getString(i) + " ");
+            }
+            System.out.println();
         }
+
         statement.close();
+    }
+    public void updateByCriteria(String criteria, String critValue) throws SQLException {
+        String query = "UPDATE " + getDBName() + ".student " +
+                "SET " + criteria + " = ? WHERE student.student_id = ?";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+
+        if(criteria.equals("group_id")) {
+            statement.setInt(1, Integer.parseInt(critValue));
+        } else {
+            statement.setString(1, critValue);
+        }
+        statement.setInt(2, student_id);
+
+        doUpdateQuery(statement);
     }
     public String toString() {
         return "student_id: " + student_id + "; name: " + name + "; " +

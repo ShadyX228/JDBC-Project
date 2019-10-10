@@ -17,7 +17,6 @@ public class Group extends Table {
         statement.setInt(1, group_id);
         statement.setInt(2, this.number);
         statement.executeUpdate();
-        statement.close();
     }
     public String toString() {
         return "Group: " + number;

@@ -14,7 +14,8 @@ public class Main {
                 'M',
                 1
         );
-        s1.selectByCriteria("student_id", "1");
-
+        s1.selectByCriteria("Birthday", "2019-01-22");
+        s1.updateByCriteria("Birthday", "2019-02-22");
+        s1.selectByCriteria("Birthday", "2019-02-22");
     }
 }

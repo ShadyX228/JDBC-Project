@@ -29,7 +29,7 @@ public class Teacher extends Table {
         statement.setString(2, this.name);
         statement.setString(3, birthday);
         statement.setObject(4, this.sex, java.sql.Types.CHAR);
-        doInsertQuery(statement);
+        doUpdateQuery(statement);
     }
     public String toString() {
         return "teacher_id: " + teacher_id + "; name: " + name + "; " +

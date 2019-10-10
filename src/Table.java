@@ -32,7 +32,7 @@ public class Table {
         }
     }
 
-    protected final void doInsertQuery(PreparedStatement statement)
+    protected final void doUpdateQuery(PreparedStatement statement)
             throws
             SQLException {
         statement.executeUpdate();

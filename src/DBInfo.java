@@ -3,7 +3,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
 
-public class Table {
+public class DBInfo {
     private String driver;
     private String url;
     private String user;
@@ -12,7 +12,7 @@ public class Table {
     private Connection connection;
     private static Properties properties;
 
-    Table() throws SQLException {
+    DBInfo() throws SQLException {
         driver = properties.getProperty("jdbc.driver");
         url = driver + "://" + properties.getProperty("jdbc.url");
         user = properties.getProperty("jdbc.user");
@@ -32,17 +32,6 @@ public class Table {
         }
     }
 
-    protected final void doUpdateQuery(PreparedStatement statement)
-            throws
-            SQLException {
-        statement.executeUpdate();
-        statement.close();
-    }
-    protected final ResultSet doSelectQuery(PreparedStatement statement)
-            throws
-            SQLException {
-        return statement.executeQuery();
-    }
     private Connection doConnection()
             throws
             SQLException {

@@ -3,9 +3,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
-public class Student extends Table {
+public class Student extends DBInfo implements SQLOperations<String> {
     private static int nextId = 0;
+    private static String tableName = "student";
     private int student_id;
     private String name;
     private String birthday;
@@ -24,7 +26,7 @@ public class Student extends Table {
         this.sex = sex;
         this.group_id = group_id;
 
-        String query = "INSERT INTO " + getDBName() + ".student " +
+        String query = "INSERT INTO " + getDBName() + "." + tableName + " " +
                     "(student_id, Name, Birthday, Sex, group_id) " +
                     "VALUES (?, ?, ?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -33,12 +35,13 @@ public class Student extends Table {
         statement.setString(3, birthday);
         statement.setObject(4, this.sex, java.sql.Types.CHAR);
         statement.setInt(5, this.group_id);
-        doUpdateQuery(statement);
+        statement.executeUpdate();
+        statement.close();
     }
 
-    public void selectByCriteria(String criteria, String critValue) throws SQLException {
-        String query = "SELECT * FROM " + getDBName() + ".student " +
-                "WHERE student." + criteria + " = ?";
+    public ArrayList<Integer> selectByCriteria(String criteria, String critValue) throws SQLException {
+        String query = "SELECT * FROM " + getDBName() + "." + tableName + " " +
+                "WHERE " + tableName + "." + criteria + " = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
 
         if(criteria.equals("student_id") || criteria.equals("group_id")) {
@@ -47,19 +50,18 @@ public class Student extends Table {
             statement.setString(1, critValue);
         }
 
-        ResultSet res = doSelectQuery(statement);
+        ResultSet res = statement.executeQuery();
+        ArrayList<Integer> list = new ArrayList<>();
         while(res.next()) {
-            for(int i = 1; i<=5; i++) {
-                System.out.print(res.getString(i) + " ");
-            }
-            System.out.println();
+            list.add(res.getInt(1));
         }
 
         statement.close();
+        return list;
     }
     public void updateByCriteria(String criteria, String critValue) throws SQLException {
-        String query = "UPDATE " + getDBName() + ".student " +
-                "SET " + criteria + " = ? WHERE student.student_id = ?";
+        String query = "UPDATE " + getDBName() + "." + tableName + " " +
+                "SET " + criteria + " = ? WHERE " + tableName + ".student_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
 
         if(criteria.equals("group_id")) {
@@ -68,8 +70,17 @@ public class Student extends Table {
             statement.setString(1, critValue);
         }
         statement.setInt(2, student_id);
-
-        doUpdateQuery(statement);
+        statement.executeUpdate();
+        statement.close();
+    }
+    public void deleteByCriteria(String criteria, String critValue) throws SQLException {
+        String query = "DELETE FROM " + getDBName() + "." + tableName + " " +
+                "WHERE " + tableName + "." + criteria + " = ?";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, critValue);
+        statement.executeUpdate();
+        statement.close();
+        //nextId--;
     }
     public String toString() {
         return "student_id: " + student_id + "; name: " + name + "; " +

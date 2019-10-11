@@ -17,13 +17,10 @@ public class Student extends DBInfo implements SQLOperations<String> {
     private int group_id;
 
     Student() throws SQLException {
-        String query = "UPDATE " + getDBName() + "." + tableName + " SET Name = 'NULL', " +
-                "Birthday = NULL, " +
-                "Sex = NULL, group_id = NULL " +
-                "WHERE " + tableName + ".student_id = ?;";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, student_id);
-        statement.executeUpdate();
+            name = "NULL";
+            birthday = "NULL";
+            sex = 'N';
+            group_id = NULL;
     }
     Student(String name, LocalDate birth, char sex, int group_id)
             throws

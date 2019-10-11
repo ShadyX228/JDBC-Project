@@ -69,10 +69,10 @@ public class Database {
         System.out.print("Updating... ");
         students.get(index).updateByCriteria(criteria, critValue);
     }
-    public void deleteStudent(String criteria, String critValue, int index)
+    public void deleteStudent(int index)
             throws SQLException {
         System.out.println("Deleting...");
-        students.get(index-1).deleteByCriteria(criteria, critValue);
-        students.remove(index-1);
+        students.get(index-1).deleteByCriteria("student_id", Integer.toString(index));
+        students.set(index-1,new Student());
     }
 }

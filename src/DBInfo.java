@@ -9,7 +9,7 @@ public class DBInfo {
     private String user;
     private String password;
     private String dbname;
-    private Connection connection;
+    private static Connection connection;
     private static Properties properties;
 
     DBInfo() throws SQLException {

@@ -50,18 +50,23 @@ public class Main {
 
         // id в базе и в коллекции не совпадают
         // варианты: переделать ArrayList в Map, уведомить пользователя об этой особенности
-        DB.deleteStudent("student_id","2", 2);
-        DB.deleteStudent("student_id","3", 2);
+        // челик 2 удалился, место в коллекции сдвинулось
+        DB.deleteStudent(2);
+        // челик 3 теперь имеет место в коллекции 2
+        // но в бд он все еще числится как 3
+        // вызов delete проходит
+        DB.deleteStudent(3);
 
-        DB.selectStudent("student_id","1");
+
 
 
         DB.addStudent("Mohammed", "2019-01-04",'M',1);
+        // а вызов этого - нет
         DB.addStudent("Mohammed Petrovich", "2019-01-05",'M',1);
         DB.addStudent("Habib Petrovich", "2019-01-06",'M',1);
 
-        //DB.selectStudent("student_id","2");
-        //DB.selectStudent("student_id","3");
+        DB.selectStudent("student_id","2");
+        DB.selectStudent("student_id","3");
 
 
         System.out.println();

@@ -17,26 +17,13 @@ public class Student extends DBInfo implements SQLOperations<String> {
     private int group_id;
 
     Student() throws SQLException {
-        student_id = ++nextId;
-        name = "NULL";
-
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("YYYY-MM-DD");
-        birthday = "2000-01-01";
-
-        sex = 'N';
-        group_id = java.sql.Types.NULL; // need to fix ex
-
-        String query = "INSERT INTO " + getDBName() + "." + tableName + " " +
-                "(student_id, Name, Birthday, Sex, group_id) " +
-                "VALUES (?, ?, ?, ?, ?)";
+        String query = "UPDATE " + getDBName() + "." + tableName + " SET Name = 'NULL', " +
+                "Birthday = NULL, " +
+                "Sex = NULL, group_id = NULL " +
+                "WHERE " + tableName + ".student_id = ?;";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, student_id);
-        statement.setString(2, name);
-        statement.setString(3, birthday);
-        statement.setObject(4, sex, java.sql.Types.CHAR);
-        statement.setObject(5, group_id, java.sql.Types.NULL); // need to fix ex
         statement.executeUpdate();
-        statement.close();
     }
     Student(String name, LocalDate birth, char sex, int group_id)
             throws
@@ -53,6 +40,7 @@ public class Student extends DBInfo implements SQLOperations<String> {
         String query = "INSERT INTO " + getDBName() + "." + tableName + " " +
                     "(student_id, Name, Birthday, Sex, group_id) " +
                     "VALUES (?, ?, ?, ?, ?)";
+        //System.out.println(student_id + " " + name + " " + birthday + " " + sex + " " + group_id);
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, student_id);
         statement.setString(2, this.name);
@@ -113,7 +101,7 @@ public class Student extends DBInfo implements SQLOperations<String> {
         statement.setString(1, critValue);
         statement.executeUpdate();
         statement.close();
-        //nextId--;
+        nextId--;
     }
 
     private void setBirthday(String birthday) {

@@ -42,35 +42,29 @@ public class Main {
         //ArrayList<Integer> i = new ArrayList<Integer>();
 
         Database DB = new Database();
-        DB.addGroup(421);
+        //DB.addGroup(421);
         DB.addStudent("Ivan Petrovich", "2019-01-01",'M',1);
         DB.addStudent("Habib Petrovich", "2019-01-01",'M',1);
         DB.addStudent("Modest Petrovich", "2019-01-03",'M',1);
 
-        DB.selectStudent("student_id","1");
-        System.out.println();
 
-        DB.selectStudent("student_id","2");
-        System.out.println();
-
-        DB.selectStudent("student_id","3");
-        System.out.println();
-
-        DB.selectStudent("Birthday","2019-01-01");
-        System.out.println();
-
-        DB.updateStudent("Birthday","2019-01-03",1);
-        System.out.println();
-
-        DB.selectStudent("Birthday","2019-01-03");
-        System.out.println();
-
+        // id в базе и в коллекции не совпадают
+        // варианты: переделать ArrayList в Map, уведомить пользователя об этой особенности
         DB.deleteStudent("student_id","2", 2);
-        System.out.println();
+        DB.deleteStudent("student_id","3", 2);
 
         DB.selectStudent("student_id","1");
-        DB.selectStudent("student_id","2");
-        DB.selectStudent("student_id","3");
+
+
+        DB.addStudent("Mohammed", "2019-01-04",'M',1);
+        DB.addStudent("Mohammed Petrovich", "2019-01-05",'M',1);
+        DB.addStudent("Habib Petrovich", "2019-01-06",'M',1);
+
+        //DB.selectStudent("student_id","2");
+        //DB.selectStudent("student_id","3");
+
+
+        System.out.println();
 
     }
 }

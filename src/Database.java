@@ -72,7 +72,7 @@ public class Database {
     public void deleteStudent(String criteria, String critValue, int index)
             throws SQLException {
         System.out.println("Deleting...");
-        students.get(index).deleteByCriteria(criteria, critValue);
-        students.set(index, new Student()); // need to fix ex
+        students.get(index-1).deleteByCriteria(criteria, critValue);
+        students.remove(index-1);
     }
 }

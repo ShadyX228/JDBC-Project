@@ -16,12 +16,6 @@ public class Student extends DBInfo implements SQLOperations<String> {
     private char sex;
     private int group_id;
 
-    Student() throws SQLException {
-            name = "NULL";
-            birthday = "NULL";
-            sex = 'N';
-            group_id = NULL;
-    }
     Student(String name, LocalDate birth, char sex, int group_id)
             throws
             SQLException {
@@ -98,7 +92,7 @@ public class Student extends DBInfo implements SQLOperations<String> {
         statement.setString(1, critValue);
         statement.executeUpdate();
         statement.close();
-        nextId--;
+        //nextId--;
     }
 
     private void setBirthday(String birthday) {

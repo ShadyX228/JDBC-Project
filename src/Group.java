@@ -29,15 +29,11 @@ public class Group extends DBInfo implements SQLOperations<Integer> {
 
         statement.setInt(1, critValue);
 
-        ArrayList<Integer> list = new ArrayList<>();
         ResultSet res = statement.executeQuery();
-        /*while(res.next()) {
-            for(int i = 1; i < 2; i++) {
-                System.out.print(res.getString(i) + " ");
-            }
-            System.out.println();
-        }*/
-
+        ArrayList<Integer> list = new ArrayList<>();
+        while(res.next()) {
+            list.add(res.getInt(1));
+        }
         statement.close();
         return list;
     }
@@ -57,8 +53,9 @@ public class Group extends DBInfo implements SQLOperations<Integer> {
         statement.setInt(1, critValue);
         statement.executeUpdate();
         statement.close();
-        nextId--;
+        //nextId--;
     }
+
     public String toString() {
         return "Group: " + number;
     }

@@ -46,7 +46,8 @@ public class Main {
         DB.addStudent("Ivan Petrovich", "2019-01-01",'M',1);
         DB.addStudent("Habib Petrovich", "2019-01-01",'M',1);
         DB.addStudent("Modest Petrovich", "2019-01-03",'M',1);
-
+        DB.addStudent("Mohammed Petrovich", "2019-01-05",'M',1);
+        DB.addStudent("Habib Petrovich", "2019-01-06",'M',1);
 
         // id в базе и в коллекции не совпадают
         // варианты: переделать ArrayList в Map, уведомить пользователя об этой особенности
@@ -68,8 +69,12 @@ public class Main {
         DB.selectStudent("student_id","2");
         DB.selectStudent("student_id","3");
 
+        DB.addStudent("Mohammed Petrovich", "2019-01-05",'M',1);
+        DB.addStudent("Habib Petrovich", "2019-01-06",'M',1);
+
+        DB.selectStudent("student_id","9");
+        DB.selectStudent("student_id","10");
 
         System.out.println();
-
     }
 }

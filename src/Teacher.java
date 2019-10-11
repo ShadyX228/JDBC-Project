@@ -86,7 +86,7 @@ public class Teacher extends DBInfo implements SQLOperations<String> {
         statement.setString(1, critValue);
         statement.executeUpdate();
         statement.close();
-        nextId--;
+        //nextId--;
     }
 
     private void setBirthday(String birthday) {

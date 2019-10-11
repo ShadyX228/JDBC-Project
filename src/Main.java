@@ -48,10 +48,29 @@ public class Main {
         DB.addStudent("Modest Petrovich", "2019-01-03",'M',1);
 
         DB.selectStudent("student_id","1");
+        System.out.println();
+
         DB.selectStudent("student_id","2");
+        System.out.println();
+
         DB.selectStudent("student_id","3");
         System.out.println();
+
         DB.selectStudent("Birthday","2019-01-01");
+        System.out.println();
+
+        DB.updateStudent("Birthday","2019-01-03",1);
+        System.out.println();
+
+        DB.selectStudent("Birthday","2019-01-03");
+        System.out.println();
+
+        DB.deleteStudent("student_id","2", 2);
+        System.out.println();
+
+        DB.selectStudent("student_id","1");
+        DB.selectStudent("student_id","2");
+        DB.selectStudent("student_id","3");
 
     }
 }

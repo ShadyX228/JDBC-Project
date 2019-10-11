@@ -49,10 +49,13 @@ public class Database {
                 )
         );
     }
+
     public void selectStudent(String criteria, String critValue)
             throws SQLException {
+        System.out.print("Selecting... ");
         if(!students.isEmpty()) {
             ArrayList<Integer> indexes = students.get(students.size()-1).selectByCriteria(criteria, critValue);
+            System.out.println(indexes.size() + " rows found.");
             for(int index : indexes){
                 System.out.println(students.get(index-1));
             }
@@ -60,5 +63,16 @@ public class Database {
         else {
             System.out.println("No students in database.");
         }
+    }
+    public void updateStudent(String criteria, String critValue, int index)
+            throws SQLException {
+        System.out.print("Updating... ");
+        students.get(index).updateByCriteria(criteria, critValue);
+    }
+    public void deleteStudent(String criteria, String critValue, int index)
+            throws SQLException {
+        System.out.println("Deleting...");
+        students.get(index).deleteByCriteria(criteria, critValue);
+        students.set(index, new Student()); // need to fix ex
     }
 }

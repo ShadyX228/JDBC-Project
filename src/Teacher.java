@@ -56,17 +56,21 @@ public class Teacher extends DBInfo implements SQLOperations<String> {
 
         ResultSet res = statement.executeQuery();
         ArrayList<Integer> list = new ArrayList<>();
-        /*while(res.next()) {
-            for(int i = 1; i < 5; i++) {
-                System.out.print(res.getString(i) + " ");
-            }
-            System.out.println();
-        }*/
-
+        while(res.next()) {
+            list.add(res.getInt(1));
+        }
         statement.close();
         return list;
     }
     public void updateByCriteria(String criteria, String critValue) throws SQLException {
+        if(criteria.equals("Name")) {
+            setName(critValue);
+        } else if(criteria.equals("Birthday")) {
+            setBirthday(critValue);
+        } else {
+            setSex(critValue);
+        }
+
         String query = "UPDATE " + getDBName() + "." + tableName + " " +
                 "SET " + criteria + " = ? WHERE " + tableName + ".teacher_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -84,6 +88,17 @@ public class Teacher extends DBInfo implements SQLOperations<String> {
         statement.close();
         nextId--;
     }
+
+    private void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+    private void setSex(String sex) {
+        this.sex = sex.charAt(0);
+    }
+    private void setName(String name) {
+        this.name = name;
+    }
+
     public String toString() {
         return "teacher_id: " + teacher_id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; sex: " + sex;

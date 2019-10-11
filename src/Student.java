@@ -5,6 +5,8 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import static java.sql.Types.NULL;
+
 public class Student extends DBInfo implements SQLOperations<String> {
     private static int nextId = 0;
     private static String tableName = "student";
@@ -14,6 +16,28 @@ public class Student extends DBInfo implements SQLOperations<String> {
     private char sex;
     private int group_id;
 
+    Student() throws SQLException {
+        student_id = ++nextId;
+        name = "NULL";
+
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("YYYY-MM-DD");
+        birthday = "2000-01-01";
+
+        sex = 'N';
+        group_id = java.sql.Types.NULL; // need to fix ex
+
+        String query = "INSERT INTO " + getDBName() + "." + tableName + " " +
+                "(student_id, Name, Birthday, Sex, group_id) " +
+                "VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, student_id);
+        statement.setString(2, name);
+        statement.setString(3, birthday);
+        statement.setObject(4, sex, java.sql.Types.CHAR);
+        statement.setObject(5, group_id, java.sql.Types.NULL); // need to fix ex
+        statement.executeUpdate();
+        statement.close();
+    }
     Student(String name, LocalDate birth, char sex, int group_id)
             throws
             SQLException {
@@ -55,11 +79,20 @@ public class Student extends DBInfo implements SQLOperations<String> {
         while(res.next()) {
             list.add(res.getInt(1));
         }
-
         statement.close();
         return list;
     }
     public void updateByCriteria(String criteria, String critValue) throws SQLException {
+        if(criteria.equals("Name")) {
+            setName(critValue);
+        } else if(criteria.equals("Birthday")) {
+            setBirthday(critValue);
+        } else if(criteria.equals("Sex")) {
+            setSex(critValue);
+        } else {
+            setGroup(critValue);
+        }
+
         String query = "UPDATE " + getDBName() + "." + tableName + " " +
                 "SET " + criteria + " = ? WHERE " + tableName + ".student_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -82,6 +115,20 @@ public class Student extends DBInfo implements SQLOperations<String> {
         statement.close();
         //nextId--;
     }
+
+    private void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+    private void setSex(String sex) {
+        this.sex = sex.charAt(0);
+    }
+    private void setName(String name) {
+        this.name = name;
+    }
+    private void setGroup(String group_id) {
+        this.group_id = Integer.parseInt(group_id);
+    }
+
     public String toString() {
         return "student_id: " + student_id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; sex: " + sex +

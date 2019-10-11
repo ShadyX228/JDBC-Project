@@ -3,6 +3,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
 public class Database {
@@ -54,10 +55,10 @@ public class Database {
 
     public void selectStudent(String criteria, String critValue)
             throws SQLException {
-        System.out.print("Selecting... ");
         if(!students.isEmpty()) {
+            //System.out.print("Selecting... ");
             ArrayList<Integer> indexes = students.get(students.size()-1).selectByCriteria(criteria, critValue);
-            System.out.println(indexes.size() + " rows found.");
+            //System.out.println(indexes.size() + " rows found.");
             for(int index : indexes){
                 System.out.println(students.get(index-1));
             }
@@ -68,11 +69,11 @@ public class Database {
     }
     public void selectTeacher(String criteria, String critValue)
             throws SQLException {
-        System.out.print("Selecting... ");
         if(!teachers.isEmpty()) {
+            //System.out.print("Selecting... ");
             ArrayList<Integer> indexes = teachers.get(teachers.size()-1).
                     selectByCriteria(criteria, critValue);
-            System.out.println(indexes.size() + " rows found.");
+            //System.out.println(indexes.size() + " rows found.");
             for(int index : indexes){
                 System.out.println(teachers.get(index-1));
             }
@@ -83,8 +84,8 @@ public class Database {
     }
     public void selectGroup(String criteria, int critValue)
             throws SQLException {
-        System.out.print("Selecting... ");
         if(!groups.isEmpty()) {
+            //System.out.print("Selecting... ");
             ArrayList<Integer> indexes = groups.get(groups.size()-1).
                     selectByCriteria(criteria, critValue);
             System.out.println(indexes.size() + " rows found.");
@@ -125,11 +126,28 @@ public class Database {
         Teacher teacher;
         if(!Objects.isNull(teacher = teachers.get(index-1))){
             System.out.println("Deleting...");
-            teacher.deleteByCriteria("student_id", Integer.toString(index));
+            teacher.deleteByCriteria("teacher_id", Integer.toString(index));
             teachers.set(index - 1, null);
         }
         else {
             System.err.println("Error.");
+        }
+    }
+
+    public void printTables() {
+        Iterator<Student> its = students.iterator();
+        Iterator<Teacher> itt = teachers.iterator();
+        Iterator<Group> itg = groups.iterator();
+        while(its.hasNext()) {
+            System.out.println(its.next());
+        }
+        System.out.println();
+        while(itt.hasNext()) {
+            System.out.println(itt.next());
+        }
+        System.out.println();
+        while(itg.hasNext()) {
+            System.out.print(itg.next());
         }
     }
 

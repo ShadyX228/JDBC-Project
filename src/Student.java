@@ -21,10 +21,7 @@ public class Student extends DBInfo implements SQLOperations<String> {
             SQLException {
         student_id = ++nextId;
         this.name = name;
-
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("YYYY-MM-DD");
-        birthday = birth.format(df);
-
+        birthday = birth.toString();
         this.sex = sex;
         this.group_id = group_id;
 

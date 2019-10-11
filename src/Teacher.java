@@ -18,10 +18,7 @@ public class Teacher extends DBInfo implements SQLOperations<String> {
             SQLException {
         teacher_id = ++nextId;
         this.name = name;
-
-        DateTimeFormatter df = DateTimeFormatter.ofPattern("YYYY-MM-DD");
-        birthday = birth.format(df);
-
+        birthday = birth.toString();
         this.sex = sex;
 
         String query = "INSERT INTO " + getDBName() + "." + tableName + " " +

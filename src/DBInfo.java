@@ -24,10 +24,11 @@ public class DBInfo {
     static {
         try {
             properties = new Properties();
-            FileInputStream input = new FileInputStream("connection.properties");
+            FileInputStream input = new FileInputStream(
+                    "connection.properties"
+            );
             properties.load(input);
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

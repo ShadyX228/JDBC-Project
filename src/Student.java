@@ -2,10 +2,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-
-import static java.sql.Types.NULL;
 
 public class Student extends DBInfo implements SQLOperations<String> {
     private static int nextId = 0;
@@ -59,14 +56,18 @@ public class Student extends DBInfo implements SQLOperations<String> {
         return list;
     }
     public void updateByCriteria(String criteria, String critValue) throws SQLException {
-        if(criteria.equals("Name")) {
-            setName(critValue);
-        } else if(criteria.equals("Birthday")) {
-            setBirthday(critValue);
-        } else if(criteria.equals("Sex")) {
-            setSex(critValue);
-        } else {
-            setGroup(critValue);
+        switch(criteria) {
+            case("Name"):
+                setName(critValue);
+                break;
+            case("Birthday"):
+                setBirthday(critValue);
+                break;
+            case("Sex"):
+                setSex(critValue);
+                break;
+            default:
+                setGroup(critValue);
         }
 
         String query = "UPDATE " + getDBName() + "." + tableName + " " +

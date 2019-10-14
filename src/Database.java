@@ -1,4 +1,3 @@
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -57,7 +56,9 @@ public class Database {
             throws SQLException {
         if(!students.isEmpty()) {
             //System.out.print("Selecting... ");
-            ArrayList<Integer> indexes = students.get(students.size()-1).selectByCriteria(criteria, critValue);
+            ArrayList<Integer> indexes = students.
+                    get(students.size()-1).
+                    selectByCriteria(criteria, critValue);
             //System.out.println(indexes.size() + " rows found.");
             for(int index : indexes){
                 System.out.println(students.get(index-1));
@@ -101,12 +102,20 @@ public class Database {
     public void updateStudent(String criteria, String critValue, int index)
             throws SQLException {
         System.out.print("Updating... ");
-        students.get(index).updateByCriteria(criteria, critValue);
+        students.get(index-1).updateByCriteria(criteria, critValue);
+        System.out.println("Success... ");
     }
     public void updateTeacher(String criteria, String critValue, int index)
             throws SQLException {
         System.out.print("Updating... ");
-        teachers.get(index).updateByCriteria(criteria, critValue);
+        teachers.get(index-1).updateByCriteria(criteria, critValue);
+        System.out.println("Success... ");
+    }
+    public void updateGroup(int index, int newNumber)
+            throws SQLException {
+        System.out.print("Updating... ");
+        groups.get(index-1).updateByCriteria("Number", newNumber);
+        System.out.println("Success... ");
     }
 
     public void deleteStudent(int index)
@@ -116,6 +125,7 @@ public class Database {
             System.out.println("Deleting...");
             student.deleteByCriteria("student_id", Integer.toString(index));
             students.set(index - 1, null);
+            System.out.println("Success... ");
         }
         else {
             System.err.println("Error.");
@@ -128,6 +138,19 @@ public class Database {
             System.out.println("Deleting...");
             teacher.deleteByCriteria("teacher_id", Integer.toString(index));
             teachers.set(index - 1, null);
+            System.out.println("Success... ");
+        }
+        else {
+            System.err.println("Error.");
+        }
+    }
+    public void deleteGroup(int index)
+            throws SQLException {
+        Group group;
+        if(!Objects.isNull(group = groups.get(index-1))){
+            System.out.println("Deleting...");
+            group.deleteByCriteria("group_id", index);
+            groups.set(index - 1, null);
         }
         else {
             System.err.println("Error.");

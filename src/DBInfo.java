@@ -12,25 +12,19 @@ public class DBInfo {
     private static Connection connection;
     private static Properties properties;
 
-    DBInfo() throws SQLException {
+    DBInfo() throws SQLException, IOException {
+        properties = new Properties();
+        FileInputStream input = new FileInputStream(
+                "connection.properties"
+        );
+
+        properties.load(input);
         driver = properties.getProperty("jdbc.driver");
         url = driver + "://" + properties.getProperty("jdbc.url");
         user = properties.getProperty("jdbc.user");
         password = properties.getProperty("jdbc.password");
         dbname = properties.getProperty("jdbc.dbname");
         connection = doConnection();
-    }
-
-    static {
-        try {
-            properties = new Properties();
-            FileInputStream input = new FileInputStream(
-                    "connection.properties"
-            );
-            properties.load(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private Connection doConnection()

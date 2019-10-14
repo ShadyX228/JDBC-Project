@@ -1,7 +1,8 @@
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) throws SQLException, IOException {
         Database database = new Database();
         database.addGroup(421);
         database.selectGroup("group_id", 1);

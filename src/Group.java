@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ public class Group extends DBInfo implements SQLOperations<Integer> {
     private int group_id;
     private int number;
 
-    Group(int number) throws SQLException {
+    Group(int number) throws SQLException, IOException {
         group_id = ++nextId;
         this.number = number;
 

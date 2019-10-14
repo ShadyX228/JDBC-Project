@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -9,17 +10,15 @@ public class Database {
     private ArrayList<Student> students;
     private ArrayList<Teacher> teachers;
     private ArrayList<Group> groups;
-    private DBInfo dbinfo;
 
     Database() throws SQLException {
         students = new ArrayList<>();
         teachers = new ArrayList<>();
         groups = new ArrayList<>();
-        dbinfo = new DBInfo();
     }
 
     public void addStudent(String name, String birth, char sex, int group_id)
-            throws SQLException {
+            throws SQLException, IOException {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("YYYY-MM-DD");
         LocalDate birthParsed = LocalDate.parse(birth);
         students.add(
@@ -32,7 +31,7 @@ public class Database {
         );
     }
     public void addTeacher(String name, String birth, char sex)
-            throws SQLException {
+            throws SQLException, IOException {
         DateTimeFormatter df = DateTimeFormatter.ofPattern("YYYY-MM-DD");
         LocalDate birthParsed = LocalDate.parse(birth);
         teachers.add(
@@ -44,7 +43,7 @@ public class Database {
         );
     }
     public void addGroup(int number)
-            throws SQLException {
+            throws SQLException, IOException {
         groups.add(
                 new Group(
                         number

@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +16,8 @@ public class Student extends DBInfo implements SQLOperations<String> {
 
     Student(String name, LocalDate birth, char sex, int group_id)
             throws
-            SQLException {
+            SQLException,
+            IOException {
         student_id = ++nextId;
         this.name = name;
         birthday = birth.toString();

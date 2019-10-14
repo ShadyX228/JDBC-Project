@@ -9,16 +9,16 @@ public class Main {
         database.selectStudent("student_id", "1");
 
         System.out.print("\nAdding students and teachers... ");
-        database.addStudent("Habib Petrovich", "1998-04-09", 'M', 1);
+        database.addStudent("Ilya Ivanov", "1998-04-09", 'M', 1);
         database.addStudent("Surkhay Petrovich",  "1997-05-22", 'M', 1);
-        database.addStudent("Madina Petrovna", "1999-02-01", 'F', 1);
-        database.addStudent("Mahmud Petrov", "1998-01-01", 'M', 1);
-        database.addStudent("Mamed Petrovas", "1998-05-12", 'M', 1);
-        database.addStudent("Tagir Petrov", "1998-02-03", 'M', 1);
+        database.addStudent("Elena Viktorovna", "1999-02-01", 'F', 1);
+        database.addStudent("Ivan Ivanov", "1998-01-01", 'M', 1);
+        database.addStudent("Andrei Petrov", "1998-05-12", 'M', 1);
+        database.addStudent("Alexey Zhukov", "1998-02-03", 'M', 1);
 
-        database.addTeacher("Conor Mcgregor", "1956-01-05", 'M');
-        database.addTeacher("Nurmagomed Nariev", "1972-02-05", 'M');
-        database.addTeacher("Galayev Ded", "1981-05-05", 'M');
+        database.addTeacher("Nikolai Voronov", "1956-01-05", 'M');
+        database.addTeacher("Sergey Dragunov", "1972-02-05", 'M');
+        database.addTeacher("Michael Kalashnikov", "1981-05-05", 'M');
         System.out.println("Success.");
 
         System.out.println("\nAll students selecting: ");

@@ -3,114 +3,73 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
-import java.util.ArrayList;
 
-public class Student extends DBInfo implements SQLOperations<String> {
-    private static int nextId = 0;
-    private static String tableName = "student";
+public class Student extends DBInfo {
     private int student_id;
     private String name;
-    private String birthday;
-    private char sex;
+    private LocalDate birthday;
+    private Gender gender;
     private int group_id;
 
-    Student(String name, LocalDate birth, char sex, int group_id)
+    Student(String name, int year, int month, int day, Gender gender, int group_id)
             throws
             SQLException,
             IOException {
-        student_id = ++nextId;
         this.name = name;
-        birthday = birth.toString();
-        this.sex = sex;
+        birthday = LocalDate.of(year,month,day+1);
+        this.gender = gender;
         this.group_id = group_id;
 
-        String query = "INSERT INTO " + getDBName() + "." + tableName + " " +
-                    "(student_id, Name, Birthday, Sex, group_id) " +
-                    "VALUES (?, ?, ?, ?, ?)";
-        //System.out.println(student_id + " " + name + " " + birthday + " " + sex + " " + group_id);
+        // inserting in db
+        String query = "INSERT INTO " + getDBName() + ".student " +
+                    "(Name, Birthday, Gender) " +
+                    "VALUES (?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, student_id);
-        statement.setString(2, this.name);
-        statement.setString(3, birthday);
-        statement.setObject(4, this.sex, java.sql.Types.CHAR);
-        statement.setInt(5, this.group_id);
+        statement.setString(1, this.name);
+        statement.setDate(2, java.sql.Date.valueOf(birthday));
+        statement.setObject(3, this.gender.getValue(), java.sql.Types.CHAR);
         statement.executeUpdate();
-        statement.close();
-    }
 
-    public ArrayList<Integer> selectByCriteria(String criteria, String critValue) throws SQLException {
-        String query = "SELECT * FROM " + getDBName() + "." + tableName + " " +
-                "WHERE " + tableName + "." + criteria + " = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-
-        if(criteria.equals("student_id") || criteria.equals("group_id")) {
-            statement.setInt(1, Integer.parseInt(critValue));
-        } else {
-            statement.setString(1, critValue);
-        }
-
+        // get id from db
+        query = "SELECT * FROM studentgroupteacher.student ORDER BY student.student_id DESC LIMIT 1";
+        statement = getConnection().prepareStatement(query);
         ResultSet res = statement.executeQuery();
-        ArrayList<Integer> list = new ArrayList<>();
-        while(res.next()) {
-            list.add(res.getInt(1));
+        if(res.next()) {
+            student_id = res.getInt(1);
         }
         statement.close();
-        return list;
-    }
-    public void updateByCriteria(String criteria, String critValue) throws SQLException {
-        switch(criteria) {
-            case("Name"):
-                setName(critValue);
-                break;
-            case("Birthday"):
-                setBirthday(critValue);
-                break;
-            case("Sex"):
-                setSex(critValue);
-                break;
-            default:
-                setGroup(critValue);
-        }
-
-        String query = "UPDATE " + getDBName() + "." + tableName + " " +
-                "SET " + criteria + " = ? WHERE " + tableName + ".student_id = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-
-        if(criteria.equals("group_id")) {
-            statement.setInt(1, Integer.parseInt(critValue));
-        } else {
-            statement.setString(1, critValue);
-        }
-        statement.setInt(2, student_id);
-        statement.executeUpdate();
-        statement.close();
-    }
-    public void deleteByCriteria(String criteria, String critValue) throws SQLException {
-        String query = "DELETE FROM " + getDBName() + "." + tableName + " " +
-                "WHERE " + tableName + "." + criteria + " = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setString(1, critValue);
-        statement.executeUpdate();
-        statement.close();
-        //nextId--;
     }
 
-    private void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public int getId() {
+        return student_id;
     }
-    private void setSex(String sex) {
-        this.sex = sex.charAt(0);
+    public String getName() {
+        return name;
     }
-    private void setName(String name) {
+    public LocalDate getBirth() {
+        return birthday;
+    }
+    public int getGroup() {
+        return group_id;
+    }
+
+    public void setName(String name) {
         this.name = name;
     }
-    private void setGroup(String group_id) {
-        this.group_id = Integer.parseInt(group_id);
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+    public void setGroup(int group_id) {
+        this.group_id = group_id;
     }
 
+
     public String toString() {
-        return "student_id: " + student_id + "; name: " + name + "; " +
-                "birthday: " + birthday + "; sex: " + sex +
+        return  "student_id: " + student_id + "; name: " + name + "; " +
+                "birthday: " + birthday + "; gender: " + gender +
                 "; group_id: " + group_id;
     }
 

@@ -114,17 +114,17 @@ public class Database {
             throws SQLException {
         System.out.print("Updating... ");
         groups.get(index-1).updateByCriteria("Number", newNumber);
-        System.out.println("Success... ");
+        System.out.println("Success.");
     }
 
     public void deleteStudent(int index)
             throws SQLException {
         Student student;
         if(!Objects.isNull(student = students.get(index-1))){
-            System.out.println("Deleting...");
+            System.out.print("Deleting student " + (index) + "... ");
             student.deleteByCriteria("student_id", Integer.toString(index));
             students.set(index - 1, null);
-            System.out.println("Success... ");
+            System.out.println("Success.");
         }
         else {
             System.err.println("Error.");
@@ -134,10 +134,10 @@ public class Database {
             throws SQLException {
         Teacher teacher;
         if(!Objects.isNull(teacher = teachers.get(index-1))){
-            System.out.println("Deleting...");
+            System.out.print("Deleting teacher " + (index) + "... ");
             teacher.deleteByCriteria("teacher_id", Integer.toString(index));
             teachers.set(index - 1, null);
-            System.out.println("Success... ");
+            System.out.println("Success.");
         }
         else {
             System.err.println("Error.");
@@ -147,9 +147,10 @@ public class Database {
             throws SQLException {
         Group group;
         if(!Objects.isNull(group = groups.get(index-1))){
-            System.out.println("Deleting...");
+            System.out.print("Deleting group " + (index) + "... ");
             group.deleteByCriteria("group_id", index);
             groups.set(index - 1, null);
+            System.out.println("Success.");
         }
         else {
             System.err.println("Error.");

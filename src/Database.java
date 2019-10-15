@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Properties;
-// допилить те же функции для teacher и group
+// допилить те же функции для group
 // запилить функционал для интерактивной работы с бд
 public class Database {
     private String driver;
@@ -457,6 +457,26 @@ public class Database {
         }
         return null;
     }
+    private Group selectGroupById(int id) throws SQLException {
+        if(!groups.isEmpty()) {
+            String query = "SELECT * FROM studentgroupteacher.group WHERE student.group_id = ?";
+            PreparedStatement statement = getConnection().prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet res = statement.executeQuery();
+
+            if (res.next()) {
+                int resId = res.getInt(1);
+                for (Group group : groups) {
+                    if (group.getId() == resId) {
+                        return group;
+                    }
+                }
+            }
+            statement.close();
+        }
+        return null;
+    }
+
     private Connection doConnection() throws SQLException {
         return DriverManager.getConnection(
                 url,

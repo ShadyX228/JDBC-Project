@@ -4,8 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.*;
 
-public class Student extends DBInfo {
-    private int student_id;
+public class Student extends Table {
+    private int id;
     private String name;
     private LocalDate birthday;
     private Gender gender;
@@ -19,9 +19,10 @@ public class Student extends DBInfo {
         birthday = LocalDate.of(year,month,day+1);
         this.gender = gender;
         this.group_id = group_id;
+        setTableName(TableType.STUDENT);
 
         // inserting in db
-        String query = "INSERT INTO " + getDBName() + ".student " +
+        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
                     "(Name, Birthday, Gender) " +
                     "VALUES (?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -31,17 +32,12 @@ public class Student extends DBInfo {
         statement.executeUpdate();
 
         // get id from db
-        query = "SELECT * FROM studentgroupteacher.student ORDER BY student.student_id DESC LIMIT 1";
-        statement = getConnection().prepareStatement(query);
-        ResultSet res = statement.executeQuery();
-        if(res.next()) {
-            student_id = res.getInt(1);
-        }
+        id = setId(statement);
         statement.close();
     }
 
     public int getId() {
-        return student_id;
+        return id;
     }
     public String getName() {
         return name;
@@ -68,7 +64,7 @@ public class Student extends DBInfo {
 
 
     public String toString() {
-        return  "student_id: " + student_id + "; name: " + name + "; " +
+        return  "student_id: " + id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; gender: " + gender +
                 "; group_id: " + group_id;
     }

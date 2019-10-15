@@ -3,10 +3,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
-public class Teacher extends DBInfo {
-    private int teacher_id;
+public class Teacher extends Table {
+    private int id;
     private String name;
     private LocalDate birthday;
     private Gender gender;
@@ -18,9 +17,10 @@ public class Teacher extends DBInfo {
         this.name = name;
         birthday = LocalDate.of(year,month,day+1);
         this.gender = gender;
+        setTableName(TableType.TEACHER);
 
         // inserting in db
-        String query = "INSERT INTO " + getDBName() + ".teacher " +
+        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
                 "(Name, Birthday, Gender) " +
                 "VALUES (?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -30,17 +30,12 @@ public class Teacher extends DBInfo {
         statement.executeUpdate();
 
         // get id from db
-        query = "SELECT * FROM studentgroupteacher.teacher ORDER BY teacher.teacher_id DESC LIMIT 1";
-        statement = getConnection().prepareStatement(query);
-        ResultSet res = statement.executeQuery();
-        if(res.next()) {
-            teacher_id = res.getInt(1);
-        }
+        id = setId(statement);
         statement.close();
     }
 
     public int getId() {
-        return teacher_id;
+        return id;
     }
     public String getName() {
         return name;
@@ -60,7 +55,7 @@ public class Teacher extends DBInfo {
     }
 
     public String toString() {
-        return "teacher_id: " + teacher_id + "; name: " + name + "; " +
+        return "teacher_id: " + id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; sex: " + gender;
     }
 }

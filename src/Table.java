@@ -3,16 +3,17 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
 
-public class DBInfo {
+public class Table {
     private String driver;
     private String url;
     private String user;
     private String password;
-    private String dbname;
+    private String dbName;
+    private TableType tableName;
     private static Connection connection;
     private static Properties properties;
 
-    DBInfo() throws SQLException, IOException {
+    Table() throws SQLException, IOException {
         properties = new Properties();
         FileInputStream input = new FileInputStream(
                 "connection.properties"
@@ -23,8 +24,11 @@ public class DBInfo {
         url = driver + "://" + properties.getProperty("jdbc.url");
         user = properties.getProperty("jdbc.user");
         password = properties.getProperty("jdbc.password");
-        dbname = properties.getProperty("jdbc.dbname");
+        dbName = properties.getProperty("jdbc.dbname");
         connection = doConnection();
+    }
+    public void setTableName(TableType tableName) {
+        this.tableName = tableName;
     }
 
     private Connection doConnection()
@@ -36,10 +40,23 @@ public class DBInfo {
                     password
             );
     }
+    protected int setId(PreparedStatement statement) throws SQLException {
+        String query = "SELECT * FROM " + getDBName() + "." + getTableName() + " " +
+                "ORDER BY " + getTableName() + "." + getTableName() + "_id DESC LIMIT 1";
+        getConnection().prepareStatement(query);
+        ResultSet res = statement.executeQuery();
+        if(res.next()) {
+            return res.getInt(1);
+        }
+        return 0;
+    }
     public Connection getConnection() {
         return connection;
     }
     public String getDBName() {
-        return dbname;
+        return dbName;
+    }
+    public String getTableName() {
+        return tableName.getValue();
     }
 }

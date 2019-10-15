@@ -51,11 +51,17 @@ public class Main {
         DB.addStudent(new Student("sss2", 1995,06,21,Gender.MALE,java.sql.Types.NULL));
         DB.addStudent(new Student("sss2", 1995,06,21,Gender.FEMALE,java.sql.Types.NULL));
         DB.addStudent(new Student("sss2", 1995,06,21,Gender.FEMALE,java.sql.Types.NULL));
+        DB.addTeacher(new Teacher("sss2", 1995,06,21,Gender.FEMALE));
 
-        for(Student s : DB.selectStudent(Criteria.BIRTH,"1995-06-20")) {
-            System.out.println(s);
-        }
-        DB.deleteStudent(Criteria.BIRTH,"1995-06-21");
+        //Student s = DB.selectById(TableType.STUDENT,62);
+        Table t = DB.selectById(TableType.TEACHER,9);
+        //System.out.println(s);
+        System.out.println(t);
+
+        //for(Student s : DB.selectStudent(Criteria.BIRTH,"1995-06-20")) {
+        //   System.out.println(s);
+        //}
+        //DB.deleteStudent(Criteria.BIRTH,"1995-06-21");
         //DB.updateStudent(101,Criteria.NAME,"ssss");
         //DB.updateStudent(101,Criteria.BIRTH,"1995-12-06");
         //DB.updateStudent(101,Criteria.GENDER,"FEMALE");

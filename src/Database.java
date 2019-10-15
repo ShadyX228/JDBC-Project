@@ -51,7 +51,7 @@ public class Database {
 
             switch (criteria) {
                 case ID:
-                    list.add(selectStudentById(Integer.parseInt(value)));
+                    list.add(selectById(TableType.STUDENT,Integer.parseInt(value)));
                     break;
                 case NAME:
                     query = "SELECT * FROM studentgroupteacher.student" + " WHERE student.Name = ?";
@@ -60,7 +60,7 @@ public class Database {
 
                     ResultSet res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectStudentById(res.getInt(1));
+                        Student student = selectById(TableType.STUDENT,res.getInt(1));
                         list.add(student);
                     }
                     break;
@@ -77,7 +77,7 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectStudentById(res.getInt(1));
+                        Student student = selectById(TableType.STUDENT,res.getInt(1));
                         list.add(student);
                     }
                     break;
@@ -90,7 +90,7 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectStudentById(res.getInt(1));
+                        Student student = selectById(TableType.STUDENT,res.getInt(1));
                         list.add(student);
                     }
                     break;
@@ -102,7 +102,7 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectStudentById(res.getInt(1));
+                        Student student = selectById(TableType.STUDENT,res.getInt(1));
                         list.add(student);
                     }
                     break;
@@ -419,8 +419,8 @@ public class Database {
     }
 
 
-    private Student selectStudentById(int id) throws SQLException {
-        if(!students.isEmpty()) {
+    public <T extends Table> T selectById(TableType table, int id) throws SQLException {
+        if(table.equals(TableType.STUDENT) && !students.isEmpty()) {
             String query = "SELECT * FROM studentgroupteacher.student WHERE student.student_id = ?";
             PreparedStatement statement = getConnection().prepareStatement(query);
             statement.setInt(1, id);
@@ -430,17 +430,12 @@ public class Database {
                 int resId = res.getInt(1);
                 for (Student student : students) {
                     if (student.getId() == resId) {
-                        return student;
+                        return (T)student;
                     }
                 }
-                }
-            statement.close();
-        }
-        return null;
-    }
-    private Teacher selectTeacherById(int id) throws SQLException {
-        if(!teachers.isEmpty()) {
-            String query = "SELECT * FROM studentgroupteacher.teacher WHERE student.teacher_id = ?";
+            }
+        } else if (table.equals(TableType.TEACHER) && !teachers.isEmpty()) {
+            String query = "SELECT * FROM studentgroupteacher.teacher WHERE teacher.teacher_id = ?";
             PreparedStatement statement = getConnection().prepareStatement(query);
             statement.setInt(1, id);
             ResultSet res = statement.executeQuery();
@@ -449,16 +444,12 @@ public class Database {
                 int resId = res.getInt(1);
                 for (Teacher teacher : teachers) {
                     if (teacher.getId() == resId) {
-                        return teacher;
+                        return (T)teacher;
                     }
                 }
-                }
+            }
             statement.close();
-        }
-        return null;
-    }
-    private Group selectGroupById(int id) throws SQLException {
-        if(!groups.isEmpty()) {
+        }  else if (table.equals(TableType.GROUP) && !groups.isEmpty()) {
             String query = "SELECT * FROM studentgroupteacher.group WHERE student.group_id = ?";
             PreparedStatement statement = getConnection().prepareStatement(query);
             statement.setInt(1, id);
@@ -468,14 +459,16 @@ public class Database {
                 int resId = res.getInt(1);
                 for (Group group : groups) {
                     if (group.getId() == resId) {
-                        return group;
+                        return (T)group;
                     }
                 }
             }
             statement.close();
         }
-        return null;
+
+            return null;
     }
+
     private Connection doConnection() throws SQLException {
         return DriverManager.getConnection(
                 url,

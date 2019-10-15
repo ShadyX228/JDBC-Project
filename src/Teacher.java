@@ -10,7 +10,7 @@ public class Teacher extends Table {
     private LocalDate birthday;
     private Gender gender;
 
-    Teacher(String name, int year, int month, int day, Gender gender, int group_id)
+    Teacher(String name, int year, int month, int day, Gender gender)
             throws
             SQLException,
             IOException {

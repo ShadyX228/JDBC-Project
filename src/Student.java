@@ -11,6 +11,18 @@ public class Student extends Table {
     private Gender gender;
     private int group_id;
 
+    Student(int id, String name, int year, int month, int day, Gender gender, int group_id)
+            throws
+            SQLException,
+            IOException {
+        this.id = id;
+        this.name = name;
+        birthday = LocalDate.of(year,month,day+1);
+        this.gender = gender;
+        this.group_id = group_id;
+        setTableName(TableType.STUDENT);
+    }
+
     Student(String name, int year, int month, int day, Gender gender, int group_id)
             throws
             SQLException,
@@ -21,19 +33,8 @@ public class Student extends Table {
         this.group_id = group_id;
         setTableName(TableType.STUDENT);
 
-        // inserting in db
-        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
-                    "(Name, Birthday, Gender) " +
-                    "VALUES (?, ?, ?)";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setString(1, this.name);
-        statement.setDate(2, java.sql.Date.valueOf(birthday));
-        statement.setObject(3, this.gender.getValue(), java.sql.Types.CHAR);
-        statement.executeUpdate();
-
         // get id from db
         id = setId();
-        statement.close();
     }
 
     public int getId() {
@@ -48,6 +49,9 @@ public class Student extends Table {
     public int getGroup() {
         return group_id;
     }
+    public Gender getGender() {
+        return gender;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -60,6 +64,17 @@ public class Student extends Table {
     }
     public void setGroup(int group_id) {
         this.group_id = group_id;
+    }
+    public void add() throws SQLException {
+        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
+                "(Name, Birthday, Gender) " +
+                "VALUES (?, ?, ?)";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, name);
+        statement.setDate(2, java.sql.Date.valueOf(birthday));
+        statement.setObject(3, gender.getValue(), java.sql.Types.CHAR);
+        statement.executeUpdate();
+        statement.close();
     }
 
     public String toString() {

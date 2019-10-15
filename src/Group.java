@@ -6,21 +6,17 @@ public class Group extends Table {
     private int id;
     private int number;
 
+    Group(int id, int number) throws SQLException, IOException {
+        this.id = id;
+        this.number = number;
+        setTableName(TableType.GROUP);
+    }
     Group(int number) throws SQLException, IOException {
         this.number = number;
         setTableName(TableType.GROUP);
 
-        // inserting in db
-        String query = "INSERT INTO " + getDBName() + "." + getTableName() +
-                "(Number) " +
-                "VALUES (?)";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, number);
-        statement.executeUpdate();
-
         // get id from db
         id = setId();
-        statement.close();
     }
 
     public int getId() {
@@ -32,6 +28,15 @@ public class Group extends Table {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+    public void add() throws SQLException {
+        String query = "INSERT INTO " + getDBName() + "." + getTableName() +
+                "(Number) " +
+                "VALUES (?)";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, number);
+        statement.executeUpdate();
+        statement.close();
     }
 
     public String toString() {

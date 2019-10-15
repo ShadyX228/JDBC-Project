@@ -10,6 +10,16 @@ public class Teacher extends Table {
     private LocalDate birthday;
     private Gender gender;
 
+    Teacher(int id, String name, int year, int month, int day, Gender gender)
+            throws
+            SQLException,
+            IOException {
+        this.id = id;
+        this.name = name;
+        birthday = LocalDate.of(year,month,day+1);
+        this.gender = gender;
+        setTableName(TableType.TEACHER);
+    }
     Teacher(String name, int year, int month, int day, Gender gender)
             throws
             SQLException,
@@ -19,19 +29,8 @@ public class Teacher extends Table {
         this.gender = gender;
         setTableName(TableType.TEACHER);
 
-        // inserting in db
-        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
-                "(Name, Birthday, Gender) " +
-                "VALUES (?, ?, ?)";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setString(1, this.name);
-        statement.setDate(2, java.sql.Date.valueOf(birthday));
-        statement.setObject(3, this.gender.getValue(), java.sql.Types.CHAR);
-        statement.executeUpdate();
-
         // get id from db
         id = setId();
-        statement.close();
     }
 
     public int getId() {
@@ -43,6 +42,9 @@ public class Teacher extends Table {
     public LocalDate getBirth() {
         return birthday;
     }
+    public Gender getGender() {
+        return gender;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -53,9 +55,20 @@ public class Teacher extends Table {
     public void setGender(Gender gender) {
         this.gender = gender;
     }
+    public void add() throws SQLException {
+        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
+                "(Name, Birthday, Gender) " +
+                "VALUES (?, ?, ?)";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, this.name);
+        statement.setDate(2, java.sql.Date.valueOf(birthday));
+        statement.setObject(3, this.gender.getValue(), java.sql.Types.CHAR);
+        statement.executeUpdate();
+        statement.close();
+    }
 
     public String toString() {
         return "teacher_id: " + id + "; name: " + name + "; " +
-                "birthday: " + birthday + "; sex: " + gender;
+                "birthday: " + birthday + "; gender: " + gender;
     }
 }

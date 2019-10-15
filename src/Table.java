@@ -40,16 +40,17 @@ public class Table {
                     password
             );
     }
-    protected int setId(PreparedStatement statement) throws SQLException {
+    protected int setId() throws SQLException {
         String query = "SELECT * FROM " + getDBName() + "." + getTableName() + " " +
                 "ORDER BY " + getTableName() + "." + getTableName() + "_id DESC LIMIT 1";
-        getConnection().prepareStatement(query);
+        PreparedStatement statement = getConnection().prepareStatement(query);
         ResultSet res = statement.executeQuery();
         if(res.next()) {
             return res.getInt(1);
         }
         return 0;
     }
+
     public Connection getConnection() {
         return connection;
     }

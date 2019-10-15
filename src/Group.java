@@ -19,7 +19,7 @@ public class Group extends Table {
         statement.executeUpdate();
 
         // get id from db
-        id = setId(statement);
+        id = setId();
         statement.close();
     }
 

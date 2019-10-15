@@ -476,7 +476,6 @@ public class Database {
         }
         return null;
     }
-
     private Connection doConnection() throws SQLException {
         return DriverManager.getConnection(
                 url,

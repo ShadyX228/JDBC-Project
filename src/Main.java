@@ -39,7 +39,7 @@ public class Main {
             DB = new Database(false);
         }
 
-        getMethods("Student");
+        /*getMethods("Student");
         getMethods("Teacher");
         getMethods("Group");
 
@@ -71,7 +71,7 @@ public class Main {
         for(Student student : DB.selectStudent(Criteria.BIRTH, "1995-06-20")) {
             System.out.println(student);
         }*/
-        //DB.deleteStudent(Criteria.BIRTH,"2019-10-23");
+        //DB.deleteStudent(Criteria.BIRTH,"2019-10-23");*/
 
 
     }

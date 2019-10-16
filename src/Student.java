@@ -17,7 +17,7 @@ public class Student extends Table {
             IOException {
         this.id = id;
         this.name = name;
-        birthday = LocalDate.of(year,month,day+1);
+        birthday = LocalDate.of(year,month,day);
         this.gender = gender;
         this.group_id = group_id;
         setTableName(TableType.STUDENT);
@@ -32,6 +32,9 @@ public class Student extends Table {
         this.gender = gender;
         this.group_id = group_id;
         setTableName(TableType.STUDENT);
+
+        // insert in db
+        add();
 
         // get id from db
         id = setId();

@@ -1,5 +1,3 @@
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
@@ -22,7 +20,7 @@ public class Database {
     private ArrayList<Teacher> teachers;
     private ArrayList<Group> groups;
 
-    Database() throws SQLException, IOException {
+    Database(boolean showTables) throws SQLException, IOException {
         properties = new Properties();
         FileInputStream input = new FileInputStream(
                 "connection.properties"
@@ -40,13 +38,12 @@ public class Database {
         teachers = new ArrayList<>();
         groups = new ArrayList<>();
 
-        fillTables(false);
+        fillTables(showTables);
     }
 
     // student's methods
-    public void addStudent(Student student) throws SQLException {
+    public void addStudent(Student student) {
         students.add(student);
-        student.add();
     }
     public ArrayList<Student> selectStudent(Criteria criteria, String value) throws SQLException {
         if(!students.isEmpty()) {

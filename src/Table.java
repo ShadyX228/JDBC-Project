@@ -27,6 +27,7 @@ public class Table {
         dbName = properties.getProperty("jdbc.dbname");
         connection = doConnection();
     }
+
     public void setTableName(TableType tableName) {
         this.tableName = tableName;
     }

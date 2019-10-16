@@ -29,6 +29,9 @@ public class Teacher extends Table {
         this.gender = gender;
         setTableName(TableType.TEACHER);
 
+        // insert in db
+        add();
+
         // get id from db
         id = setId();
     }

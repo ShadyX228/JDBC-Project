@@ -21,7 +21,7 @@ public class Main {
         ArrayList<Method> result = new ArrayList<>();
         for(Method method : Database.class.getDeclaredMethods()) {
             if(Modifier.toString(method.getModifiers()).contains("public") && method.getName().contains(table)) {
-                System.err.print(method.getName() + " ");
+                System.out.print(method.getName() + " ");
                 result.add(method);
             }
         }
@@ -39,31 +39,93 @@ public class Main {
             DB = new Database(false);
         }
 
-        /*getMethods("Student");
+        getMethods("Student");
         getMethods("Teacher");
         getMethods("Group");
 
-        System.out.println("\nEnter method's name: ");
-        String methodName = input.next();
-        switch (methodName) {
-            case "addStudent":
-                System.out.println("Adding student. \nEnter name: ");
-                String name = input.next();
+        String methodName = "";
+        while(!methodName.equals("exit")) {
+            System.out.print("\nEnter method's name or \"exit\" to stop: ");
+            methodName = input.next();
+            switch (methodName) {
+                case "addStudent":
+                    System.out.print("Adding student. \nEnter name: ");
+                    String name = input.next();
 
-                System.out.println("Entering birthday. Enter year: ");
-                int year = input.nextInt();
+                    System.out.print("Entering birthday. Enter year: ");
+                    int year = input.nextInt();
 
-                System.out.println("Enter month: ");
-                int month = input.nextInt();
+                    System.out.print("Enter month: ");
+                    int month = input.nextInt();
 
-                System.out.println("Enter day: ");
-                int day = input.nextInt();
+                    System.out.print("Enter day: ");
+                    int day = input.nextInt();
 
-                System.out.println(name + " " + year + " " + month + " " + day);
+                    System.out.print("Enter gender (MALE/FEMALE): ");
+                    String genderInput = input.next();
+                    Gender gender = Gender.valueOf(genderInput);
 
-                break;
-            default:
-                System.out.println("No method with selected name. Select method's name from list that above.");
+                    System.out.print("Enter student's group number: ");
+                    int number = input.nextInt();
+                    Group group = DB.selectGroup(number);
+                    //System.out.println(group.getId());
+                    int group_id = group.getId();
+
+                    DB.addStudent(new Student(name, year, month, day, gender, group_id));
+
+                    //System.out.println(name + " " + year + " " + month + " " + day);
+                    break;
+
+                case "selectStudent":
+                    System.out.print("Selecting students. \nEnter criteria. Available variants: ");
+                    for(Criteria criteria1 : Criteria.values()) {
+                        System.out.print(criteria1 + " ");
+                    }
+                    System.out.print(": ");
+                    String crit = input.next();
+                    Criteria criteria = Criteria.valueOf(crit);
+
+                    System.out.print("Enter criteria value: ");
+                    String critVal = input.next();
+
+                    for(Student student : DB.selectStudent(criteria, critVal)) {
+                        System.out.println(student);
+                    }
+
+                    break;
+
+                case "deleteStudent":
+                    System.out.print("Deleting studetns. \nEnter criteria. Available variants: ");
+                    for(Criteria criteria2 : Criteria.values()) {
+                        System.out.print(criteria2 + " ");
+                    }
+                    System.out.print(": ");
+                    crit = input.next();
+                    criteria = Criteria.valueOf(crit);
+
+                    System.out.print("Enter criteria value: ");
+                    critVal = input.next();
+
+                    DB.deleteStudent(criteria, critVal);
+                    break;
+
+                case "updateStudent":
+                    System.out.print("Updating studetns. \nEnter id: ");
+                    int id = input.nextInt();
+                    Student student;
+                    for(Student element : DB.selectStudent(Criteria.ID,Integer.toString(id))) {
+                        student = element;
+                    }
+
+                    //DB.updateStudent();
+                    break;
+                case "printTables":
+                    DB.printTables();
+                    break;
+
+                default:
+                    System.out.println("Shutting down.");
+            }
         }
 
 
@@ -71,8 +133,10 @@ public class Main {
         for(Student student : DB.selectStudent(Criteria.BIRTH, "1995-06-20")) {
             System.out.println(student);
         }*/
-        //DB.deleteStudent(Criteria.BIRTH,"2019-10-23");*/
+        //DB.deleteStudent(Criteria.BIRTH,"2019-10-23");
 
 
     }
 }
+/*связи между преподавателем и группой так и нет
+сделай возможность добавлять/просматривать/удалять данные через консоль*/

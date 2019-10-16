@@ -70,12 +70,13 @@ public class Student extends Table {
     }
     public void add() throws SQLException {
         String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
-                "(Name, Birthday, Gender) " +
-                "VALUES (?, ?, ?)";
+                "(Name, Birthday, Gender, group_id) " +
+                "VALUES (?, ?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setString(1, name);
         statement.setDate(2, java.sql.Date.valueOf(birthday));
         statement.setObject(3, gender.getValue(), java.sql.Types.CHAR);
+        statement.setInt(4, group_id);
         statement.executeUpdate();
         statement.close();
     }

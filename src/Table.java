@@ -47,7 +47,6 @@ public class Table {
         PreparedStatement statement = getConnection().prepareStatement(query);
         ResultSet res = statement.executeQuery();
         if(res.next()) {
-            System.out.println(res.getInt(1));
             return res.getInt(1);
         }
         return 0;

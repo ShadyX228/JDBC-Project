@@ -19,7 +19,7 @@ public class Teacher extends Table {
             IOException {
         this.id = id;
         this.name = name;
-        birthday = LocalDate.of(year,month,day+1);
+        birthday = LocalDate.of(year,month,day);
         this.gender = gender;
         setTableName(TableType.TEACHER);
     }
@@ -68,7 +68,8 @@ public class Teacher extends Table {
         groups.add(group);
     }
     public void add() throws SQLException {
-        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
+        String query = "INSERT INTO " + getDBName() + "."
+                + getTableName() + " " +
                 "(Name, Birthday, Gender) " +
                 "VALUES (?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);

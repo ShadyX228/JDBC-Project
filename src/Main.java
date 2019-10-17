@@ -21,7 +21,8 @@ public class Main {
         System.out.print("Available methods for "+ table + "'s table: ");
         ArrayList<Method> result = new ArrayList<>();
         for(Method method : Database.class.getDeclaredMethods()) {
-            if(Modifier.toString(method.getModifiers()).contains("public") && method.getName().contains(table)) {
+            if(Modifier.toString(method.getModifiers()).contains("public") &&
+                    method.getName().contains(table)) {
                 System.out.print(method.getName() + " ");
                 result.add(method);
             }
@@ -73,13 +74,18 @@ public class Main {
                     //System.out.println(group.getId());
                     int group_id = group.getId();
 
-                    DB.addStudent(new Student(name, year, month, day, gender, group_id));
+                    DB.addStudent(new Student(
+                            name,
+                            year, month, day,
+                            gender,
+                            group_id));
 
                     //System.out.println(name + " " + year + " " + month + " " + day);
                     break;
 
                 case "selectStudent":
-                    System.out.print("Selecting students. \nEnter criteria. Available variants: ");
+                    System.out.print("Selecting students. \n" +
+                            "Enter criteria. Available variants: ");
                     for(Criteria criteria1 : Criteria.values()) {
                         System.out.print(criteria1 + " ");
                     }
@@ -90,14 +96,16 @@ public class Main {
                     System.out.print("Enter criteria value: ");
                     String critVal = input.next();
 
-                    for(Student student : DB.selectStudent(criteria, critVal)) {
+                    for(Student student :
+                            DB.selectStudent(criteria, critVal)
+                    ) {
                         System.out.println(student);
                     }
-
                     break;
 
                 case "deleteStudent":
-                    System.out.print("Deleting studetns. \nEnter criteria. Available variants: ");
+                    System.out.print("Deleting studetns. " +
+                            "\nEnter criteria. Available variants: ");
                     for(Criteria criteria2 : Criteria.values()) {
                         System.out.print(criteria2 + " ");
                     }
@@ -114,12 +122,9 @@ public class Main {
                 case "updateStudent":
                     System.out.print("Updating student. \nEnter id: ");
                     int id = input.nextInt();
-                    Student student;
-                    for(Student element : DB.selectStudent(Criteria.ID,Integer.toString(id))) {
-                        student = element;
-                        break;
-                    }
-                    System.out.print("Enter criteria wich need to update. Available variants: ");
+
+                    System.out.print("Enter criteria " +
+                            "wich need to update. Available variants: ");
                     for(Criteria criteria2 : Criteria.values()) {
                         System.out.print(criteria2 + " ");
                     }
@@ -150,34 +155,110 @@ public class Main {
                     genderInput = input.next();
                     gender = Gender.valueOf(genderInput);
 
-                    DB.addTeacher(new Teacher(name, year, month, day, gender));
+                    DB.addTeacher(new Teacher(name,
+                            year, month, day,
+                            gender)
+                    );
                     break;
 
-                 case "addSelectTeacher":
+                 case "selectTeacher":
+                     System.out.print("Selecting teachers. " +
+                             "\nEnter criteria. Available variants: ");
+                     for(Criteria criteria1 : Criteria.values()) {
+                         if(!criteria1.equals(Criteria.GROUP)) {
+                             System.out.print(criteria1 + " ");
+                         }
+                     }
+                     System.out.print(": ");
+                     crit = input.next();
+                     criteria = Criteria.valueOf(crit);
 
+                     System.out.print("Enter criteria value: ");
+                     critVal = input.next();
+
+                     for(Teacher teacher : DB.selectTeacher(
+                             criteria,
+                             critVal)
+                     ) {
+                         System.out.println(teacher);
+                     }
                      break;
 
                 case "deleteTeacher" :
+                    System.out.print("Deleting teachers. " +
+                            "\nEnter criteria. Available variants: ");
+                    for(Criteria criteria2 : Criteria.values()) {
+                        if(!criteria2.equals(Criteria.GROUP)) {
+                            System.out.print(criteria2 + " ");
+                        }
+                    }
+                    System.out.print(": ");
+                    crit = input.next();
+                    criteria = Criteria.valueOf(crit);
 
+                    System.out.print("Enter criteria value: ");
+                    critVal = input.next();
+
+                    DB.deleteTeacher(criteria, critVal);
                     break;
 
                 case "updateTeacher" :
+                    System.out.print("Updating teacher. \nEnter id: ");
+                    id = input.nextInt();
 
+                    System.out.print("Enter criteria " +
+                            "wich need to update. Available variants: ");
+                    for(Criteria criteria2 : Criteria.values()) {
+                        if(!criteria2.equals(Criteria.GROUP)) {
+                            System.out.print(criteria2 + " ");
+                        }
+                    }
+                    System.out.print( ": ");
+                    crit = input.next();
+                    criteria = Criteria.valueOf(crit);
+
+                    System.out.print("Enter criteria value: ");
+                    critVal = input.next();
+                    DB.updateTeacher(id, criteria, critVal);
                     break;
 
                 case "selectTeachersGroup" :
-
+                    System.out.print("Selecting teacher's groups." +
+                            " \nEnter teacher id: ");
+                    id = input.nextInt();
+                    for(Group gr : DB.selectTeachersGroup(id)) {
+                        System.out.println(gr);
+                    }
                     break;
 
-                case "putTeacherGroup" :
-
+                case "putTeacherInGroup" :
+                    System.out.print("Putting teacher in group." +
+                            " \nEnter teacher id: ");
+                    id = input.nextInt();
+                    System.out.print("Enter group number: ");
+                    number = input.nextInt();
+                    DB.putTeacherInGroup(id, number);
                     break;
-
-
                 // teacher methods end
 
+                // group methods begin
+                case "addGroup" :
+                    System.out.print("Adding group. " +
+                            "\nEnter group number: ");
+                    number = input.nextInt();
+                    DB.addGroup(new Group(number));
+                    break;
 
-                // General methods
+                case "selectGroup" :
+                    System.out.print("Selecting group. " +
+                            "\nEnter group number: ");
+                    number = input.nextInt();
+
+                    System.out.println(DB.selectGroup(number));
+                    break;
+                // group methods end
+
+                // general methods begin
                 case "printTables":
                     DB.printTables();
                     break;
@@ -188,18 +269,8 @@ public class Main {
 
                 default:
                     System.out.println("No method with selected name.");
+                 // general methods end
             }
         }
-
-
-        /*DB.addStudent(new Student("Andrei Petrovich",1995,06,20,Gender.MALE,java.sql.Types.NULL));
-        for(Student student : DB.selectStudent(Criteria.BIRTH, "1995-06-20")) {
-            System.out.println(student);
-        }*/
-        //DB.deleteStudent(Criteria.BIRTH,"2019-10-23");
-
-
     }
 }
-/*связи между преподавателем и группой так и нет
-сделай возможность добавлять/просматривать/удалять данные через консоль*/

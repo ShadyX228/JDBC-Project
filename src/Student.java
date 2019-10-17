@@ -11,7 +11,8 @@ public class Student extends Table {
     private Gender gender;
     private int group_id;
 
-    Student(int id, String name, int year, int month, int day, Gender gender, int group_id)
+    Student(int id, String name, int year, int month, int day,
+            Gender gender, int group_id)
             throws
             SQLException,
             IOException {
@@ -23,12 +24,13 @@ public class Student extends Table {
         setTableName(TableType.STUDENT);
     }
 
-    Student(String name, int year, int month, int day, Gender gender, int group_id)
+    Student(String name, int year, int month, int day,
+            Gender gender, int group_id)
             throws
             SQLException,
             IOException {
         this.name = name;
-        birthday = LocalDate.of(year,month,day+1);
+        birthday = LocalDate.of(year,month,day);
         this.gender = gender;
         this.group_id = group_id;
         setTableName(TableType.STUDENT);
@@ -69,7 +71,8 @@ public class Student extends Table {
         this.group_id = group_id;
     }
     public void add() throws SQLException {
-        String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +
+        String query = "INSERT INTO " + getDBName() + "."
+                + getTableName() + " " +
                 "(Name, Birthday, Gender, group_id) " +
                 "VALUES (?, ?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);

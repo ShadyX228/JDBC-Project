@@ -45,25 +45,30 @@ public class Database {
     public void addStudent(Student student) {
         students.add(student);
     }
-    public ArrayList<Student> selectStudent(Criteria criteria, String value) throws SQLException {
+    public ArrayList<Student> selectStudent(Criteria criteria, String value)
+            throws
+            SQLException {
         if(!students.isEmpty()) {
             String query = "SELECT * FROM studentgroupteacher.student";
-            PreparedStatement statement = getConnection().prepareStatement(query);
+            PreparedStatement statement = getConnection().
+                    prepareStatement(query);
             ArrayList<Student> list = new ArrayList<>();
 
             switch (criteria) {
                 case ID:
-                    list.add(selectById(TableType.STUDENT,Integer.parseInt(value)));
+                    list.add(selectById(
+                            TableType.STUDENT,
+                            Integer.parseInt(value)
+                    ));
                     break;
                 case NAME:
-                    query = "SELECT * FROM studentgroupteacher.student" + " WHERE student.Name = ?";
+                    query = "SELECT * FROM studentgroupteacher.student"
+                            + " WHERE student.Name = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setString(1, value);
 
                     ResultSet res = statement.executeQuery();
                     while(res.next()) {
-                        //Student student = selectById(TableType.STUDENT,res.getInt(1));
-                        //list.add(student);
                         int id = res.getInt(1);
                         for(Student student : students) {
                             if(student.getId() == id) {
@@ -80,7 +85,8 @@ public class Database {
                             LocalDate.parse(value).getDayOfMonth() + 1
                     );
 
-                    query = "SELECT * FROM studentgroupteacher.student WHERE student.Birthday = ?";
+                    query = "SELECT * FROM studentgroupteacher.student " +
+                            "WHERE student.Birthday = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setDate(1, java.sql.Date.valueOf(birth));
 
@@ -98,9 +104,11 @@ public class Database {
                 case GENDER:
                     Gender gender = Gender.valueOf(value);
 
-                    query = "SELECT * FROM studentgroupteacher.student WHERE student.Gender = ?";
+                    query = "SELECT * FROM studentgroupteacher.student" +
+                            " WHERE student.Gender = ?";
                     statement = getConnection().prepareStatement(query);
-                    statement.setObject(1, gender.getValue(), java.sql.Types.CHAR);
+                    statement.setObject(1, gender.getValue(),
+                            java.sql.Types.CHAR);
 
                     res = statement.executeQuery();
                     while(res.next()) {
@@ -115,7 +123,8 @@ public class Database {
                     break;
                 case GROUP:
                     int group_id = Integer.parseInt(value);
-                    query = "SELECT * FROM studentgroupteacher.student WHERE student.group_id = ?";
+                    query = "SELECT * FROM studentgroupteacher." +
+                            "student WHERE student.group_id = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setInt(1, group_id);
 
@@ -136,20 +145,25 @@ public class Database {
         }
         return null;
     }
-    public void updateStudent(int id, Criteria criteria, String value) throws SQLException {
+    public void updateStudent(int id, Criteria criteria, String value)
+            throws
+            SQLException {
             if(!students.isEmpty()) {
                 Student student = selectById(TableType.STUDENT,id);
                 if(!Objects.isNull(student)) {
                     String query = "SELECT * FROM studentgroupteacher.student";
-                    PreparedStatement statement = getConnection().prepareStatement(query);
+                    PreparedStatement statement = getConnection()
+                            .prepareStatement(query);
 
                     switch (criteria) {
                         case NAME:
                             student.setName(value);
 
                             query = "UPDATE studentgroupteacher.student SET " +
-                                    "student.Name = ? WHERE student.student_id = ?";
-                            statement = getConnection().prepareStatement(query);
+                                    "student.Name = ? " +
+                                    "WHERE student.student_id = ?";
+                            statement = getConnection().
+                                    prepareStatement(query);
                             statement.setString(1, value);
                             statement.setInt(2, id);
                             statement.executeUpdate();
@@ -163,7 +177,8 @@ public class Database {
                             student.setBirthday(birth);
 
                             query = "UPDATE studentgroupteacher.student SET " +
-                                    "student.Birthday = ? WHERE student.student_id = ?";
+                                    "student.Birthday = ? " +
+                                    "WHERE student.student_id = ?";
                             statement = getConnection().prepareStatement(query);
                             statement.setDate(1, java.sql.Date.valueOf(birth));
                             statement.setInt(2, id);
@@ -176,7 +191,8 @@ public class Database {
                             query = "UPDATE studentgroupteacher.student SET " +
                                     "student.Gender = ? WHERE student.student_id = ?";
                             statement = getConnection().prepareStatement(query);
-                            statement.setObject(1, newGender.getValue(), java.sql.Types.CHAR);
+                            statement.setObject(1, newGender.getValue(),
+                                    java.sql.Types.CHAR);
                             statement.setInt(2, id);
                             statement.executeUpdate();
                             break;
@@ -185,9 +201,12 @@ public class Database {
                             student.setGroup(group_id);
 
                             query = "UPDATE studentgroupteacher.student SET " +
-                                    "student.group_id = ? WHERE student.student_id = ?";
-                            statement = getConnection().prepareStatement(query);
-                            statement.setObject(1, group_id, java.sql.Types.CHAR);
+                                    "student.group_id = ? " +
+                                    "WHERE student.student_id = ?";
+                            statement = getConnection()
+                                    .prepareStatement(query);
+                            statement.setObject(1, group_id,
+                                    java.sql.Types.CHAR);
                             statement.setInt(2, id);
                             statement.executeUpdate();
                             break;
@@ -196,17 +215,21 @@ public class Database {
                 }
         }
     }
-    public void deleteStudent(Criteria criteria, String value) throws SQLException {
+    public void deleteStudent(Criteria criteria, String value)
+            throws
+            SQLException {
         if(!students.isEmpty()) {
                 String query = "SELECT * FROM studentgroupteacher.student";
-                PreparedStatement statement = getConnection().prepareStatement(query);
+                PreparedStatement statement = getConnection()
+                        .prepareStatement(query);
 
                 switch (criteria) {
                     case ID:
                         int id = Integer.parseInt(value);
                         Student student = selectById(TableType.STUDENT,id);
 
-                        query = "DELETE FROM studentgroupteacher.student WHERE student.student_id = ?";
+                        query = "DELETE FROM studentgroupteacher.student " +
+                                "WHERE student.student_id = ?";
                         statement = getConnection().prepareStatement(query);
                         statement.setInt(1,id);
                         statement.executeUpdate();
@@ -228,7 +251,8 @@ public class Database {
                                 it.remove();
                             }
                         }
-                        query = "DELETE FROM studentgroupteacher.student WHERE student.Name = ?";
+                        query = "DELETE FROM studentgroupteacher." +
+                                "student WHERE student.Name = ?";
                         statement = getConnection().prepareStatement(query);
                         statement.setString(1, value);
                         statement.executeUpdate();
@@ -239,7 +263,8 @@ public class Database {
                                 LocalDate.parse(value).getMonth(),
                                 LocalDate.parse(value).getDayOfMonth() + 1
                         );
-                        query = "DELETE FROM studentgroupteacher.student WHERE student.Birthday = ?";
+                        query = "DELETE FROM studentgroupteacher." +
+                                "student WHERE student.Birthday = ?";
                         statement = getConnection().prepareStatement(query);
                         statement.setDate(1, java.sql.Date.valueOf(birth));
                         statement.executeUpdate();
@@ -254,9 +279,11 @@ public class Database {
                             }
                         }
 
-                        query = "DELETE FROM studentgroupteacher.student WHERE student.Gender = ?";
+                        query = "DELETE FROM studentgroupteacher." +
+                                "student WHERE student.Gender = ?";
                         statement = getConnection().prepareStatement(query);
-                        statement.setObject(1, gender.getValue(), java.sql.Types.CHAR);
+                        statement.setObject(1, gender.getValue()
+                                , java.sql.Types.CHAR);
                         statement.executeUpdate();
                         break;
                     case GROUP:
@@ -269,7 +296,8 @@ public class Database {
                             }
 
                         }
-                        query = "DELETE FROM studentgroupteacher.student WHERE student.group_id = ?";
+                        query = "DELETE FROM studentgroupteacher." +
+                                "student WHERE student.group_id = ?";
                         statement = getConnection().prepareStatement(query);
                         statement.setInt(1, group_id);
                         statement.executeUpdate();
@@ -283,10 +311,13 @@ public class Database {
     public void addTeacher(Teacher teacher) {
         teachers.add(teacher);
     }
-    public ArrayList<Teacher> selectTeacher(Criteria criteria, String value) throws SQLException {
+    public ArrayList<Teacher> selectTeacher(Criteria criteria, String value)
+            throws
+            SQLException {
         if(!teachers.isEmpty()) {
             String query = "SELECT * FROM studentgroupteacher.teacher";
-            PreparedStatement statement = getConnection().prepareStatement(query);
+            PreparedStatement statement = getConnection()
+                    .prepareStatement(query);
             ArrayList<Teacher> list = new ArrayList<>();
 
             switch (criteria) {
@@ -294,7 +325,8 @@ public class Database {
                     list.add(selectById(TableType.TEACHER,Integer.parseInt(value)));
                     break;
                 case NAME:
-                    query = "SELECT * FROM studentgroupteacher.teacher WHERE teacher.Name = ?";
+                    query = "SELECT * FROM studentgroupteacher." +
+                            "teacher WHERE teacher.Name = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setString(1, value);
 
@@ -316,7 +348,8 @@ public class Database {
                             LocalDate.parse(value).getDayOfMonth() + 1
                     );
 
-                    query = "SELECT * FROM studentgroupteacher.teacher WHERE teacher.Birthday = ?";
+                    query = "SELECT * FROM studentgroupteacher.teacher" +
+                            " WHERE teacher.Birthday = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setDate(1, java.sql.Date.valueOf(birth));
 
@@ -334,9 +367,11 @@ public class Database {
                 case GENDER:
                     Gender gender = Gender.valueOf(value);
 
-                    query = "SELECT * FROM studentgroupteacher.teacher WHERE teacher.Gender = ?";
+                    query = "SELECT * FROM studentgroupteacher.teacher " +
+                            "WHERE teacher.Gender = ?";
                     statement = getConnection().prepareStatement(query);
-                    statement.setObject(1, gender.getValue(), java.sql.Types.CHAR);
+                    statement.setObject(1, gender.getValue(),
+                            java.sql.Types.CHAR);
 
                     res = statement.executeQuery();
                     while(res.next()) {
@@ -355,19 +390,23 @@ public class Database {
         }
         return null;
     }
-    public void updateTeacher(int id, Criteria criteria, String value) throws SQLException {
+    public void updateTeacher(int id, Criteria criteria, String value)
+            throws
+            SQLException {
         if(!teachers.isEmpty()) {
             Teacher teacher = selectById(TableType.TEACHER,id);
             if(!Objects.isNull(teacher)) {
                 String query = "SELECT * FROM studentgroupteacher.teacher";
-                PreparedStatement statement = getConnection().prepareStatement(query);
+                PreparedStatement statement = getConnection().
+                        prepareStatement(query);
 
                 switch (criteria) {
                     case NAME:
                         teacher.setName(value);
 
                         query = "UPDATE studentgroupteacher.teacher SET " +
-                                "teacher.Name = ? WHERE teacher.teacher_id = ?";
+                                "teacher.Name = ? " +
+                                "WHERE teacher.teacher_id = ?";
                         statement = getConnection().prepareStatement(query);
                         statement.setString(1, value);
                         statement.setInt(2, id);
@@ -393,9 +432,11 @@ public class Database {
                         teacher.setGender(newGender);
 
                         query = "UPDATE studentgroupteacher.teacher SET " +
-                                "teacher.Gender = ? WHERE teacher.teacher_id = ?";
+                                "teacher.Gender = ? " +
+                                "WHERE teacher.teacher_id = ?";
                         statement = getConnection().prepareStatement(query);
-                        statement.setObject(1, newGender.getValue(), java.sql.Types.CHAR);
+                        statement.setObject(1, newGender.getValue(),
+                                java.sql.Types.CHAR);
                         statement.setInt(2, id);
                         statement.executeUpdate();
                         break;
@@ -404,17 +445,21 @@ public class Database {
             }
         }
     }
-    public void deleteTeacher(Criteria criteria, String value) throws SQLException {
+    public void deleteTeacher(Criteria criteria, String value)
+            throws
+            SQLException {
         if(!teachers.isEmpty()) {
             String query = "SELECT * FROM studentgroupteacher.teacher";
-            PreparedStatement statement = getConnection().prepareStatement(query);
+            PreparedStatement statement = getConnection().
+                    prepareStatement(query);
 
             switch (criteria) {
                 case ID:
                     int id = Integer.parseInt(value);
                     Student student = selectById(TableType.STUDENT,id);
 
-                    query = "DELETE FROM studentgroupteacher.teacher WHERE teacher.teacher_id = ?";
+                    query = "DELETE FROM studentgroupteacher.teacher " +
+                            "WHERE teacher.teacher_id = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setInt(1,id);
                     statement.executeUpdate();
@@ -436,7 +481,8 @@ public class Database {
                             it.remove();
                         }
                     }
-                    query = "DELETE FROM studentgroupteacher.teacher WHERE teacher.Name = ?";
+                    query = "DELETE FROM studentgroupteacher.teacher " +
+                            "WHERE teacher.Name = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setString(1, value);
                     statement.executeUpdate();
@@ -445,7 +491,7 @@ public class Database {
                     LocalDate birth = LocalDate.of(
                             LocalDate.parse(value).getYear(),
                             LocalDate.parse(value).getMonth(),
-                            LocalDate.parse(value).getDayOfMonth() + 1
+                            LocalDate.parse(value).getDayOfMonth()
                     );
                     it = teachers.iterator();
                     while(it.hasNext()) {
@@ -455,7 +501,8 @@ public class Database {
                         }
                     }
 
-                    query = "DELETE FROM studentgroupteacher.teacher WHERE teacher.Birthday = ?";
+                    query = "DELETE FROM studentgroupteacher.teacher " +
+                            "WHERE teacher.Birthday = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setDate(1, java.sql.Date.valueOf(birth));
                     statement.executeUpdate();
@@ -470,52 +517,57 @@ public class Database {
                         }
                     }
 
-                    query = "DELETE FROM studentgroupteacher.teacher WHERE teacher.Gender = ?";
+                    query = "DELETE FROM studentgroupteacher.teacher " +
+                            "WHERE teacher.Gender = ?";
                     statement = getConnection().prepareStatement(query);
-                    statement.setObject(1, gender.getValue(), java.sql.Types.CHAR);
+                    statement.setObject(1, gender.getValue(),
+                            java.sql.Types.CHAR);
                     statement.executeUpdate();
                     break;
             }
             statement.close();
         }
     }
-    public void putTeacherInGroup(int teacher_id, int group_number) throws SQLException {
+    public void putTeacherInGroup(int teacher_id, int group_number)
+            throws
+            SQLException {
         Group group = selectGroup(group_number);
         int group_id = group.getId();
+        Teacher teacher = selectById(TableType.TEACHER,teacher_id);
+        teacher.addGroup(group);
 
-        for(Teacher element : teachers) {
-            Teacher teacher;
-            if(element.getId() == teacher_id) {
-                teacher = element;
-                teacher.addGroup(group);
-                break;
-            }
-        }
-
-        String query = "INSERT INTO studentgroupteacher.groupteacher (group_id, teacher_id) VALUES (?, ?);";
+        String query = "INSERT INTO studentgroupteacher.groupteacher " +
+                "(group_id, teacher_id) VALUES (?, ?);";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, group_id);
         statement.setInt(2, teacher_id);
         statement.executeUpdate();
     }
-    public ArrayList<Group> selectTeachersGroup(int teacher_id) throws SQLException {
-        String query = "SELECT * FROM studentgroupteacher.groupteacher WHERE groupteacher.teacher_id = ?;";
+    public ArrayList<Group> selectTeachersGroup(int teacher_id)
+            throws
+            SQLException {
+        String query = "SELECT * FROM studentgroupteacher.groupteacher " +
+                "WHERE groupteacher.teacher_id = ?;";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, teacher_id);
         ResultSet res = statement.executeQuery();
 
-        Teacher teacher = selectById(TableType.TEACHER,teacher_id);
-
         ArrayList<Group> list = new ArrayList<>();
         while(res.next()) {
             for(Group group : groups) {
+                //System.out.print(group);
+                if(group.getId() == res.getInt(2)) {
+                    list.add(group);
+                }
+            }
+            /*for(Group group : groups) {
                 int g_id = group.getId();
                 for(Group tGroup : teacher.getGroups()) {
                     if(g_id == tGroup.getId()) {
                         list.add(tGroup);
                     }
                 }
-            }
+            }*/
             //Group group = selectById(TableType.GROUP,res.getInt(2));
             //list.add(group);
         }
@@ -527,7 +579,8 @@ public class Database {
         groups.add(group);
     }
     public Group selectGroup(int group_number) throws SQLException {
-        String query = "SELECT * FROM studentgroupteacher.group WHERE group.Number = ?";
+        String query = "SELECT * FROM studentgroupteacher.group " +
+                "WHERE group.Number = ? LIMIT 0,1";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, group_number);
 
@@ -545,22 +598,32 @@ public class Database {
 
     // public database methods
     public void printTables() {
+        System.out.println("Table: student");
         for (Student student : students) {
             System.out.println(student);
         }
         System.out.println();
+
+        System.out.println("Table: teacher");
         for (Teacher teacher : teachers) {
             System.out.println(teacher);
         }
         System.out.println();
+
+        System.out.println("Table: group");
         for (Group group : groups) {
             System.out.println(group);
         }
+        System.out.println();
     }
 
     // internal database methods
-    private <T extends Table> T selectById(TableType table, int id) throws SQLException {
-        String query = "SELECT * FROM studentgroupteacher." + table.getValue() + " WHERE " + table.getValue() + "." + table.getValue() + "_id = ?";
+    private <T extends Table> T selectById(TableType table, int id)
+            throws
+            SQLException {
+        String query = "SELECT * FROM studentgroupteacher."
+                + table.getValue() + " WHERE " + table.getValue() + "."
+                + table.getValue() + "_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, id);
         ResultSet res = statement.executeQuery();
@@ -598,7 +661,10 @@ public class Database {
 
             return null;
     }
-    private void fillTables(boolean showTables) throws SQLException, IOException {
+    private void fillTables(boolean showTables)
+            throws
+            SQLException,
+            IOException {
         String query = "SELECT * FROM studentgroupteacher.student";
         PreparedStatement statement = getConnection().prepareStatement(query);
         ResultSet res = statement.executeQuery();
@@ -681,7 +747,9 @@ public class Database {
             printTables();
         }
     }
-    private Connection doConnection() throws SQLException {
+    private Connection doConnection()
+            throws
+            SQLException {
         return DriverManager.getConnection(
                 url,
                 user,

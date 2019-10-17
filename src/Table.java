@@ -42,8 +42,10 @@ public class Table {
             );
     }
     protected int setId() throws SQLException {
-        String query = "SELECT * FROM " + getDBName() + "." + getTableName() + " " +
-                "ORDER BY " + getTableName() + "." + getTableName() + "_id DESC LIMIT 1";
+        String query = "SELECT * FROM " + getDBName() + "."
+                + getTableName() + " " +
+                "ORDER BY " + getTableName() + "."
+                + getTableName() + "_id DESC LIMIT 1";
         PreparedStatement statement = getConnection().prepareStatement(query);
         ResultSet res = statement.executeQuery();
         if(res.next()) {

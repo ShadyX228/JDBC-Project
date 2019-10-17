@@ -16,9 +16,9 @@ public class Database {
     private static Connection connection;
     private static Properties properties;
 
-    private ArrayList<Student> students;
-    private ArrayList<Teacher> teachers;
-    private ArrayList<Group> groups;
+    private List<Student> students;
+    private List<Teacher> teachers;
+    private List<Group> groups;
 
     Database(boolean showTables) throws SQLException, IOException {
         properties = new Properties();
@@ -45,7 +45,7 @@ public class Database {
     public void addStudent(Student student) {
         students.add(student);
     }
-    public ArrayList<Student> selectStudent(Criteria criteria, String value)
+    public List<Student> selectStudent(Criteria criteria, String value)
             throws
             SQLException {
         if(!students.isEmpty()) {
@@ -311,14 +311,14 @@ public class Database {
     public void addTeacher(Teacher teacher) {
         teachers.add(teacher);
     }
-    public ArrayList<Teacher> selectTeacher(Criteria criteria, String value)
+    public List<Teacher> selectTeacher(Criteria criteria, String value)
             throws
             SQLException {
         if(!teachers.isEmpty()) {
             String query = "SELECT * FROM studentgroupteacher.teacher";
             PreparedStatement statement = getConnection()
                     .prepareStatement(query);
-            ArrayList<Teacher> list = new ArrayList<>();
+            List<Teacher> list = new ArrayList<>();
 
             switch (criteria) {
                 case ID:

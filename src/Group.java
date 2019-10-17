@@ -6,17 +6,11 @@ public class Group extends Table {
     private int id;
     private int number;
 
-    Group(int id, int number) throws SQLException, IOException {
-        this.id = id;
-        this.number = number;
-        setTableName(TableType.GROUP);
-    }
+
     Group(int number) throws SQLException, IOException {
         this.number = number;
         setTableName(TableType.GROUP);
 
-        // insert in db
-        add();
 
         // get id from db
         id = setId();

@@ -16,11 +16,8 @@ public class Database {
     private static Connection connection;
     private static Properties properties;
 
-    private List<Student> students;
-    private List<Teacher> teachers;
-    private List<Group> groups;
 
-    Database(boolean showTables) throws SQLException, IOException {
+    Database() throws SQLException, IOException {
         properties = new Properties();
         FileInputStream input = new FileInputStream(
                 "connection.properties"
@@ -34,21 +31,17 @@ public class Database {
         dbname = properties.getProperty("jdbc.dbname");
         connection = doConnection();
 
-        students = new ArrayList<>();
-        teachers = new ArrayList<>();
-        groups = new ArrayList<>();
 
-        fillTables(showTables);
     }
 
     // student's methods
-    public void addStudent(Student student) {
-        students.add(student);
+    public void addStudent(Student student) throws SQLException {
+        student.add();
     }
     public List<Student> selectStudent(Criteria criteria, String value)
             throws
-            SQLException {
-        if(!students.isEmpty()) {
+            SQLException,
+            IOException {
             String query = "SELECT * FROM studentgroupteacher.student";
             PreparedStatement statement = getConnection().
                     prepareStatement(query);
@@ -68,14 +61,27 @@ public class Database {
                     statement.setString(1, value);
 
                     ResultSet res = statement.executeQuery();
+
                     while(res.next()) {
-                        int id = res.getInt(1);
-                        for(Student student : students) {
-                            if(student.getId() == id) {
-                                list.add(student);
-                                break;
-                            }
+                        int s_id = res.getInt(1);
+                        String s_name = res.getString(2);
+                        LocalDate s_birth = res.getDate(3).toLocalDate();
+                        Gender s_gender = Gender.valueOf(res.getString(4));
+                        int s_group_id;
+                        if(res.getInt(5) != java.sql.Types.NULL) {
+                            s_group_id = res.getInt(5);
+                        } else {
+                            s_group_id = java.sql.Types.NULL;
                         }
+                        list.add(new Student(
+                                s_id,
+                                s_name,
+                                s_birth.getYear(),
+                                s_birth.getMonth().getValue(),
+                                s_birth.getDayOfMonth(),
+                                s_gender,
+                                s_group_id
+                        ));
                     }
                     break;
                 case BIRTH:
@@ -92,13 +98,25 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int id = res.getInt(1);
-                        for(Student student : students) {
-                            if(student.getId() == id) {
-                                list.add(student);
-                                break;
-                            }
+                        int s_id = res.getInt(1);
+                        String s_name = res.getString(2);
+                        LocalDate s_birth = res.getDate(3).toLocalDate();
+                        Gender s_gender = Gender.valueOf(res.getString(4));
+                        int s_group_id;
+                        if(res.getInt(5) != java.sql.Types.NULL) {
+                            s_group_id = res.getInt(5);
+                        } else {
+                            s_group_id = java.sql.Types.NULL;
                         }
+                        list.add(new Student(
+                                s_id,
+                                s_name,
+                                s_birth.getYear(),
+                                s_birth.getMonth().getValue(),
+                                s_birth.getDayOfMonth(),
+                                s_gender,
+                                s_group_id
+                        ));
                     }
                     break;
                 case GENDER:
@@ -112,13 +130,25 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int id = res.getInt(1);
-                        for(Student student : students) {
-                            if(student.getId() == id) {
-                                list.add(student);
-                                break;
-                            }
+                        int s_id = res.getInt(1);
+                        String s_name = res.getString(2);
+                        LocalDate s_birth = res.getDate(3).toLocalDate();
+                        Gender s_gender = Gender.valueOf(res.getString(4));
+                        int s_group_id;
+                        if(res.getInt(5) != java.sql.Types.NULL) {
+                            s_group_id = res.getInt(5);
+                        } else {
+                            s_group_id = java.sql.Types.NULL;
                         }
+                        list.add(new Student(
+                                s_id,
+                                s_name,
+                                s_birth.getYear(),
+                                s_birth.getMonth().getValue(),
+                                s_birth.getDayOfMonth(),
+                                s_gender,
+                                s_group_id
+                        ));
                     }
                     break;
                 case GROUP:
@@ -130,27 +160,37 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int id = res.getInt(1);
-                        for(Student student : students) {
-                            if(student.getId() == id) {
-                                list.add(student);
-                                break;
-                            }
+                        int s_id = res.getInt(1);
+                        String s_name = res.getString(2);
+                        LocalDate s_birth = res.getDate(3).toLocalDate();
+                        Gender s_gender = Gender.valueOf(res.getString(4));
+                        int s_group_id;
+                        if(res.getInt(5) != java.sql.Types.NULL) {
+                            s_group_id = res.getInt(5);
+                        } else {
+                            s_group_id = java.sql.Types.NULL;
                         }
+                        list.add(new Student(
+                                s_id,
+                                s_name,
+                                s_birth.getYear(),
+                                s_birth.getMonth().getValue(),
+                                s_birth.getDayOfMonth(),
+                                s_gender,
+                                s_group_id
+                        ));
                     }
                     break;
             }
             statement.close();
             return list;
-        }
-        return null;
     }
     public void updateStudent(int id, Criteria criteria, String value)
             throws
-            SQLException {
-            if(!students.isEmpty()) {
-                Student student = selectById(TableType.STUDENT,id);
-                if(!Objects.isNull(student)) {
+            SQLException,
+            IOException {
+        Student student = selectById(TableType.STUDENT,id);
+        if(!Objects.isNull(student)) {
                     String query = "SELECT * FROM studentgroupteacher.student";
                     PreparedStatement statement = getConnection()
                             .prepareStatement(query);
@@ -213,12 +253,10 @@ public class Database {
                     }
                     statement.close();
                 }
-        }
     }
     public void deleteStudent(Criteria criteria, String value)
             throws
             SQLException {
-        if(!students.isEmpty()) {
                 String query = "SELECT * FROM studentgroupteacher.student";
                 PreparedStatement statement = getConnection()
                         .prepareStatement(query);
@@ -226,7 +264,6 @@ public class Database {
                 switch (criteria) {
                     case ID:
                         int id = Integer.parseInt(value);
-                        Student student = selectById(TableType.STUDENT,id);
 
                         query = "DELETE FROM studentgroupteacher.student " +
                                 "WHERE student.student_id = ?";
@@ -234,23 +271,8 @@ public class Database {
                         statement.setInt(1,id);
                         statement.executeUpdate();
 
-                        if(!Objects.isNull(student)) {
-                            for(Student element : students) {
-                                if(element.getId() == id) {
-                                    students.remove(element);
-                                    break;
-                                }
-                            }
-                        }
                         break;
                     case NAME:
-                        Iterator<Student> it = students.iterator();
-                        while(it.hasNext()) {
-                            Student element = it.next();
-                            if(element.getName().equals(value)) {
-                                it.remove();
-                            }
-                        }
                         query = "DELETE FROM studentgroupteacher." +
                                 "student WHERE student.Name = ?";
                         statement = getConnection().prepareStatement(query);
@@ -271,14 +293,6 @@ public class Database {
                         break;
                     case GENDER:
                         Gender gender = Gender.valueOf(value);
-                        it = students.iterator();
-                        while(it.hasNext()) {
-                            Student element = it.next();
-                            if(element.getGender().equals(gender)) {
-                                it.remove();
-                            }
-                        }
-
                         query = "DELETE FROM studentgroupteacher." +
                                 "student WHERE student.Gender = ?";
                         statement = getConnection().prepareStatement(query);
@@ -288,14 +302,6 @@ public class Database {
                         break;
                     case GROUP:
                         int group_id = Integer.parseInt(value);
-                        it = students.iterator();
-                        while(it.hasNext()) {
-                            Student element = it.next();
-                            if(element.getGroup() == group_id) {
-                                it.remove();
-                            }
-
-                        }
                         query = "DELETE FROM studentgroupteacher." +
                                 "student WHERE student.group_id = ?";
                         statement = getConnection().prepareStatement(query);
@@ -304,11 +310,10 @@ public class Database {
                         break;
                 }
                 statement.close();
-        }
     }
 
     // teacher's methods
-    public void addTeacher(Teacher teacher) {
+    /*public void addTeacher(Teacher teacher) {
         teachers.add(teacher);
     }
     public List<Teacher> selectTeacher(Criteria criteria, String value)
@@ -570,15 +575,18 @@ public class Database {
             }*/
             //Group group = selectById(TableType.GROUP,res.getInt(2));
             //list.add(group);
-        }
-        return list;
-    }
+        //}
+        //return list;
+    //}
 
     // group's methods
-    public void addGroup(Group group) {
-        groups.add(group);
+    public void addGroup(Group group) throws SQLException {
+        group.add();
     }
-    public Group selectGroup(int group_number) throws SQLException {
+    public Group selectGroup(int group_number)
+            throws
+            SQLException,
+            IOException {
         String query = "SELECT * FROM studentgroupteacher.group " +
                 "WHERE group.Number = ? LIMIT 0,1";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -586,41 +594,20 @@ public class Database {
 
         ResultSet res = statement.executeQuery();
         if(res.next()) {
-            int resId = res.getInt(1);
-            for (Group group : groups) {
-                if (group.getId() == resId) {
-                    return group;
-                }
-            }
+            return new Group(group_number);
+
         }
         return null;
     }
 
     // public database methods
-    public void printTables() {
-        System.out.println("Table: student");
-        for (Student student : students) {
-            System.out.println(student);
-        }
-        System.out.println();
 
-        System.out.println("Table: teacher");
-        for (Teacher teacher : teachers) {
-            System.out.println(teacher);
-        }
-        System.out.println();
-
-        System.out.println("Table: group");
-        for (Group group : groups) {
-            System.out.println(group);
-        }
-        System.out.println();
-    }
 
     // internal database methods
     private <T extends Table> T selectById(TableType table, int id)
             throws
-            SQLException {
+            SQLException,
+            IOException {
         String query = "SELECT * FROM studentgroupteacher."
                 + table.getValue() + " WHERE " + table.getValue() + "."
                 + table.getValue() + "_id = ?";
@@ -628,125 +615,60 @@ public class Database {
         statement.setInt(1, id);
         ResultSet res = statement.executeQuery();
 
-        if(table.equals(TableType.STUDENT) && !students.isEmpty()) {
+        if(table.equals(TableType.STUDENT)) {
             if (res.next()) {
-                int resId = res.getInt(1);
-                for (Student student : students) {
-                    if (student.getId() == resId) {
-                        return (T)student;
-                    }
+                int s_id = res.getInt(1);
+                String s_name = res.getString(2);
+                LocalDate s_birth = res.getDate(3).toLocalDate();
+                Gender s_gender = Gender.valueOf(res.getString(4));
+                int s_group_id;
+                if(res.getInt(5) != java.sql.Types.NULL) {
+                    s_group_id = res.getInt(5);
+                } else {
+                    s_group_id = java.sql.Types.NULL;
                 }
-            }
-        } else if (table.equals(TableType.TEACHER) && !teachers.isEmpty()) {
-            if (res.next()) {
-                int resId = res.getInt(1);
-                for (Teacher teacher : teachers) {
-                    if (teacher.getId() == resId) {
-                        return (T)teacher;
-                    }
-                }
-            }
-            statement.close();
-        }  else if (table.equals(TableType.GROUP) && !groups.isEmpty()) {
-            if (res.next()) {
-                int resId = res.getInt(1);
-                for (Group group : groups) {
-                    if (group.getId() == resId) {
-                        return (T)group;
-                    }
-                }
-            }
-            statement.close();
-        }
 
-            return null;
+                statement.close();
+                return (T)new Student(
+                        s_id,
+                        s_name,
+                        s_birth.getYear(),
+                        s_birth.getMonth().getValue(),
+                        s_birth.getDayOfMonth(),
+                        s_gender,
+                        s_group_id
+                );
+
+            }
+        } else if (table.equals(TableType.TEACHER)) {
+            if (res.next()) {
+                int s_id = res.getInt(1);
+                String s_name = res.getString(2);
+                LocalDate s_birth = res.getDate(3).toLocalDate();
+                Gender s_gender = Gender.valueOf(res.getString(4));
+
+                statement.close();
+                return (T)new Teacher(
+                        s_id,
+                        s_name,
+                        s_birth.getYear(),
+                        s_birth.getMonth().getValue(),
+                        s_birth.getDayOfMonth(),
+                        s_gender
+                );
+            }
+        }  else if (table.equals(TableType.GROUP)) {
+            if (res.next()) {
+                int s_number = res.getInt(2);
+                statement.close();
+                return (T)new Group(
+                        s_number
+                        );
+            }
+        }
+        return null;
     }
-    private void fillTables(boolean showTables)
-            throws
-            SQLException,
-            IOException {
-        String query = "SELECT * FROM studentgroupteacher.student";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        ResultSet res = statement.executeQuery();
-        while (res.next()) {
-            int id = res.getInt(1);
-            String name = res.getString(2);
 
-            LocalDate birthday;
-            birthday = res.getDate(3).toLocalDate();
-
-            Gender gender;
-            if(!Objects.isNull(res.getString(4))) {
-                gender = Gender.valueOf(res.getString(4));
-            } else {
-                gender = Gender.NULL;
-            }
-
-            int group_id;
-            if(res.getInt(5) != java.sql.Types.NULL) {
-                group_id = res.getInt(5);
-            } else {
-                group_id = java.sql.Types.NULL;
-            }
-
-            students.add(new Student(
-                    id,
-                    name,
-                    birthday.getYear(),
-                    birthday.getMonthValue(),
-                    birthday.getDayOfMonth(),
-                    gender,
-                    group_id
-                )
-            );
-        }
-
-        query = "SELECT * FROM studentgroupteacher.teacher";
-        statement = getConnection().prepareStatement(query);
-        res = statement.executeQuery();
-        while (res.next()) {
-            int id = res.getInt(1);
-            String name = res.getString(2);
-
-            LocalDate birthday;
-            birthday = res.getDate(3).toLocalDate();
-
-            Gender gender;
-            if(!Objects.isNull(res.getString(4))) {
-                gender = Gender.valueOf(res.getString(4));
-            } else {
-                gender = Gender.NULL;
-            }
-
-            teachers.add(new Teacher(
-                    id,
-                    name,
-                    birthday.getYear(),
-                    birthday.getMonthValue(),
-                    birthday.getDayOfMonth(),
-                    gender
-                )
-            );
-        }
-
-        query = "SELECT * FROM studentgroupteacher.group";
-        statement = getConnection().prepareStatement(query);
-        res = statement.executeQuery();
-        while (res.next()) {
-            int id = res.getInt(1);
-            int number = res.getInt(2);
-
-            groups.add(new Group(
-                            id,
-                            number
-                    )
-            );
-        }
-
-        if(showTables) {
-            printTables();
-        }
-    }
     private Connection doConnection()
             throws
             SQLException {

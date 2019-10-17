@@ -35,9 +35,6 @@ public class Student extends Table {
         this.group_id = group_id;
         setTableName(TableType.STUDENT);
 
-        // insert in db
-        add();
-
         // get id from db
         id = setId();
     }

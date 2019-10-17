@@ -18,10 +18,10 @@ import java.util.Scanner;
 
 public class Main {
     public static ArrayList<Method> getMethods(String table) {
-        System.out.print("Available methods for "+ table + "'s table: ");
+        System.out.print("Available methods for " + table + "'s table: ");
         ArrayList<Method> result = new ArrayList<>();
-        for(Method method : Database.class.getDeclaredMethods()) {
-            if(Modifier.toString(method.getModifiers()).contains("public") &&
+        for (Method method : Database.class.getDeclaredMethods()) {
+            if (Modifier.toString(method.getModifiers()).contains("public") &&
                     method.getName().contains(table)) {
                 System.out.print(method.getName() + " ");
                 result.add(method);
@@ -30,23 +30,22 @@ public class Main {
         System.out.println();
         return result;
     }
+
     public static void main(String[] args) throws SQLException, IOException {
-        Database DB;
+        //Database DB = new Database();
+        //DB.addStudent(new Student("Hax",1999,04,04,Gender.MALE,4));
+        //for(Student student : DB.selectStudent(Criteria.BIRTH,"1995-04-04")) {
+        //    System.out.println(student);
+        //}
+        Database DB = new Database();
         Scanner input = new Scanner(System.in);
-        System.out.println("Will you want to see table's content? Y/N");
-        char check = input.next().charAt(0);
-        if(check == 'Y') {
-            DB = new Database(true);
-        } else {
-            DB = new Database(false);
-        }
 
         getMethods("Student");
         getMethods("Teacher");
         getMethods("Group");
 
         String methodName = "";
-        while(!methodName.equals("exit")) {
+        while (!methodName.equals("exit")) {
             System.out.print("\nEnter method's name or \"exit\" to stop: ");
             methodName = input.next();
             switch (methodName) {
@@ -71,6 +70,7 @@ public class Main {
                     System.out.print("Enter student's group number: ");
                     int number = input.nextInt();
                     Group group = DB.selectGroup(number);
+                    //System.out.print(group);
                     //System.out.println(group.getId());
                     int group_id = group.getId();
 
@@ -86,7 +86,7 @@ public class Main {
                 case "selectStudent":
                     System.out.print("Selecting students. \n" +
                             "Enter criteria. Available variants: ");
-                    for(Criteria criteria1 : Criteria.values()) {
+                    for (Criteria criteria1 : Criteria.values()) {
                         System.out.print(criteria1 + " ");
                     }
                     System.out.print(": ");
@@ -96,7 +96,7 @@ public class Main {
                     System.out.print("Enter criteria value: ");
                     String critVal = input.next();
 
-                    for(Student student :
+                    for (Student student :
                             DB.selectStudent(criteria, critVal)
                     ) {
                         System.out.println(student);
@@ -106,7 +106,7 @@ public class Main {
                 case "deleteStudent":
                     System.out.print("Deleting studetns. " +
                             "\nEnter criteria. Available variants: ");
-                    for(Criteria criteria2 : Criteria.values()) {
+                    for (Criteria criteria2 : Criteria.values()) {
                         System.out.print(criteria2 + " ");
                     }
                     System.out.print(": ");
@@ -125,7 +125,7 @@ public class Main {
 
                     System.out.print("Enter criteria " +
                             "wich need to update. Available variants: ");
-                    for(Criteria criteria2 : Criteria.values()) {
+                    for (Criteria criteria2 : Criteria.values()) {
                         System.out.print(criteria2 + " ");
                     }
                     crit = input.next();
@@ -136,7 +136,7 @@ public class Main {
                     DB.updateStudent(id, criteria, critVal);
                     break;
                 // student methods end
-
+/*
                 // teacher methods begin
                 case "addTeacher":
                     System.out.print("Adding teacher. \nEnter name: ");
@@ -270,6 +270,7 @@ public class Main {
                 default:
                     System.out.println("No method with selected name.");
                  // general methods end
+            }*/
             }
         }
     }

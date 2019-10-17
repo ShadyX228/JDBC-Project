@@ -62,21 +62,15 @@ public class Database {
 
                     ResultSet res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectById(TableType.STUDENT,res.getInt(1));
-                        list.add(student);
-                        // допилить то, шо ниже (в других методах тоже). Нужно исключить лишние запросы
-                        /*int id = res.getInt(1);
-                        String name = res.getString(2);
-                        LocalDate birth = res.getDate(3).toLocalDate();
-                        LocalDate birth = res.getDate(3).toLocalDate();
-
-
+                        //Student student = selectById(TableType.STUDENT,res.getInt(1));
+                        //list.add(student);
                         int id = res.getInt(1);
-                        list.add(new Student(
-                                res.getInt(1),
-                                res.get
-                                )
-                        )*/
+                        for(Student student : students) {
+                            if(student.getId() == id) {
+                                list.add(student);
+                                break;
+                            }
+                        }
                     }
                     break;
                 case BIRTH:
@@ -92,8 +86,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectById(TableType.STUDENT,res.getInt(1));
-                        list.add(student);
+                        int id = res.getInt(1);
+                        for(Student student : students) {
+                            if(student.getId() == id) {
+                                list.add(student);
+                                break;
+                            }
+                        }
                     }
                     break;
                 case GENDER:
@@ -105,8 +104,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectById(TableType.STUDENT,res.getInt(1));
-                        list.add(student);
+                        int id = res.getInt(1);
+                        for(Student student : students) {
+                            if(student.getId() == id) {
+                                list.add(student);
+                                break;
+                            }
+                        }
                     }
                     break;
                 case GROUP:
@@ -117,8 +121,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Student student = selectById(TableType.STUDENT,res.getInt(1));
-                        list.add(student);
+                        int id = res.getInt(1);
+                        for(Student student : students) {
+                            if(student.getId() == id) {
+                                list.add(student);
+                                break;
+                            }
+                        }
                     }
                     break;
             }
@@ -291,8 +300,13 @@ public class Database {
 
                     ResultSet res = statement.executeQuery();
                     while(res.next()) {
-                        Teacher teacher = selectById(TableType.TEACHER,res.getInt(1));
-                        list.add(teacher);
+                        int id = res.getInt(1);
+                        for(Teacher teacher : teachers) {
+                            if(teacher.getId() == id) {
+                                list.add(teacher);
+                                break;
+                            }
+                        }
                     }
                     break;
                 case BIRTH:
@@ -308,8 +322,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Teacher teacher = selectById(TableType.TEACHER,res.getInt(1));
-                        list.add(teacher);
+                        int id = res.getInt(1);
+                        for(Teacher teacher : teachers) {
+                            if(teacher.getId() == id) {
+                                list.add(teacher);
+                                break;
+                            }
+                        }
                     }
                     break;
                 case GENDER:
@@ -321,8 +340,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        Teacher teacher = selectById(TableType.TEACHER,res.getInt(1));
-                        list.add(teacher);
+                        int id = res.getInt(1);
+                        for(Teacher teacher : teachers) {
+                            if(teacher.getId() == id) {
+                                list.add(teacher);
+                                break;
+                            }
+                        }
                     }
                     break;
             }

@@ -483,6 +483,15 @@ public class Database {
         Group group = selectGroup(group_number);
         int group_id = group.getId();
 
+        for(Teacher element : teachers) {
+            Teacher teacher;
+            if(element.getId() == teacher_id) {
+                teacher = element;
+                teacher.addGroup(group);
+                break;
+            }
+        }
+
         String query = "INSERT INTO studentgroupteacher.groupteacher (group_id, teacher_id) VALUES (?, ?);";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, group_id);
@@ -495,10 +504,20 @@ public class Database {
         statement.setInt(1, teacher_id);
         ResultSet res = statement.executeQuery();
 
+        Teacher teacher = selectById(TableType.TEACHER,teacher_id);
+
         ArrayList<Group> list = new ArrayList<>();
         while(res.next()) {
-            Group group = selectById(TableType.GROUP,res.getInt(2));
-            list.add(group);
+            for(Group group : groups) {
+                int g_id = group.getId();
+                for(Group tGroup : teacher.getGroups()) {
+                    if(g_id == tGroup.getId()) {
+                        list.add(tGroup);
+                    }
+                }
+            }
+            //Group group = selectById(TableType.GROUP,res.getInt(2));
+            //list.add(group);
         }
         return list;
     }

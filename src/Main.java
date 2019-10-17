@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.IDN;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -48,6 +49,7 @@ public class Main {
             System.out.print("\nEnter method's name or \"exit\" to stop: ");
             methodName = input.next();
             switch (methodName) {
+                // student methods begin
                 case "addStudent":
                     System.out.print("Adding student. \nEnter name: ");
                     String name = input.next();
@@ -110,21 +112,82 @@ public class Main {
                     break;
 
                 case "updateStudent":
-                    System.out.print("Updating studetns. \nEnter id: ");
+                    System.out.print("Updating student. \nEnter id: ");
                     int id = input.nextInt();
                     Student student;
                     for(Student element : DB.selectStudent(Criteria.ID,Integer.toString(id))) {
                         student = element;
+                        break;
                     }
+                    System.out.print("Enter criteria wich need to update. Available variants: ");
+                    for(Criteria criteria2 : Criteria.values()) {
+                        System.out.print(criteria2 + " ");
+                    }
+                    crit = input.next();
+                    criteria = Criteria.valueOf(crit);
 
-                    //DB.updateStudent();
+                    System.out.print("Enter criteria value: ");
+                    critVal = input.next();
+                    DB.updateStudent(id, criteria, critVal);
                     break;
+                // student methods end
+
+                // teacher methods begin
+                case "addTeacher":
+                    System.out.print("Adding teacher. \nEnter name: ");
+                    name = input.next();
+
+                    System.out.print("Entering birthday. Enter year: ");
+                    year = input.nextInt();
+
+                    System.out.print("Enter month: ");
+                    month = input.nextInt();
+
+                    System.out.print("Enter day: ");
+                    day = input.nextInt();
+
+                    System.out.print("Enter gender (MALE/FEMALE): ");
+                    genderInput = input.next();
+                    gender = Gender.valueOf(genderInput);
+
+                    DB.addTeacher(new Teacher(name, year, month, day, gender));
+                    break;
+
+                 case "addSelectTeacher":
+
+                     break;
+
+                case "deleteTeacher" :
+
+                    break;
+
+                case "updateTeacher" :
+
+                    break;
+
+                case "selectTeachersGroup" :
+
+                    break;
+
+                case "putTeacherGroup" :
+
+                    break;
+
+
+                // teacher methods end
+
+
+                // General methods
                 case "printTables":
                     DB.printTables();
                     break;
 
+                case "exit":
+                    System.out.print("Shutting down.");
+                    break;
+
                 default:
-                    System.out.println("Shutting down.");
+                    System.out.println("No method with selected name.");
             }
         }
 

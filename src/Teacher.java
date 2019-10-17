@@ -3,12 +3,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class Teacher extends Table {
     private int id;
     private String name;
     private LocalDate birthday;
     private Gender gender;
+    private ArrayList<Group> groups = new ArrayList<>();
+
 
     Teacher(int id, String name, int year, int month, int day, Gender gender)
             throws
@@ -48,6 +51,9 @@ public class Teacher extends Table {
     public Gender getGender() {
         return gender;
     }
+    public ArrayList<Group> getGroups() {
+        return groups;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -57,6 +63,9 @@ public class Teacher extends Table {
     }
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+    public void addGroup(Group group) {
+        groups.add(group);
     }
     public void add() throws SQLException {
         String query = "INSERT INTO " + getDBName() + "." + getTableName() + " " +

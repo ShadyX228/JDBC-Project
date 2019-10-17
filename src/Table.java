@@ -46,10 +46,11 @@ public class Table {
                 + getTableName() + " " +
                 "ORDER BY " + getTableName() + "."
                 + getTableName() + "_id DESC LIMIT 1";
+        //System.out.println(query);
         PreparedStatement statement = getConnection().prepareStatement(query);
         ResultSet res = statement.executeQuery();
         if(res.next()) {
-            System.out.println(query + " " + res.getInt(1));
+            //System.out.println(query + " " + res.getInt(1));
             return res.getInt(1);
         }
         return 0;
@@ -58,10 +59,10 @@ public class Table {
     public Connection getConnection() {
         return connection;
     }
-    public String getDBName() {
+    protected String getDBName() {
         return dbName;
     }
-    public String getTableName() {
+    protected String getTableName() {
         return tableName.getValue();
     }
 }

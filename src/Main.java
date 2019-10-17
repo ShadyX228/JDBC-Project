@@ -58,6 +58,8 @@ public class Main {
         Database DB = new Database();
         Scanner input = new Scanner(System.in);
 
+        //System.out.println(DB.selectGroup(421).getId());
+
         getMethods("Student");
         getMethods("Teacher");
         getMethods("Group");
@@ -154,7 +156,7 @@ public class Main {
                     DB.updateStudent(id, criteria, critVal);
                     break;
                 // student methods end
-/*
+
                 // teacher methods begin
                 case "addTeacher":
                     System.out.print("Adding teacher. \nEnter name: ");
@@ -277,10 +279,6 @@ public class Main {
                 // group methods end
 
                 // general methods begin
-                case "printTables":
-                    DB.printTables();
-                    break;
-
                 case "exit":
                     System.out.print("Shutting down.");
                     break;
@@ -288,7 +286,6 @@ public class Main {
                 default:
                     System.out.println("No method with selected name.");
                  // general methods end
-            }*/
             }
         }
     }

@@ -16,24 +16,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 
-/*
-1. в Database ты заполняешь в память копию всех таблиц, а потом работаешь с ней. Не надо так делать, работай с базой
-2. ArrayList<Group> groups = new ArrayList<>(), LocalDate birthday - не надо работать с конкретной реализацией. Например  List<Group> groups = new ArrayList<>() позволит тебе при необходимости заменить реализацию, не переписывая весь код
-3. в параметрах базы вместо localhost пропиши ip своего компа
-magomedovim
-По поводу первого. А нужны ли тогда вообще списки students, teachers, groups? Я просто думал, в этом и заключалось задание по переводу всего кода в объекты, чтобы по минимуму работать с базой.16:20
-Лемешкин Максим Олегович
-не совсем, задание в том чтобы ты работал с объектами и их полями и твои изменения сохранялись в базе16:22
-списки в этом классе не нужны
-magomedovim
-А, вот как.16:23
-Лемешкин Максим Олегович
-задача не в том чтобы по минимуму работать с базой и управлять изменениями базы через java объекты
-а управлять*
-magomedovim
-Понял.
-* */
-
 public class Main {
     public static ArrayList<Method> getMethods(String table) {
         System.out.print("Available methods for " + table + "'s table: ");

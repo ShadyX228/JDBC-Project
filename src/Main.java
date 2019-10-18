@@ -1,19 +1,9 @@
-import javax.xml.crypto.Data;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.IDN;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.nio.charset.IllegalCharsetNameException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Properties;
 import java.util.Scanner;
 
 public class Main {
@@ -21,8 +11,8 @@ public class Main {
         System.out.print("Available methods for " + table + "'s table: ");
         ArrayList<Method> result = new ArrayList<>();
         for (Method method : Database.class.getDeclaredMethods()) {
-            if (Modifier.toString(method.getModifiers()).contains("public") &&
-                    method.getName().contains(table)) {
+            if (Modifier.toString(method.getModifiers()).contains("public")
+                    && method.getName().contains(table)) {
                 System.out.print(method.getName() + " ");
                 result.add(method);
             }
@@ -50,11 +40,12 @@ public class Main {
         while (!methodName.equals("exit")) {
             System.out.print("\nEnter method's name or \"exit\" to stop: ");
             methodName = input.next();
+            input.nextLine();
             switch (methodName) {
                 // student methods begin
                 case "addStudent":
                     System.out.print("Adding student. \nEnter name: ");
-                    String name = input.next();
+                    String name = input.nextLine();
 
                     System.out.print("Entering birthday. Enter year: ");
                     int year = input.nextInt();
@@ -72,8 +63,6 @@ public class Main {
                     System.out.print("Enter student's group number: ");
                     int number = input.nextInt();
                     Group group = DB.selectGroup(number);
-                    //System.out.print(group);
-                    //System.out.println(group.getId());
                     int group_id = group.getId();
 
                     DB.addStudent(new Student(
@@ -81,13 +70,11 @@ public class Main {
                             year, month, day,
                             gender,
                             group_id));
-
-                    //System.out.println(name + " " + year + " " + month + " " + day);
                     break;
 
                 case "selectStudent":
-                    System.out.print("Selecting students. \n" +
-                            "Enter criteria. Available variants: ");
+                    System.out.print("Selecting students. \n"
+                            + "Enter criteria. Available variants: ");
                     for (Criteria criteria1 : Criteria.values()) {
                         System.out.print(criteria1 + " ");
                     }
@@ -98,16 +85,16 @@ public class Main {
                     System.out.print("Enter criteria value: ");
                     String critVal = input.next();
 
-                    for (Student student :
-                            DB.selectStudent(criteria, critVal)
+                    for (Student student
+                            : DB.selectStudent(criteria, critVal)
                     ) {
                         System.out.println(student);
                     }
                     break;
 
                 case "deleteStudent":
-                    System.out.print("Deleting studetns. " +
-                            "\nEnter criteria. Available variants: ");
+                    System.out.print("Deleting studetns. "
+                            + "\nEnter criteria. Available variants: ");
                     for (Criteria criteria2 : Criteria.values()) {
                         System.out.print(criteria2 + " ");
                     }
@@ -142,7 +129,7 @@ public class Main {
                 // teacher methods begin
                 case "addTeacher":
                     System.out.print("Adding teacher. \nEnter name: ");
-                    name = input.next();
+                    name = input.nextLine();
 
                     System.out.print("Entering birthday. Enter year: ");
                     year = input.nextInt();

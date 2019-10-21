@@ -53,27 +53,8 @@ public class Database {
                     statement.setString(1, value);
 
                     ResultSet res = statement.executeQuery();
-
                     while(res.next()) {
-                        int s_id = res.getInt(1);
-                        String s_name = res.getString(2);
-                        LocalDate s_birth = res.getDate(3).toLocalDate();
-                        Gender s_gender = Gender.valueOf(res.getString(4));
-                        int s_group_id;
-                        if(res.getInt(5) != java.sql.Types.NULL) {
-                            s_group_id = res.getInt(5);
-                        } else {
-                            s_group_id = java.sql.Types.NULL;
-                        }
-                        list.add(new Student(
-                                s_id,
-                                s_name,
-                                s_birth.getYear(),
-                                s_birth.getMonth().getValue(),
-                                s_birth.getDayOfMonth(),
-                                s_gender,
-                                s_group_id
-                        ));
+                        list.add(getStudentFromRS(res));
                     }
                     break;
                 case BIRTH:
@@ -82,7 +63,7 @@ public class Database {
                             LocalDate.parse(value).getMonth(),
                             LocalDate.parse(value).getDayOfMonth() + 1
                     );
-
+                    //System.out.println(birth);
                     query = "SELECT * FROM studentgroupteacher.student " +
                             "WHERE student.Birthday = ?";
                     statement = getConnection().prepareStatement(query);
@@ -90,30 +71,11 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int s_id = res.getInt(1);
-                        String s_name = res.getString(2);
-                        LocalDate s_birth = res.getDate(3).toLocalDate();
-                        Gender s_gender = Gender.valueOf(res.getString(4));
-                        int s_group_id;
-                        if(res.getInt(5) != java.sql.Types.NULL) {
-                            s_group_id = res.getInt(5);
-                        } else {
-                            s_group_id = java.sql.Types.NULL;
-                        }
-                        list.add(new Student(
-                                s_id,
-                                s_name,
-                                s_birth.getYear(),
-                                s_birth.getMonth().getValue(),
-                                s_birth.getDayOfMonth(),
-                                s_gender,
-                                s_group_id
-                        ));
+                        list.add(getStudentFromRS(res));
                     }
                     break;
                 case GENDER:
                     Gender gender = Gender.valueOf(value);
-
                     query = "SELECT * FROM studentgroupteacher.student" +
                             " WHERE student.Gender = ?";
                     statement = getConnection().prepareStatement(query);
@@ -122,25 +84,7 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int s_id = res.getInt(1);
-                        String s_name = res.getString(2);
-                        LocalDate s_birth = res.getDate(3).toLocalDate();
-                        Gender s_gender = Gender.valueOf(res.getString(4));
-                        int s_group_id;
-                        if(res.getInt(5) != java.sql.Types.NULL) {
-                            s_group_id = res.getInt(5);
-                        } else {
-                            s_group_id = java.sql.Types.NULL;
-                        }
-                        list.add(new Student(
-                                s_id,
-                                s_name,
-                                s_birth.getYear(),
-                                s_birth.getMonth().getValue(),
-                                s_birth.getDayOfMonth(),
-                                s_gender,
-                                s_group_id
-                        ));
+                        list.add(getStudentFromRS(res));
                     }
                     break;
                 case GROUP:
@@ -153,25 +97,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int s_id = res.getInt(1);
-                        String s_name = res.getString(2);
-                        LocalDate s_birth = res.getDate(3).toLocalDate();
-                        Gender s_gender = Gender.valueOf(res.getString(4));
-                        int s_group_id;
-                        if(res.getInt(5) != java.sql.Types.NULL) {
-                            s_group_id = res.getInt(5);
-                        } else {
-                            s_group_id = java.sql.Types.NULL;
-                        }
-                        list.add(new Student(
-                                s_id,
-                                s_name,
-                                s_birth.getYear(),
-                                s_birth.getMonth().getValue(),
-                                s_birth.getDayOfMonth(),
-                                s_gender,
-                                s_group_id
-                        ));
+                        list.add(getStudentFromRS(res));
+                    }
+                    break;
+                case ALL :
+                    res = statement.executeQuery();
+                    while(res.next()) {
+                        list.add(getStudentFromRS(res));
                     }
                     break;
             }
@@ -226,9 +158,7 @@ public class Database {
         teacher.add();
     }
     public List<Teacher> selectTeacher(Criteria criteria, String value)
-            throws
-            SQLException,
-            IOException {
+            throws SQLException, IOException {
             String query = "SELECT * FROM studentgroupteacher.teacher";
             PreparedStatement statement = getConnection()
                     .prepareStatement(query);
@@ -249,19 +179,7 @@ public class Database {
 
                     ResultSet res = statement.executeQuery();
                     while(res.next()) {
-                        int t_id = res.getInt(1);
-                        String t_name = res.getString(2);
-                        LocalDate t_birth = res.getDate(3).toLocalDate();
-                        Gender t_gender = Gender.valueOf(res.getString(4));
-
-                        list.add(new Teacher(
-                                t_id,
-                                t_name,
-                                t_birth.getYear(),
-                                t_birth.getMonth().getValue(),
-                                t_birth.getDayOfMonth(),
-                                t_gender
-                        ));
+                        list.add(getTeacherFromRS(res));
                     }
                     break;
                 case BIRTH:
@@ -278,24 +196,11 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int t_id = res.getInt(1);
-                        String t_name = res.getString(2);
-                        LocalDate t_birth = res.getDate(3).toLocalDate();
-                        Gender t_gender = Gender.valueOf(res.getString(4));
-
-                        list.add(new Teacher(
-                                t_id,
-                                t_name,
-                                t_birth.getYear(),
-                                t_birth.getMonth().getValue(),
-                                t_birth.getDayOfMonth(),
-                                t_gender
-                        ));
+                        list.add(getTeacherFromRS(res));
                     }
                     break;
                 case GENDER:
                     Gender gender = Gender.valueOf(value);
-
                     query = "SELECT * FROM studentgroupteacher.teacher " +
                             "WHERE teacher.Gender = ?";
                     statement = getConnection().prepareStatement(query);
@@ -304,19 +209,13 @@ public class Database {
 
                     res = statement.executeQuery();
                     while(res.next()) {
-                        int t_id = res.getInt(1);
-                        String t_name = res.getString(2);
-                        LocalDate t_birth = res.getDate(3).toLocalDate();
-                        Gender t_gender = Gender.valueOf(res.getString(4));
-
-                        list.add(new Teacher(
-                                t_id,
-                                t_name,
-                                t_birth.getYear(),
-                                t_birth.getMonth().getValue(),
-                                t_birth.getDayOfMonth(),
-                                t_gender
-                        ));
+                        list.add(getTeacherFromRS(res));
+                    }
+                    break;
+                case ALL:
+                    res = statement.executeQuery();
+                    while(res.next()) {
+                        list.add(getTeacherFromRS(res));
                     }
                     break;
             }
@@ -324,15 +223,9 @@ public class Database {
             return list;
     }
     public void updateTeacher(int id, Criteria criteria, String value)
-            throws
-            SQLException,
-            IOException {
+            throws SQLException, IOException {
             Teacher teacher = selectById(TableType.TEACHER,id);
             if(!Objects.isNull(teacher)) {
-                String query = "SELECT * FROM studentgroupteacher.teacher";
-                PreparedStatement statement = getConnection().
-                        prepareStatement(query);
-
                 switch (criteria) {
                     case NAME:
                         teacher.setName(value);
@@ -350,7 +243,6 @@ public class Database {
                         teacher.setGender(newGender);
                         break;
                 }
-                statement.close();
             }
     }
     public void deleteTeacher(Criteria criteria, String value)
@@ -361,17 +253,13 @@ public class Database {
         }
     }
     public void putTeacherInGroup(int teacher_id, int group_number)
-            throws
-            SQLException,
-            IOException {
+            throws SQLException, IOException {
         Group group = selectGroup(group_number);
         Teacher teacher = selectById(TableType.TEACHER,teacher_id);
         teacher.addGroup(group);
     }
     public List<Group> selectTeachersGroup(int teacher_id)
-            throws
-            SQLException,
-            IOException {
+            throws SQLException, IOException {
         Teacher teacher = selectById(TableType.TEACHER, teacher_id);
         String query = "SELECT * FROM studentgroupteacher.groupteacher " +
                 "WHERE groupteacher.teacher_id = ?;";
@@ -381,24 +269,23 @@ public class Database {
 
         while(res.next()) {
             Group group = selectById(TableType.GROUP,res.getInt(2));
-            teacher.addGroup(group);
+            teacher.restoureGroupFromDB(group);
         }
         return teacher.getGroups();
     }
+
+
 
     // group's methods
     public void addGroup(Group group) throws SQLException {
         group.add();
     }
     public Group selectGroup(int group_number)
-            throws
-            SQLException,
-            IOException {
+            throws SQLException, IOException {
         String query = "SELECT * FROM studentgroupteacher.group " +
                 "WHERE group.Number = ? LIMIT 0,1";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, group_number);
-
         ResultSet res = statement.executeQuery();
         if(res.next()) {
             return new Group(group_number);
@@ -408,11 +295,10 @@ public class Database {
     // group methods end
 
 
+
     // internal database methods
     private <T extends Table> T selectById(TableType table, int id)
-            throws
-            SQLException,
-            IOException {
+            throws SQLException, IOException {
         String query = "SELECT * FROM studentgroupteacher."
                 + table.getValue() + " WHERE " + table.getValue() + "."
                 + table.getValue() + "_id = ?";
@@ -475,10 +361,46 @@ public class Database {
         }
         return null;
     }
+    private Student getStudentFromRS(ResultSet res)
+            throws SQLException, IOException {
+        int s_id = res.getInt(1);
+        String s_name = res.getString(2);
+        LocalDate s_birth = res.getDate(3).toLocalDate();
+        Gender s_gender = Gender.valueOf(res.getString(4));
+        int s_group_id;
+        if(res.getInt(5) != java.sql.Types.NULL) {
+            s_group_id = res.getInt(5);
+        } else {
+            s_group_id = java.sql.Types.NULL;
+        }
+        return new Student(
+                s_id,
+                s_name,
+                s_birth.getYear(),
+                s_birth.getMonth().getValue(),
+                s_birth.getDayOfMonth(),
+                s_gender,
+                s_group_id
+        );
+    }
+    private Teacher getTeacherFromRS(ResultSet res)
+            throws SQLException, IOException {
+        int t_id = res.getInt(1);
+        String t_name = res.getString(2);
+        LocalDate t_birth = res.getDate(3).toLocalDate();
+        Gender t_gender = Gender.valueOf(res.getString(4));
 
+        return new Teacher(
+                t_id,
+                t_name,
+                t_birth.getYear(),
+                t_birth.getMonth().getValue(),
+                t_birth.getDayOfMonth(),
+                t_gender
+        );
+    }
     private Connection doConnection()
-            throws
-            SQLException {
+            throws SQLException {
         return DriverManager.getConnection(
                 url,
                 user,
@@ -488,5 +410,4 @@ public class Database {
     private Connection getConnection() {
         return connection;
     }
-
 }

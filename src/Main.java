@@ -3,7 +3,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.charset.IllegalCharsetNameException;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -22,15 +24,8 @@ public class Main {
     }
 
     public static void main(String[] args) throws SQLException, IOException {
-        //Database DB = new Database();
-        //DB.addStudent(new Student("Hax",1999,04,04,Gender.MALE,4));
-        //for(Student student : DB.selectStudent(Criteria.BIRTH,"1995-04-04")) {
-        //    System.out.println(student);
-        //}
         Database DB = new Database();
         Scanner input = new Scanner(System.in);
-
-        //System.out.println(DB.selectGroup(421).getId());
 
         getMethods("Student");
         getMethods("Teacher");
@@ -63,6 +58,10 @@ public class Main {
                     System.out.print("Enter student's group number: ");
                     int number = input.nextInt();
                     Group group = DB.selectGroup(number);
+                    if(Objects.isNull(group)) {
+                        System.out.println("No group with given number. Try again.");
+                        break;
+                    }
                     int group_id = group.getId();
 
                     DB.addStudent(new Student(
@@ -80,10 +79,10 @@ public class Main {
                     }
                     System.out.print(": ");
                     String crit = input.next();
+                    input.nextLine();
                     Criteria criteria = Criteria.valueOf(crit);
-
-                    System.out.print("Enter criteria value: ");
-                    String critVal = input.next();
+                    System.out.print("Enter criteria value (or \"-\" if criteria is ALL): ");
+                    String critVal = input.nextLine();
 
                     for (Student student
                             : DB.selectStudent(criteria, critVal)
@@ -100,10 +99,11 @@ public class Main {
                     }
                     System.out.print(": ");
                     crit = input.next();
+                    input.nextLine();
                     criteria = Criteria.valueOf(crit);
 
                     System.out.print("Enter criteria value: ");
-                    critVal = input.next();
+                    critVal = input.nextLine();
 
                     DB.deleteStudent(criteria, critVal);
                     break;
@@ -118,13 +118,16 @@ public class Main {
                         System.out.print(criteria2 + " ");
                     }
                     crit = input.next();
+                    input.nextLine();
                     criteria = Criteria.valueOf(crit);
 
                     System.out.print("Enter criteria value: ");
-                    critVal = input.next();
+                    critVal = input.nextLine();
                     DB.updateStudent(id, criteria, critVal);
                     break;
                 // student methods end
+
+
 
                 // teacher methods begin
                 case "addTeacher":
@@ -160,10 +163,11 @@ public class Main {
                      }
                      System.out.print(": ");
                      crit = input.next();
+                     input.nextLine();
                      criteria = Criteria.valueOf(crit);
 
-                     System.out.print("Enter criteria value: ");
-                     critVal = input.next();
+                     System.out.print("Enter criteria value (or \"-\" if criteria is ALL): ");
+                     critVal = input.nextLine();
 
                      for(Teacher teacher : DB.selectTeacher(
                              criteria,
@@ -183,10 +187,11 @@ public class Main {
                     }
                     System.out.print(": ");
                     crit = input.next();
+                    input.nextLine();
                     criteria = Criteria.valueOf(crit);
 
                     System.out.print("Enter criteria value: ");
-                    critVal = input.next();
+                    critVal = input.nextLine();
 
                     DB.deleteTeacher(criteria, critVal);
                     break;
@@ -230,6 +235,8 @@ public class Main {
                     break;
                 // teacher methods end
 
+
+
                 // group methods begin
                 case "addGroup" :
                     System.out.print("Adding group. " +
@@ -246,6 +253,8 @@ public class Main {
                     System.out.println(DB.selectGroup(number));
                     break;
                 // group methods end
+
+
 
                 // general methods begin
                 case "exit":

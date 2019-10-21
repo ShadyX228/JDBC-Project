@@ -28,7 +28,7 @@ public class Teacher extends Table {
             SQLException,
             IOException {
         this.name = name;
-        birthday = LocalDate.of(year,month,day+1);
+        birthday = LocalDate.of(year,month,day);
         this.gender = gender;
         setTableName(TableType.TEACHER);
 
@@ -86,13 +86,15 @@ public class Teacher extends Table {
         statement.close();
     }
     public void addGroup(Group group) throws SQLException {
-        groups.add(group);
         String query = "INSERT INTO studentgroupteacher.groupteacher " +
                 "(group_id, teacher_id) VALUES (?, ?);";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setInt(1, group.getId());
         statement.setInt(2, id);
         statement.executeUpdate();
+    }
+    public void restoureGroupFromDB(Group group) {
+        groups.add(group);
     }
     public void add() throws SQLException {
         String query = "INSERT INTO " + getDBName() + "."

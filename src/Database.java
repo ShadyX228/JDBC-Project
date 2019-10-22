@@ -269,7 +269,7 @@ public class Database {
 
         while(res.next()) {
             Group group = selectById(TableType.GROUP,res.getInt(2));
-            teacher.restoureGroupFromDB(group);
+            teacher.restoreGroupFromDB(group);
         }
         return teacher.getGroups();
     }
@@ -291,6 +291,18 @@ public class Database {
             return new Group(group_number);
         }
         return null;
+    }
+    public List<Group> selectAllGroups()
+            throws SQLException, IOException {
+        String query = "SELECT * FROM studentgroupteacher.group";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        ResultSet res = statement.executeQuery();
+
+        List<Group> list = new ArrayList<>();
+        while(res.next()) {
+            list.add(new Group(res.getInt(1), res.getInt(2)));
+        }
+        return list;
     }
     // group methods end
 

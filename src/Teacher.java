@@ -93,7 +93,7 @@ public class Teacher extends Table {
         statement.setInt(2, id);
         statement.executeUpdate();
     }
-    public void restoureGroupFromDB(Group group) {
+    public void restoreGroupFromDB(Group group) {
         groups.add(group);
     }
     public void add() throws SQLException {

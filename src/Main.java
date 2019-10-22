@@ -1,8 +1,8 @@
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.nio.charset.IllegalCharsetNameException;
 import java.sql.SQLException;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -22,7 +22,6 @@ public class Main {
         System.out.println();
         return result;
     }
-
     public static void main(String[] args) throws SQLException, IOException {
         Database DB = new Database();
         Scanner input = new Scanner(System.in);
@@ -51,9 +50,22 @@ public class Main {
                     System.out.print("Enter day: ");
                     int day = input.nextInt();
 
+                    try {
+                        LocalDate.of(year, month, day);
+                    } catch (DateTimeException e) {
+                        System.out.println("Invalid birthday. Try again.");
+                        break;
+                    }
+
                     System.out.print("Enter gender (MALE/FEMALE): ");
                     String genderInput = input.next();
-                    Gender gender = Gender.valueOf(genderInput);
+                    Gender gender;
+                    try {
+                        gender = Gender.valueOf(genderInput);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid gender. Try again.");
+                        break;
+                    }
 
                     System.out.print("Enter student's group number: ");
                     int number = input.nextInt();
@@ -81,9 +93,36 @@ public class Main {
                     String crit = input.next();
                     input.nextLine();
                     Criteria criteria = Criteria.valueOf(crit);
-                    System.out.print("Enter criteria value (or \"-\" if criteria is ALL): ");
-                    String critVal = input.nextLine();
-
+                    String critVal;
+                    if(!criteria.equals(Criteria.ALL)) {
+                        System.out.print("Enter criteria value: ");
+                        critVal = input.nextLine();
+                    } else {
+                        critVal = "";
+                    }
+                    if(criteria.equals(Criteria.GENDER)) {
+                        try {
+                            Gender.valueOf(critVal);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.GROUP)) {
+                        Group group_check = DB.selectGroup(Integer.parseInt(critVal));
+                        if(Objects.isNull(group_check)) {
+                            System.out.println("No group with given number. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.BIRTH)) {
+                        try {
+                            LocalDate.parse(critVal);
+                        } catch (DateTimeException e) {
+                            System.out.println("Invalid birthday. Try again.");
+                            break;
+                        }
+                    }
                     for (Student student
                             : DB.selectStudent(criteria, critVal)
                     ) {
@@ -105,6 +144,29 @@ public class Main {
                     System.out.print("Enter criteria value: ");
                     critVal = input.nextLine();
 
+                    if(criteria.equals(Criteria.GENDER)) {
+                        try {
+                            Gender.valueOf(critVal);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.GROUP)) {
+                        Group group_check = DB.selectGroup(Integer.parseInt(critVal));
+                        if(Objects.isNull(group_check)) {
+                            System.out.println("No group with given number. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.BIRTH)) {
+                        try {
+                            LocalDate.parse(critVal);
+                        } catch (DateTimeException e) {
+                            System.out.println("Invalid birthday. Try again.");
+                            break;
+                        }
+                    }
                     DB.deleteStudent(criteria, critVal);
                     break;
 
@@ -114,15 +176,42 @@ public class Main {
 
                     System.out.print("Enter criteria " +
                             "wich need to update. Available variants: ");
-                    for (Criteria criteria2 : Criteria.values()) {
-                        System.out.print(criteria2 + " ");
+                    for (Criteria cr : Criteria.values()) {
+                        if(!cr.equals(Criteria.ALL) && !cr.equals(Criteria.ID)) {
+                            System.out.print(cr + " ");
+                        }
                     }
+                    System.out.println(": ");
                     crit = input.next();
                     input.nextLine();
                     criteria = Criteria.valueOf(crit);
 
                     System.out.print("Enter criteria value: ");
                     critVal = input.nextLine();
+
+                    if(criteria.equals(Criteria.GENDER)) {
+                        try {
+                            Gender.valueOf(critVal);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.GROUP)) {
+                        Group group_check = DB.selectGroup(Integer.parseInt(critVal));
+                        if(Objects.isNull(group_check)) {
+                            System.out.println("No group with given number. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.BIRTH)) {
+                        try {
+                            LocalDate.parse(critVal);
+                        } catch (DateTimeException e) {
+                            System.out.println("Invalid birthday. Try again.");
+                            break;
+                        }
+                    }
                     DB.updateStudent(id, criteria, critVal);
                     break;
                 // student methods end
@@ -143,9 +232,21 @@ public class Main {
                     System.out.print("Enter day: ");
                     day = input.nextInt();
 
+                    try {
+                        LocalDate.of(year, month, day);
+                    } catch (DateTimeException e) {
+                        System.out.println("Invalid birthday. Try again.");
+                        break;
+                    }
+
                     System.out.print("Enter gender (MALE/FEMALE): ");
                     genderInput = input.next();
-                    gender = Gender.valueOf(genderInput);
+                    try {
+                        gender = Gender.valueOf(genderInput);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Invalid gender. Try again.");
+                        break;
+                    }
 
                     DB.addTeacher(new Teacher(name,
                             year, month, day,
@@ -166,9 +267,28 @@ public class Main {
                      input.nextLine();
                      criteria = Criteria.valueOf(crit);
 
-                     System.out.print("Enter criteria value (or \"-\" if criteria is ALL): ");
-                     critVal = input.nextLine();
-
+                     if(!criteria.equals(Criteria.ALL)) {
+                         System.out.print("Enter criteria value: ");
+                         critVal = input.nextLine();
+                     } else {
+                         critVal = "";
+                     }
+                     if(criteria.equals(Criteria.GENDER)) {
+                         try {
+                             Gender.valueOf(critVal);
+                         } catch (IllegalArgumentException e) {
+                             System.out.println("Invalid gender. Try again.");
+                             break;
+                         }
+                     }
+                     if(criteria.equals(Criteria.BIRTH)) {
+                         try {
+                             LocalDate.parse(critVal);
+                         } catch (DateTimeException e) {
+                             System.out.println("Invalid birthday. Try again.");
+                             break;
+                         }
+                     }
                      for(Teacher teacher : DB.selectTeacher(
                              criteria,
                              critVal)
@@ -193,6 +313,22 @@ public class Main {
                     System.out.print("Enter criteria value: ");
                     critVal = input.nextLine();
 
+                    if(criteria.equals(Criteria.GENDER)) {
+                        try {
+                            Gender.valueOf(critVal);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.BIRTH)) {
+                        try {
+                            LocalDate.parse(critVal);
+                        } catch (DateTimeException e) {
+                            System.out.println("Invalid birthday. Try again.");
+                            break;
+                        }
+                    }
                     DB.deleteTeacher(criteria, critVal);
                     break;
 
@@ -202,9 +338,11 @@ public class Main {
 
                     System.out.print("Enter criteria " +
                             "wich need to update. Available variants: ");
-                    for(Criteria criteria2 : Criteria.values()) {
-                        if(!criteria2.equals(Criteria.GROUP)) {
-                            System.out.print(criteria2 + " ");
+                    for(Criteria cr : Criteria.values()) {
+                        if(!cr.equals(Criteria.GROUP)
+                                && !cr.equals(Criteria.ID)
+                                && !cr.equals(Criteria.ALL)) {
+                            System.out.print(cr + " ");
                         }
                     }
                     System.out.print( ": ");
@@ -213,6 +351,23 @@ public class Main {
 
                     System.out.print("Enter criteria value: ");
                     critVal = input.next();
+
+                    if(criteria.equals(Criteria.GENDER)) {
+                        try {
+                            Gender.valueOf(critVal);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid gender. Try again.");
+                            break;
+                        }
+                    }
+                    if(criteria.equals(Criteria.BIRTH)) {
+                        try {
+                            LocalDate.parse(critVal);
+                        } catch (DateTimeException e) {
+                            System.out.println("Invalid birthday. Try again.");
+                            break;
+                        }
+                    }
                     DB.updateTeacher(id, criteria, critVal);
                     break;
 
@@ -231,6 +386,15 @@ public class Main {
                     id = input.nextInt();
                     System.out.print("Enter group number: ");
                     number = input.nextInt();
+
+                    if(Objects.isNull(DB.selectTeacher(Criteria.ID,Integer.toString(number)).get(0))) {
+                        System.out.println("Invalid teacher id. Try again.");
+                        break;
+                    }
+                    if(Objects.isNull(DB.selectGroup(number))) {
+                        System.out.println("No group with given number. Try again.");
+                        break;
+                    }
                     DB.putTeacherInGroup(id, number);
                     break;
                 // teacher methods end
@@ -251,6 +415,12 @@ public class Main {
                     number = input.nextInt();
 
                     System.out.println(DB.selectGroup(number));
+                    break;
+                case "selectAllGroups" :
+                    System.out.println("Selecting all groups.");
+                    for(Group gr : DB.selectAllGroups()) {
+                        System.out.println(gr);
+                    }
                     break;
                 // group methods end
 

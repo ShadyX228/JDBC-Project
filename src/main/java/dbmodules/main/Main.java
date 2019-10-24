@@ -4,9 +4,7 @@ import dbmodules.database.Database;
 import dbmodules.types.*;
 import dbmodules.tables.*;
 
-import java.io.IOException;
 import java.lang.reflect.*;
-import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
 
@@ -25,6 +23,25 @@ public class Main {
         System.out.println();
         return result;
     }
+    private static boolean checkBirth(int year, int month, int day) {
+        try {
+            LocalDate.of(year, month, day);
+            return true;
+        } catch (DateTimeException e) {
+            System.out.println("Invalid birthday. Try again.");
+            return false;
+        }
+    }
+    private static boolean checkCriteria(String crit) {
+        try {
+            Criteria.valueOf(crit);
+            return true;
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid criteria. Try again.");
+            return false;
+        }
+    }
+
     public static void main(String[] args) {
         try {
             Database DB = new Database();
@@ -54,10 +71,7 @@ public class Main {
                         System.out.print("Enter day: ");
                         int day = input.nextInt();
 
-                        try {
-                            LocalDate.of(year, month, day);
-                        } catch (DateTimeException e) {
-                            System.out.println("Invalid birthday. Try again.");
+                        if(!checkBirth(year, month, day)) {
                             break;
                         }
 
@@ -96,8 +110,12 @@ public class Main {
                         System.out.print(": ");
                         String crit = input.next();
                         input.nextLine();
+                        if(!checkCriteria(crit)) {
+                            break;
+                        }
                         Criteria criteria = Criteria.valueOf(crit);
                         String critVal;
+
                         if (!criteria.equals(Criteria.ALL)) {
                             System.out.print("Enter criteria value: ");
                             critVal = input.nextLine();
@@ -120,10 +138,11 @@ public class Main {
                             }
                         }
                         if (criteria.equals(Criteria.BIRTH)) {
-                            try {
-                                LocalDate.parse(critVal);
-                            } catch (DateTimeException e) {
-                                System.out.println("Invalid birthday. Try again.");
+                            LocalDate d = LocalDate.parse(critVal);
+                            if(!checkBirth(
+                                    d.getYear(),
+                                    d.getDayOfMonth(),
+                                    d.getDayOfMonth())) {
                                 break;
                             }
                         }
@@ -143,6 +162,9 @@ public class Main {
                         System.out.print(": ");
                         crit = input.next();
                         input.nextLine();
+                        if(!checkCriteria(crit)) {
+                            break;
+                        }
                         criteria = Criteria.valueOf(crit);
 
                         System.out.print("Enter criteria value: ");
@@ -164,10 +186,11 @@ public class Main {
                             }
                         }
                         if (criteria.equals(Criteria.BIRTH)) {
-                            try {
-                                LocalDate.parse(critVal);
-                            } catch (DateTimeException e) {
-                                System.out.println("Invalid birthday. Try again.");
+                            LocalDate d = LocalDate.parse(critVal);
+                            if(!checkBirth(
+                                    d.getYear(),
+                                    d.getDayOfMonth(),
+                                    d.getDayOfMonth())) {
                                 break;
                             }
                         }
@@ -185,9 +208,12 @@ public class Main {
                                 System.out.print(cr + " ");
                             }
                         }
-                        System.out.println(": ");
+                        System.out.print(": ");
                         crit = input.next();
                         input.nextLine();
+                        if(!checkCriteria(crit)) {
+                            break;
+                        }
                         criteria = Criteria.valueOf(crit);
 
                         System.out.print("Enter criteria value: ");
@@ -202,17 +228,20 @@ public class Main {
                             }
                         }
                         if (criteria.equals(Criteria.GROUP)) {
-                            Group group_check = DB.selectGroup(Integer.parseInt(critVal));
+                            Group group_check = DB.selectGroup(
+                                    Integer.parseInt(critVal));
                             if (Objects.isNull(group_check)) {
-                                System.out.println("No group with given number. Try again.");
+                                System.out.println("No group with given number." +
+                                        " Try again.");
                                 break;
                             }
                         }
                         if (criteria.equals(Criteria.BIRTH)) {
-                            try {
-                                LocalDate.parse(critVal);
-                            } catch (DateTimeException e) {
-                                System.out.println("Invalid birthday. Try again.");
+                            LocalDate d = LocalDate.parse(critVal);
+                            if(!checkBirth(
+                                    d.getYear(),
+                                    d.getDayOfMonth(),
+                                    d.getDayOfMonth())) {
                                 break;
                             }
                         }
@@ -235,10 +264,7 @@ public class Main {
                         System.out.print("Enter day: ");
                         day = input.nextInt();
 
-                        try {
-                            LocalDate.of(year, month, day);
-                        } catch (DateTimeException e) {
-                            System.out.println("Invalid birthday. Try again.");
+                        if(!checkBirth(year, month, day)) {
                             break;
                         }
 
@@ -268,6 +294,9 @@ public class Main {
                         System.out.print(": ");
                         crit = input.next();
                         input.nextLine();
+                        if(!checkCriteria(crit)) {
+                            break;
+                        }
                         criteria = Criteria.valueOf(crit);
 
                         if (!criteria.equals(Criteria.ALL)) {
@@ -311,10 +340,15 @@ public class Main {
                         System.out.print(": ");
                         crit = input.next();
                         input.nextLine();
+                        if(!checkCriteria(crit)) {
+                            break;
+                        }
                         criteria = Criteria.valueOf(crit);
 
                         System.out.print("Enter criteria value: ");
                         critVal = input.nextLine();
+
+
 
                         if (criteria.equals(Criteria.GENDER)) {
                             try {
@@ -350,6 +384,9 @@ public class Main {
                         }
                         System.out.print(": ");
                         crit = input.next();
+                        if(!checkCriteria(crit)) {
+                            break;
+                        }
                         criteria = Criteria.valueOf(crit);
 
                         System.out.print("Enter criteria value: ");
@@ -390,7 +427,27 @@ public class Main {
                         System.out.print("Enter group number: ");
                         number = input.nextInt();
 
-                        if (Objects.isNull(DB.selectTeacher(Criteria.ID, Integer.toString(number)).get(0))) {
+                        if (Objects.isNull(DB.selectTeacher(Criteria.ID,
+                                Integer.toString(id)).get(0))) {
+                            System.out.println("Invalid teacher id. Try again.");
+                            break;
+                        }
+                        if (Objects.isNull(DB.selectGroup(number))) {
+                            System.out.println("No group with given number. " +
+                                    "Try again.");
+                            break;
+                        }
+                        DB.putTeacherInGroup(id, number);
+                        break;
+
+                    case "deleteTeacherFromGroup":
+                        System.out.print("Putting teacher in group." +
+                                " \nEnter teacher id: ");
+                        id = input.nextInt();
+                        System.out.print("Enter group number: ");
+                        number = input.nextInt();
+                        if (Objects.isNull(DB.selectTeacher(Criteria.ID,
+                                Integer.toString(id)).get(0))) {
                             System.out.println("Invalid teacher id. Try again.");
                             break;
                         }
@@ -398,7 +455,8 @@ public class Main {
                             System.out.println("No group with given number. Try again.");
                             break;
                         }
-                        DB.putTeacherInGroup(id, number);
+                        DB.deleteTeacherFromGroup(id, number);
+
                         break;
                     // teacher methods end
 
@@ -423,6 +481,16 @@ public class Main {
                         for (Group gr : DB.selectAllGroups()) {
                             System.out.println(gr);
                         }
+                        break;
+                    case "deleteGroup":
+                        System.out.print("Deleting group. Enter group number: ");
+                        number = input.nextInt();
+                        Group g = DB.selectGroup(number);
+                        if(Objects.isNull(g)) {
+                            System.out.println("Invalid group. Try again.");
+                            break;
+                        }
+                        DB.deleteGroup(g);
                         break;
                     // group methods end
 

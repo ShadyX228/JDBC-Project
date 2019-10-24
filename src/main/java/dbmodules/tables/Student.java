@@ -83,7 +83,7 @@ public class Student extends Table {
     public void setGender(Gender gender) throws SQLException {
         this.gender = gender;
         String query = "UPDATE studentgroupteacher.student SET " +
-                "student.database.types.Gender = ? WHERE student.student_id = ?";
+                "student.Gender = ? WHERE student.student_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setObject(1, gender.getValue(),
                 java.sql.Types.CHAR);
@@ -117,7 +117,7 @@ public class Student extends Table {
     public void add() throws SQLException {
         String query = "INSERT INTO " + getDBName() + "."
                 + getTableName() + " " +
-                "(Name, Birthday, database.types.Gender, group_id) " +
+                "(Name, Birthday, Gender, group_id) " +
                 "VALUES (?, ?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setString(1, name);
@@ -157,7 +157,7 @@ public class Student extends Table {
                 break;
             case GENDER:
                 query = "DELETE FROM studentgroupteacher.student " +
-                        "WHERE student.database.types.Gender = ?";
+                        "WHERE student.Gender = ?";
                 statement = getConnection().prepareStatement(query);
                 statement.setObject(1, gender.getValue(),
                         java.sql.Types.CHAR);

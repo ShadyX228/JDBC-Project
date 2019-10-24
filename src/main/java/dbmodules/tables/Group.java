@@ -44,6 +44,13 @@ public class Group extends Table {
         statement.executeUpdate();
         statement.close();
     }
+    public void delete() throws SQLException {
+        String query = "DELETE FROM studentgroupteacher.group " +
+                "WHERE group_id = ?";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1,id);
+        statement.executeUpdate();
+    }
 
     @Override
     protected int setId() throws SQLException {

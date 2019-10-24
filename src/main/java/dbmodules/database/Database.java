@@ -21,7 +21,7 @@ public class Database {
 
     public Database() throws SQLException, IOException {
         properties = new Properties();
-        InputStream input = getClass().getResourceAsStream("/connection.properties");;
+        InputStream input = getClass().getResourceAsStream("/connection.properties");
         properties.load(input);
         driver = properties.getProperty("jdbc.driver");
         url = driver + "://" + properties.getProperty("jdbc.url");
@@ -80,7 +80,7 @@ public class Database {
                 case GENDER:
                     Gender gender = Gender.valueOf(value);
                     query = "SELECT * FROM studentgroupteacher.student" +
-                            " WHERE student.database.types.Gender = ?";
+                            " WHERE student.Gender = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setObject(1, gender.getValue(),
                             java.sql.Types.CHAR);
@@ -205,7 +205,7 @@ public class Database {
                 case GENDER:
                     Gender gender = Gender.valueOf(value);
                     query = "SELECT * FROM studentgroupteacher.teacher " +
-                            "WHERE teacher.database.types.Gender = ?";
+                            "WHERE teacher.Gender = ?";
                     statement = getConnection().prepareStatement(query);
                     statement.setObject(1, gender.getValue(),
                             java.sql.Types.CHAR);
@@ -261,6 +261,12 @@ public class Database {
         Teacher teacher = selectById(TableType.TEACHER,teacher_id);
         teacher.addGroup(group);
     }
+    public void deleteTeacherFromGroup(int teacher_id, int group_number)
+            throws SQLException, IOException {
+        Group group = selectGroup(group_number);
+        Teacher teacher = selectById(TableType.TEACHER,teacher_id);
+        teacher.removeGroup(group);
+    }
     public List<Group> selectTeachersGroup(int teacher_id)
             throws SQLException, IOException {
         Teacher teacher = selectById(TableType.TEACHER, teacher_id);
@@ -306,6 +312,20 @@ public class Database {
             list.add(new Group(res.getInt(1), res.getInt(2)));
         }
         return list;
+    }
+    public void deleteGroup(Group group) throws SQLException {
+        String query = "SELECT * FROM studentgroupteacher.groupteacher " +
+                "WHERE groupteacher.group_id = ?";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, group.getId());
+        ResultSet res = statement.executeQuery();
+        if(res.next()) {
+            System.out.println("Cannot delete group. " +
+                    "Some teachers teach in this group. " +
+                    "Unbind them first.");
+        } else {
+            group.delete();
+        }
     }
     // group methods end
 

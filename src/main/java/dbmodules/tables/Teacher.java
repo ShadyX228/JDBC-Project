@@ -80,7 +80,7 @@ public class Teacher extends Table {
     public void setGender(Gender gender) throws SQLException {
         this.gender = gender;
         String query = "UPDATE studentgroupteacher.teacher SET " +
-                "teacher.database.types.Gender = ? " +
+                "teacher.Gender = ? " +
                 "WHERE teacher.teacher_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setObject(1, gender.getValue(),
@@ -100,10 +100,18 @@ public class Teacher extends Table {
     public void restoreGroupFromDB(Group group) {
         groups.add(group);
     }
+    public void removeGroup(Group group) throws SQLException {
+        String query = "DELETE FROM studentgroupteacher.groupteacher " +
+                "WHERE group_id = ?";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1,group.getId());
+        statement.executeUpdate();
+        groups.remove(group);
+    }
     public void add() throws SQLException {
         String query = "INSERT INTO " + getDBName() + "."
                 + getTableName() + " " +
-                "(Name, Birthday, database.types.Gender) " +
+                "(Name, Birthday, Gender) " +
                 "VALUES (?, ?, ?)";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setString(1, name);
@@ -142,7 +150,7 @@ public class Teacher extends Table {
                 break;
             case GENDER:
                 query = "DELETE FROM studentgroupteacher.teacher " +
-                        "WHERE teacher.database.types.Gender = ?";
+                        "WHERE teacher.Gender = ?";
                 statement = getConnection().prepareStatement(query);
                 statement.setObject(1, gender.getValue(),
                         java.sql.Types.CHAR);

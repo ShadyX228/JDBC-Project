@@ -1,0 +1,12 @@
+dbmodules\tables\Teacher$1.class
+dbmodules\tables\Student.class
+dbmodules\types\Gender.class
+dbmodules\tables\Table.class
+dbmodules\types\Criteria.class
+dbmodules\tables\Group.class
+dbmodules\main\Main.class
+dbmodules\database\Database$1.class
+dbmodules\types\TableType.class
+dbmodules\tables\Student$1.class
+dbmodules\database\Database.class
+dbmodules\tables\Teacher.class

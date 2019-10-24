@@ -30,9 +30,9 @@ public class Main {
             Database DB = new Database();
             Scanner input = new Scanner(System.in);
 
-            getMethods("database.tables.Student");
-            getMethods("database.tables.Teacher");
-            getMethods("database.tables.Group");
+            getMethods("Student");
+            getMethods("Teacher");
+            getMethods("Group");
 
             String methodName = "";
             while (!methodName.equals("exit")) {

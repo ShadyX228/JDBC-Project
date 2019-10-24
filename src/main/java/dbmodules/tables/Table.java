@@ -18,9 +18,7 @@ public class Table {
 
     Table() throws SQLException, IOException {
         properties = new Properties();
-        FileInputStream input = new FileInputStream(
-                new File("connection.properties\\")
-        );
+        InputStream input = getClass().getResourceAsStream("/connection.properties");;
 
         properties.load(input);
         driver = properties.getProperty("jdbc.driver");

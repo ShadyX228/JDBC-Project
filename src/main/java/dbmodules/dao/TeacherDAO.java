@@ -1,11 +1,14 @@
 package dbmodules.dao;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import dbmodules.annotation.isUseful;
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
+import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
+import dbmodules.types.TableType;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -16,21 +19,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dbmodules.types.TableType.STUDENT;
+import static dbmodules.types.TableType.TEACHER;
 
-
-public class StudentDAO extends TableDAO implements PersonTable<Student> {
-    public StudentDAO() throws IOException, SQLException {
-        super(STUDENT);
+public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
+    public TeacherDAO() throws IOException, SQLException {
+        super(TEACHER);
     }
 
     @isUseful
-    public void add(Student person)
+    public void add(Teacher person)
             throws SQLException {
         String query = "INSERT INTO " + getDBName() + "."
                 + getTableName() + " " +
-                "(Name, Birthday, Gender, group_id) " +
-                "VALUES (?, ?, ?, ?);";
+                "(Name, Birthday, Gender) " +
+                "VALUES (?, ?, ?);";
         PreparedStatement statement = getConnection().prepareStatement(query);
         statement.setString(1, person.getName());
 
@@ -39,12 +41,11 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.setString(2, formattedBirth);
 
         statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
-        statement.setInt(4, person.getGroup_id());
         statement.executeUpdate();
         statement.close();
     }
     @isUseful
-    public Student selectById(int id)
+    public Teacher selectById(int id)
             throws SQLException {
         String query = "SELECT * FROM " + getDBName() + "."
                 + getTableName() + " WHERE " + getTableName() + "." + getTableName() + "_id = ?";
@@ -60,26 +61,25 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
             int group_id = res.getInt(5);
             statement.close();
 
-            return new Student(
-                        s_id,
-                        name,
-                        birth.getYear(),
-                        birth.getMonth().getValue(),
-                        birth.getDayOfMonth(),
-                        gender,
-                        group_id
-                );
+            return new Teacher(
+                    s_id,
+                    name,
+                    birth.getYear(),
+                    birth.getMonth().getValue(),
+                    birth.getDayOfMonth(),
+                    gender
+            );
         }
         return null;
     }
     @isUseful
-    public List<Student> select(Criteria criteria, String value)
+    public List<Teacher> select(Criteria criteria, String value)
             throws SQLException, IOException {
         String query = "SELECT * FROM " + getDBName() + "."
                 + getTableName();
         PreparedStatement statement = getConnection().
                 prepareStatement(query);
-        List<Student> list = new ArrayList<>();
+        List<Teacher> list = new ArrayList<>();
 
         switch (criteria) {
             case ID : {
@@ -94,7 +94,7 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
 
                 ResultSet res = statement.executeQuery();
                 while (res.next()) {
-                    list.add(getStudentFromRS(res));
+                    list.add(getTeacherFromRS(res));
                 }
                 break;
             }
@@ -102,19 +102,19 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 LocalDate birth = LocalDate.of(
                         LocalDate.parse(value).getYear(),
                         LocalDate.parse(value).getMonth(),
-                        LocalDate.parse(value).getDayOfMonth()
+                        LocalDate.parse(value).getDayOfMonth() + 1
                 );
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 String formattedBirth = dateTimeFormatter.format(birth);
 
                 query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".Birthday = ?";
+                        + getTableName() + " WHERE " + getTableName() + ".Birthday= ?";
                 statement = getConnection().prepareStatement(query);
                 statement.setString(1, formattedBirth);
 
                 ResultSet res = statement.executeQuery();
                 while (res.next()) {
-                    list.add(getStudentFromRS(res));
+                    list.add(getTeacherFromRS(res));
                 }
                 break;
             }
@@ -128,30 +128,14 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
 
                 ResultSet res = statement.executeQuery();
                 while (res.next()) {
-                    list.add(getStudentFromRS(res));
-                }
-                break;
-            }
-            case GROUP : {
-                GroupDAO gd = new GroupDAO();
-
-                Group group = gd.select(Integer.parseInt(value));
-
-                query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".group_id = ?";
-                statement = getConnection().prepareStatement(query);
-                statement.setInt(1, group.getId());
-
-                ResultSet res = statement.executeQuery();
-                while (res.next()) {
-                    list.add(getStudentFromRS(res));
+                    list.add(getTeacherFromRS(res));
                 }
                 break;
             }
             case ALL : {
                 ResultSet res = statement.executeQuery();
                 while (res.next()) {
-                    list.add(getStudentFromRS(res));
+                    list.add(getTeacherFromRS(res));
                 }
                 break;
             }
@@ -160,7 +144,7 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         return list;
     }
     @isUseful
-    public void update(Student person, Criteria criteria, String value)
+    public void update(Teacher person, Criteria criteria, String value)
             throws SQLException, IOException {
         switch (criteria) {
             case NAME : {
@@ -181,16 +165,9 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 person.setGender(newGender);
                 break;
             }
-            case GROUP : {
-                GroupDAO gd = new GroupDAO();
-                Group group = gd.select(Integer.parseInt(value));
-                int group_id = group.getId();
-                person.setGroup_id(group_id);
-                break;
-            }
         }
         String query = "UPDATE " + getDBName() + "." + getTableName()
-                + " SET Name = ?, Birthday = ?, Gender = ?, group_id = ? " +
+                + " SET Name = ?, Birthday = ?, Gender = ?" +
                 "WHERE " + getTableName() + "."
                 + getTableName() + "_id = ?;";
         PreparedStatement statement = getConnection()
@@ -198,43 +175,68 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.setString(1, person.getName());
         statement.setDate(2, java.sql.Date.valueOf(person.getBirth()));
         statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
-        statement.setInt(4, person.getGroup_id());
-        statement.setInt(5, person.getId());
+        statement.setInt(4, person.getId());
         statement.executeUpdate();
         statement.close();
     }
     @isUseful
     public void delete(Criteria criteria, String value)
             throws SQLException, IOException {
-        List<Student> students = select(criteria,value);
+        List<Teacher> students = select(criteria,value);
         String query = "DELETE FROM " + getDBName() + "."
                 + getTableName() +
                 " WHERE " + getTableName() + "."
                 + getTableName() + "_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
-        for(Student student : students) {
-            statement.setInt(1, student.getId());
+        for(Teacher teacher : students) {
+            statement.setInt(1, teacher.getId());
             statement.executeUpdate();
         }
     }
+    @isUseful
+    public void putTeacherInGroup(Teacher teacher, Group group)
+            throws SQLException, IOException {
+        String query = "INSERT INTO " + getDBName() + ".groupteacher"
+                + " " +
+                "(group_id, teacher_id) " +
+                "VALUES (?, ?);";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, group.getId());
+        statement.setInt(2, teacher.getId());
+
+        statement.executeUpdate();
+        statement.close();
+        //teacher.addGroup(group);
+    }
+    @isUseful
+    public void removeTeacherFromGroup(Teacher teacher, Group group)
+            throws SQLException, IOException {
+        String query = "DELETE FROM " + getDBName() + ".groupteacher"
+                + " WHERE group_id = ? AND teacher_id = ?;";
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, group.getId());
+        statement.setInt(2, teacher.getId());
+
+        statement.executeUpdate();
+        statement.close();
+        //teacher.addGroup(group);
+    }
 
 
-
-    private Student getStudentFromRS(ResultSet res)
+    private Teacher getTeacherFromRS(ResultSet res)
             throws SQLException {
-        int id = res.getInt(1);
+        int t_id = res.getInt(1);
         String name = res.getString(2);
         LocalDate birth = res.getDate(3).toLocalDate();
         Gender gender = Gender.valueOf(res.getString(4));
-        int group_id = res.getInt(5);
-        return new Student(
-                id,
+
+        return new Teacher(
+                t_id,
                 name,
                 birth.getYear(),
                 birth.getMonth().getValue(),
                 birth.getDayOfMonth(),
-                gender,
-                group_id
+                gender
         );
     }
 }

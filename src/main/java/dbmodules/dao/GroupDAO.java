@@ -1,20 +1,25 @@
 package dbmodules.dao;
 
+import dbmodules.annotation.isUseful;
 import dbmodules.interfaces.GroupTable;
 import dbmodules.tables.Group;
-import dbmodules.types.TableType;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import static dbmodules.types.TableType.GROUP;
 
 public class GroupDAO extends TableDAO implements GroupTable {
     public GroupDAO() throws IOException, SQLException {
-        super(TableType.GROUP);
+        super(GROUP);
     }
 
+    @isUseful
     public void add(Group group) throws SQLException, IOException {
         if(Objects.isNull(select(group.getNumber()))) {
             String query = "INSERT INTO " + getDBName() + "."
@@ -27,6 +32,7 @@ public class GroupDAO extends TableDAO implements GroupTable {
             statement.close();
         }
     }
+    @isUseful
     public Group selectById(int id) throws SQLException, IOException {
         String query = "SELECT * FROM " + getDBName() + "."
                 + getTableName() + " WHERE " + getTableName() + "_id = ?";
@@ -43,6 +49,7 @@ public class GroupDAO extends TableDAO implements GroupTable {
         }
         return null;
     }
+    @isUseful
     public Group select(int number)  throws SQLException, IOException {
         String query = "SELECT * FROM " + getDBName() + "."
                 + getTableName() + " WHERE "
@@ -58,6 +65,22 @@ public class GroupDAO extends TableDAO implements GroupTable {
         }
         return null;
     }
+    @isUseful
+    public List<Group> selectAll()  throws SQLException, IOException {
+        String query = "SELECT * FROM " + getDBName() + "."
+                + getTableName();
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        ResultSet res = statement.executeQuery();
+        List<Group> list = new ArrayList<>();
+        while(res.next()) {
+            list.add(new Group(
+                    res.getInt(1),
+                    res.getInt(2)
+            ));
+        }
+        return list;
+    }
+    @isUseful
     public void delete(Group group) throws SQLException {
         String query = "SELECT * FROM " + getDBName() + ".groupteacher" +
                  " WHERE groupteacher.group_id = ?";

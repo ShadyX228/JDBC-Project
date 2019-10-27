@@ -12,5 +12,6 @@ public interface GroupTable {
     void add(Group group) throws SQLException, IOException;
     Group selectById(int id) throws SQLException, IOException;
     Group select(int number) throws SQLException, IOException ;
+    List<Group> selectAll() throws SQLException, IOException ;
     void delete(Group group) throws SQLException;
 }

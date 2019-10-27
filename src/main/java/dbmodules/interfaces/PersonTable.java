@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface PersonTable<T extends Table> {
     void add(T person) throws SQLException;
-    Student selectById(int id) throws SQLException, IOException ;
+    T selectById(int id) throws SQLException;
     List<T> select(Criteria criteria, String value) throws SQLException, IOException;
     void update(T person, Criteria criteria, String value) throws SQLException, IOException;
     void delete(Criteria criteria, String value) throws SQLException, IOException;

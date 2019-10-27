@@ -25,7 +25,6 @@ public class Teacher extends Table {
         this.name = name;
         birthday = LocalDate.of(year,month,day);
         this.gender = gender;
-        setTableName(TableType.TEACHER);
     }
     public Teacher(String name, int year, int month, int day, Gender gender)
             throws
@@ -34,10 +33,6 @@ public class Teacher extends Table {
         this.name = name;
         birthday = LocalDate.of(year,month,day);
         this.gender = gender;
-        setTableName(TableType.TEACHER);
-
-        // get id from db
-        id = setId();
     }
 
     public int getId() {
@@ -56,7 +51,7 @@ public class Teacher extends Table {
         return groups;
     }
 
-    public void setName(String name) throws SQLException {
+    /*public void setName(String name) throws SQLException {
         this.name = name;
         String query = "UPDATE studentgroupteacher.teacher SET " +
                 "teacher.Name = ? " +
@@ -164,7 +159,7 @@ public class Teacher extends Table {
         }
         statement.executeUpdate();
         statement.close();
-    }
+    }*/
 
     public String toString() {
         return "teacher_id: " + id + "; name: " + name + "; " +

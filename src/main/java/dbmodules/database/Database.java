@@ -33,7 +33,7 @@ public class Database {
 
     // student's methods
     public void addStudent(Student student) throws SQLException {
-        student.add();
+        //student.add();
     }
     public List<Student> selectStudent(Criteria criteria, String value)
             throws SQLException, IOException {
@@ -140,7 +140,7 @@ public class Database {
                         case GROUP:
                             Group group = selectGroup(Integer.parseInt(value));
                             int group_id = group.getId();
-                            student.setGroup(group_id);
+                            student.setGroup_id(group_id);
                             break;
                     }
                     statement.close();
@@ -150,7 +150,7 @@ public class Database {
             throws SQLException, IOException {
         List<Student> students = selectStudent(criteria,value);
         for(Student s: students) {
-            s.delete(criteria);
+            //s.delete(criteria);
         }
     }
 
@@ -158,7 +158,7 @@ public class Database {
 
     // teacher's methods
     public void addTeacher(Teacher teacher) throws SQLException {
-        teacher.add();
+        //teacher.add();
     }
     public List<Teacher> selectTeacher(Criteria criteria, String value)
             throws SQLException, IOException {
@@ -231,7 +231,7 @@ public class Database {
             if(!Objects.isNull(teacher)) {
                 switch (criteria) {
                     case NAME:
-                        teacher.setName(value);
+                        //teacher.setName(value);
                         break;
                     case BIRTH:
                         LocalDate birth = LocalDate.of(
@@ -239,11 +239,11 @@ public class Database {
                                 LocalDate.parse(value).getMonth(),
                                 LocalDate.parse(value).getDayOfMonth() + 1
                         );
-                        teacher.setBirthday(birth);
+                        //teacher.setBirthday(birth);
                         break;
                     case GENDER:
                         Gender newGender = Gender.valueOf(value);
-                        teacher.setGender(newGender);
+                        //teacher.setGender(newGender);
                         break;
                 }
             }
@@ -252,20 +252,20 @@ public class Database {
             throws SQLException, IOException {
         List<Teacher> teachers = selectTeacher(criteria,value);
         for(Teacher teacher: teachers) {
-            teacher.delete(criteria);
+            //teacher.delete(criteria);
         }
     }
     public void putTeacherInGroup(int teacher_id, int group_number)
             throws SQLException, IOException {
         Group group = selectGroup(group_number);
         Teacher teacher = selectById(TableType.TEACHER,teacher_id);
-        teacher.addGroup(group);
+        //teacher.addGroup(group);
     }
     public void deleteTeacherFromGroup(int teacher_id, int group_number)
             throws SQLException, IOException {
         Group group = selectGroup(group_number);
         Teacher teacher = selectById(TableType.TEACHER,teacher_id);
-        teacher.removeGroup(group);
+        //teacher.removeGroup(group);
     }
     public List<Group> selectTeachersGroup(int teacher_id)
             throws SQLException, IOException {
@@ -278,7 +278,7 @@ public class Database {
 
         while(res.next()) {
             Group group = selectById(TableType.GROUP,res.getInt(2));
-            teacher.restoreGroupFromDB(group);
+            //teacher.restoreGroupFromDB(group);
         }
         return teacher.getGroups();
     }
@@ -287,7 +287,7 @@ public class Database {
 
     // group's methods
     public void addGroup(Group group) throws SQLException {
-        group.add();
+        //group.add();
     }
     public Group selectGroup(int group_number)
             throws SQLException, IOException {
@@ -324,7 +324,7 @@ public class Database {
                     "Some teachers teach in this group. " +
                     "Unbind them first.");
         } else {
-            group.delete();
+            //group.delete();
         }
     }
     // group methods end

@@ -1,16 +1,21 @@
 package dbmodules.main;
 
-import dbmodules.database.Database;
+import dbmodules.dao.GroupDAO;
+import dbmodules.dao.StudentDAO;
 import dbmodules.types.*;
 import dbmodules.tables.*;
 
+import java.io.IOException;
 import java.lang.reflect.*;
+import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
 
+import static dbmodules.types.Criteria.*;
+
 public class Main {
 
-    private static ArrayList<Method> getMethods(String table) {
+    /*private static ArrayList<Method> getMethods(String table) {
         System.out.print("Available methods for " + table + "'s table: ");
         ArrayList<Method> result = new ArrayList<>();
         for (Method method : Database.class.getDeclaredMethods()) {
@@ -40,10 +45,36 @@ public class Main {
             System.out.println("Invalid criteria. Try again.");
             return false;
         }
-    }
+    }*/
 
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) throws SQLException, IOException {
+        GroupDAO gd = new GroupDAO();
+        StudentDAO sd = new StudentDAO();
+        sd.add(
+                new Student(
+                        "ss2",
+                        1999, 04, 05+1,
+                        Gender.FEMALE,
+                        gd.select(422).getId()
+                )
+        );
+        sd.update(sd.selectById(24),GROUP,"421");
+        //sd.delete(ALL,"422");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*try {
             Database DB = new Database();
             Scanner input = new Scanner(System.in);
 
@@ -101,7 +132,7 @@ public class Main {
                                 group_id));
                         break;
 
-                    case "selectStudent":
+                    case "select":
                         System.out.print("Selecting students. \n"
                                 + "Enter criteria. Available variants: ");
                         for (Criteria criteria1 : Criteria.values()) {
@@ -508,6 +539,6 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();
-        }
+        }*/
     }
 }

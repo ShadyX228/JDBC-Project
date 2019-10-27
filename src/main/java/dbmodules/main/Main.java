@@ -34,7 +34,7 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws SQLException, IOException {
+    public static void main(String[] args) {
         try {
             StudentDAO sd = new StudentDAO();
             TeacherDAO td = new TeacherDAO();
@@ -44,7 +44,7 @@ public class Main {
             String tableName = "";
 
             while(!tableName.equals("e")) {
-                System.out.print("Enter table name: ");
+                System.out.print("Enter table name (string): ");
                 tableName = in.next();
                 in.nextLine();
                 TableType table;
@@ -55,20 +55,14 @@ public class Main {
                     continue;
                 }
 
+
                 switch (table) {
                     case STUDENT : {
                         System.out.println("Operation: \t add \t select \t update \t delete");
                         System.out.println("Code: \t\t 0 \t\t 1 \t\t\t 2 \t\t\t 3 \n");
-                        System.out.print("Enter operation code: ");
-                        int opCode = 0;
-                        try {
-                            opCode = in.nextInt();
-                            in.nextLine();
-                        } catch (InputMismatchException e) {
-                            System.out.println("Invalid operation code. Try again.");
-                            break;
-                        }
-
+                        System.out.print("Enter operation code (int): ");
+                        int opCode = in.nextInt();
+                        in.nextLine();
                         switch (opCode) {
                             case 0 : {
                                 System.out.print("Adding student. \nEnter name: ");
@@ -115,12 +109,12 @@ public class Main {
                             }
                             case 1 : {
                                 System.out.print("Selecting students. \n"
-                                        + "Enter criteria. Available variants: ");
+                                        + "Enter criteria ( ");
                                 for (Criteria criteria1 : values()) {
                                     System.out.print(criteria1 + " ");
                                 }
-                                System.out.print(": ");
-                                String crit = in.next();
+                                System.out.print("): ");
+                                String crit = in.next().toUpperCase();
                                 in.nextLine();
                                 if(!checkCriteria(crit)) {
                                     break;
@@ -172,14 +166,14 @@ public class Main {
                                 Student student = sd.selectById(id);
 
                                 System.out.print("Enter criteria " +
-                                        "wich need to update. Available variants: ");
+                                        "wich need to update ( ");
                                 for (Criteria cr : values()) {
                                     if (!cr.equals(ALL) && !cr.equals(ID)) {
                                         System.out.print(cr + " ");
                                     }
                                 }
-                                System.out.print(": ");
-                                String crit = in.next();
+                                System.out.print("): ");
+                                String crit = in.next().toUpperCase();
                                 in.nextLine();
                                 if(!checkCriteria(crit)) {
                                     break;
@@ -221,12 +215,12 @@ public class Main {
                             }
                             case 3 : {
                                 System.out.print("Deleting studetns. "
-                                        + "\nEnter criteria. Available variants: ");
+                                        + "\nEnter criteria ( ");
                                 for (Criteria criteria2 : values()) {
                                     System.out.print(criteria2 + " ");
                                 }
-                                System.out.print(": ");
-                                String crit = in.next();
+                                System.out.print(") ");
+                                String crit = in.next().toUpperCase();
                                 in.nextLine();
                                 if(!checkCriteria(crit)) {
                                     break;

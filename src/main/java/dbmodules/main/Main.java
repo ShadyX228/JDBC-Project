@@ -1,6 +1,5 @@
 package dbmodules.main;
 
-import dbmodules.annotation.isUseful;
 import dbmodules.dao.GroupDAO;
 import dbmodules.dao.StudentDAO;
 import dbmodules.dao.TeacherDAO;
@@ -8,12 +7,12 @@ import dbmodules.types.*;
 import dbmodules.tables.*;
 
 import java.io.IOException;
-import java.lang.reflect.*;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.*;
 
 import static dbmodules.types.Criteria.*;
+import static dbmodules.types.TableType.STUDENT;
 
 public class Main {
     private static boolean checkBirth(int year, int month, int day) {
@@ -48,7 +47,6 @@ public class Main {
                 System.out.print("Enter table name: ");
                 tableName = in.next();
                 in.nextLine();
-
                 TableType table;
                 try {
                     table = TableType.valueOf(tableName.toUpperCase());
@@ -62,8 +60,14 @@ public class Main {
                         System.out.println("Operation: \t add \t select \t update \t delete");
                         System.out.println("Code: \t\t 0 \t\t 1 \t\t\t 2 \t\t\t 3 \n");
                         System.out.print("Enter operation code: ");
-                        int opCode = in.nextInt();
-                        in.nextLine();
+                        int opCode = 0;
+                        try {
+                            opCode = in.nextInt();
+                            in.nextLine();
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid operation code. Try again.");
+                            break;
+                        }
 
                         switch (opCode) {
                             case 0 : {
@@ -258,6 +262,9 @@ public class Main {
                                 }
                                 sd.delete(criteria, critVal);
                                 System.out.println("Student deleted.");
+                            }
+                            default : {
+                                System.out.println("Invalid operation code. Try again.");
                             }
                         }
                         System.out.println();

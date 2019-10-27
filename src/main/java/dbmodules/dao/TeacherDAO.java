@@ -1,14 +1,10 @@
 package dbmodules.dao;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import dbmodules.annotation.isUseful;
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
-import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
-import dbmodules.types.TableType;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -26,7 +22,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         super(TEACHER);
     }
 
-    @isUseful
     public void add(Teacher person)
             throws SQLException {
         String query = "INSERT INTO " + getDBName() + "."
@@ -44,7 +39,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         statement.executeUpdate();
         statement.close();
     }
-    @isUseful
     public Teacher selectById(int id)
             throws SQLException {
         String query = "SELECT * FROM " + getDBName() + "."
@@ -72,7 +66,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         }
         return null;
     }
-    @isUseful
     public List<Teacher> select(Criteria criteria, String value)
             throws SQLException, IOException {
         String query = "SELECT * FROM " + getDBName() + "."
@@ -143,7 +136,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         statement.close();
         return list;
     }
-    @isUseful
     public void update(Teacher person, Criteria criteria, String value)
             throws SQLException, IOException {
         switch (criteria) {
@@ -179,7 +171,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         statement.executeUpdate();
         statement.close();
     }
-    @isUseful
     public void delete(Criteria criteria, String value)
             throws SQLException, IOException {
         List<Teacher> students = select(criteria,value);
@@ -193,7 +184,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
             statement.executeUpdate();
         }
     }
-    @isUseful
     public void putTeacherInGroup(Teacher teacher, Group group)
             throws SQLException, IOException {
         String query = "INSERT INTO " + getDBName() + ".groupteacher"
@@ -208,7 +198,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         statement.close();
         //teacher.addGroup(group);
     }
-    @isUseful
     public void removeTeacherFromGroup(Teacher teacher, Group group)
             throws SQLException, IOException {
         String query = "DELETE FROM " + getDBName() + ".groupteacher"

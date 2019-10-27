@@ -1,6 +1,6 @@
 package dbmodules.dao;
 
-import dbmodules.annotation.isUseful;
+
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
@@ -24,7 +24,6 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         super(STUDENT);
     }
 
-    @isUseful
     public void add(Student person)
             throws SQLException {
         String query = "INSERT INTO " + getDBName() + "."
@@ -43,7 +42,6 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.executeUpdate();
         statement.close();
     }
-    @isUseful
     public Student selectById(int id)
             throws SQLException {
         String query = "SELECT * FROM " + getDBName() + "."
@@ -72,7 +70,6 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         }
         return null;
     }
-    @isUseful
     public List<Student> select(Criteria criteria, String value)
             throws SQLException, IOException {
         String query = "SELECT * FROM " + getDBName() + "."
@@ -159,7 +156,6 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.close();
         return list;
     }
-    @isUseful
     public void update(Student person, Criteria criteria, String value)
             throws SQLException, IOException {
         switch (criteria) {
@@ -203,7 +199,6 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.executeUpdate();
         statement.close();
     }
-    @isUseful
     public void delete(Criteria criteria, String value)
             throws SQLException, IOException {
         List<Student> students = select(criteria,value);

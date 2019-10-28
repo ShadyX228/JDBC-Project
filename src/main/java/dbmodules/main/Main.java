@@ -734,6 +734,7 @@ public class Main {
                                     group = gd.select(number);
                                 } catch (NullPointerException e) {
                                     System.out.println("No group with given number. Try again.");
+                                    break;
                                 }
 
                                 if(!sd.select(GROUP, Integer.toString(number)).isEmpty()) {

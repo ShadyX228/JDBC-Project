@@ -54,4 +54,7 @@ public class TableDAO {
     protected String getTableName() {
         return tableName.getValue();
     }
+    public static void closeConnection() throws SQLException {
+        connection.close();
+    }
 }

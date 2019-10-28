@@ -843,6 +843,8 @@ public class Main {
                     }
                 }
             }
+
+            TableDAO.closeConnection();
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();

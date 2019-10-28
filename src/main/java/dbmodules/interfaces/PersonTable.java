@@ -1,7 +1,5 @@
 package dbmodules.interfaces;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-import dbmodules.tables.Student;
 import dbmodules.tables.Table;
 import dbmodules.types.Criteria;
 

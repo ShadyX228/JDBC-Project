@@ -166,8 +166,8 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
             case BIRTH : {
                 LocalDate birth = LocalDate.of(
                         LocalDate.parse(value).getYear(),
-                        LocalDate.parse(value).getMonth(),
-                        LocalDate.parse(value).getDayOfMonth() + 1
+                        LocalDate.parse(value).getMonth().getValue(),
+                        LocalDate.parse(value).getDayOfMonth()
                 );
                 person.setBirthday(birth);
                 break;
@@ -192,7 +192,11 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         PreparedStatement statement = getConnection()
                 .prepareStatement(query);
         statement.setString(1, person.getName());
-        statement.setDate(2, java.sql.Date.valueOf(person.getBirth()));
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedBirth = dateTimeFormatter.format(person.getBirth());
+        statement.setString(2, formattedBirth);
+
         statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
         statement.setInt(4, person.getGroup_id());
         statement.setInt(5, person.getId());

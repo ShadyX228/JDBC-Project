@@ -1,18 +1,13 @@
 package dbmodules.main;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
-import dbmodules.dao.TeacherDAO;
+import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
-
-import java.io.IOException;
-import java.sql.SQLException;
 import java.time.*;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static dbmodules.types.Criteria.*;
-import static dbmodules.types.TableType.STUDENT;
 
 public class Main {
     private static boolean checkBirth(int year, int month, int day) {
@@ -58,24 +53,42 @@ public class Main {
 
                 switch (table) {
                     case STUDENT : {
-                        System.out.println("Operation: \t add \t select \t update \t delete");
-                        System.out.println("Code: \t\t 0 \t\t 1 \t\t\t 2 \t\t\t 3 \n");
+                        System.out.println("Operation: \t add \t select " +
+                                "\t update \t delete");
+                        System.out.println("Code: \t\t 0 \t\t 1 " +
+                                "\t\t\t 2 \t\t\t 3 \n");
                         System.out.print("Enter operation code (int): ");
-                        int opCode = in.nextInt();
-                        in.nextLine();
+                        int opCode = 0;
+                        try {
+                            opCode = in.nextInt();
+                            in.nextLine();
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid operation code. Try again.");
+                            in.nextLine();
+                            break;
+                        }
                         switch (opCode) {
-                            case 0 : {
+                            case 0 :  {
                                 System.out.print("Adding student. \nEnter name: ");
                                 String name = in.nextLine();
 
                                 System.out.print("Entering birthday. Enter year: ");
-                                int year = in.nextInt();
+                                int year;
+                                int month;
+                                int day;
+                                try {
+                                    year = in.nextInt();
 
-                                System.out.print("Enter month: ");
-                                int month = in.nextInt();
+                                    System.out.print("Enter month: ");
+                                    month = in.nextInt();
 
-                                System.out.print("Enter day: ");
-                                int day = in.nextInt();
+                                    System.out.print("Enter day: ");
+                                    day = in.nextInt();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid birthday. Try again.");
+                                    in.nextLine();
+                                    break;
+                                }
 
                                 if(!checkBirth(year, month, day)) {
                                     break;
@@ -85,14 +98,21 @@ public class Main {
                                 String genderInput = in.next();
                                 Gender gender;
                                 try {
-                                    gender = Gender.valueOf(genderInput);
+                                    gender = Gender.valueOf(genderInput.toUpperCase());
                                 } catch (IllegalArgumentException e) {
                                     System.out.println("Invalid gender. Try again.");
                                     break;
                                 }
 
                                 System.out.print("Enter student's group number: ");
-                                int number = in.nextInt();
+                                int number = 0;
+                                try {
+                                    number = in.nextInt();
+                                } catch (InputMismatchException e ) {
+                                    System.out.println("Invalid group number. Try again.");
+                                    in.nextLine();
+                                    break;
+                                }
                                 Group group = gd.select(number);
                                 if (Objects.isNull(group)) {
                                     System.out.println("No group with given number. Try again.");
@@ -107,7 +127,7 @@ public class Main {
                                 System.out.println("Student added.");
                                 break;
                             }
-                            case 1 : {
+                            case 1 :  {
                                 System.out.print("Selecting students. \n"
                                         + "Enter criteria ( ");
                                 for (Criteria criteria1 : values()) {
@@ -128,6 +148,14 @@ public class Main {
                                 } else {
                                     critVal = "";
                                 }
+                                if (criteria.equals(ID)) {
+                                    try {
+                                        Integer.parseInt(critVal);
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Invalid id. Try again");
+                                        break;
+                                    }
+                                }
                                 if (criteria.equals(GENDER)) {
                                     try {
                                         Gender.valueOf(critVal);
@@ -137,18 +165,28 @@ public class Main {
                                     }
                                 }
                                 if (criteria.equals(GROUP)) {
-                                    Group group_check = gd.select(Integer.parseInt(critVal));
-                                    if (Objects.isNull(group_check)) {
-                                        System.out.println("No group with given number. Try again.");
+                                    try {
+                                        Group group_check = gd.select(Integer.parseInt(critVal));
+                                        if (Objects.isNull(group_check)) {
+                                            System.out.println("No group with given number. Try again.");
+                                            break;
+                                        }
+                                    } catch (NumberFormatException e ) {
+                                        System.out.println("Invalid group number. Try again.");
                                         break;
                                     }
                                 }
                                 if (criteria.equals(BIRTH)) {
-                                    LocalDate d = LocalDate.parse(critVal);
-                                    if(!checkBirth(
-                                            d.getYear(),
-                                            d.getMonth().getValue(),
-                                            d.getDayOfMonth())) {
+                                    try {
+                                        LocalDate d = LocalDate.parse(critVal);
+                                        if (!checkBirth(
+                                                d.getYear(),
+                                                d.getMonth().getValue(),
+                                                d.getDayOfMonth())) {
+                                            break;
+                                        }
+                                    } catch (DateTimeParseException e ) {
+                                        System.out.println("Invalid birthday. Try again.");
                                         break;
                                     }
 
@@ -160,10 +198,23 @@ public class Main {
                                 }
                                 break;
                             }
-                            case 2 : {
+                            case 2 :  {
                                 System.out.print("Updating student. \nEnter id: ");
-                                int id = in.nextInt();
+                                int id;
+                                try {
+                                    id = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid id. Try again");
+                                    in.nextLine();
+                                    break;
+                                }
                                 Student student = sd.selectById(id);
+
+                                if(Objects.isNull(student)) {
+                                    System.out.println("No student with given id. Try again.");
+                                    break;
+                                }
 
                                 System.out.print("Enter criteria " +
                                         "wich need to update ( ");
@@ -192,34 +243,251 @@ public class Main {
                                     }
                                 }
                                 if (criteria.equals(GROUP)) {
-                                    Group group_check = gd.select(
-                                            Integer.parseInt(critVal)
-                                    );
-                                    if (Objects.isNull(group_check)) {
-                                        System.out.println("No group with given number." +
-                                                " Try again.");
+                                    try {
+                                        Group group_check = gd.select(Integer.parseInt(critVal));
+                                        if (Objects.isNull(group_check)) {
+                                            System.out.println("No group with given number. Try again.");
+                                            break;
+                                        }
+                                    } catch (NumberFormatException e ) {
+                                        System.out.println("Invalid group number. Try again.");
                                         break;
                                     }
                                 }
                                 if (criteria.equals(BIRTH)) {
-                                    LocalDate d = LocalDate.parse(critVal);
-                                    if(!checkBirth(
-                                            d.getYear(),
-                                            d.getMonth().getValue(),
-                                            d.getDayOfMonth())) {
+                                    try {
+                                        LocalDate d = LocalDate.parse(critVal);
+                                        if (!checkBirth(
+                                                d.getYear(),
+                                                d.getMonth().getValue(),
+                                                d.getDayOfMonth())) {
+                                            break;
+                                        }
+                                    } catch (DateTimeParseException e ) {
+                                        System.out.println("Invalid birthday. Try again.");
                                         break;
                                     }
                                 }
                                 sd.update(student, criteria, critVal);
+                                System.out.println("Student updated.");
                                 break;
                             }
-                            case 3 : {
+                            case 3 :  {
                                 System.out.print("Deleting studetns. "
                                         + "\nEnter criteria ( ");
                                 for (Criteria criteria2 : values()) {
                                     System.out.print(criteria2 + " ");
                                 }
                                 System.out.print(") ");
+                                String crit = in.next().toUpperCase();
+                                in.nextLine();
+                                if(!checkCriteria(crit)) {
+                                    break;
+                                }
+                                Criteria criteria = valueOf(crit);
+
+                                System.out.print("Enter criteria value: ");
+                                String critVal = in.nextLine();
+
+                                if (criteria.equals(ID)) {
+                                    try {
+                                        Integer.parseInt(critVal);
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Invalid id. Try again");
+                                        break;
+                                    }
+                                }
+                                if (criteria.equals(GENDER)) {
+                                    try {
+                                        Gender.valueOf(critVal);
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println("Invalid gender. Try again.");
+                                        break;
+                                    }
+                                }
+                                if (criteria.equals(GROUP)) {
+                                    try {
+                                        Group group_check = gd.select(Integer.parseInt(critVal));
+                                        if (Objects.isNull(group_check)) {
+                                            System.out.println("No group with given number. Try again.");
+                                            break;
+                                        }
+                                    } catch (NumberFormatException e ) {
+                                        System.out.println("Invalid group number. Try again.");
+                                        break;
+                                    }
+                                }
+                                if (criteria.equals(BIRTH)) {
+                                    try {
+                                        LocalDate d = LocalDate.parse(critVal);
+                                        if (!checkBirth(
+                                                d.getYear(),
+                                                d.getMonth().getValue(),
+                                                d.getDayOfMonth())) {
+                                            break;
+                                        }
+                                    } catch (DateTimeParseException e ) {
+                                        System.out.println("Invalid birthday. Try again.");
+                                        break;
+                                    }
+                                }
+                                sd.delete(criteria, critVal);
+                                System.out.println("Student deleted.");
+                            }
+                            default : {
+                                System.out.println("Invalid operation code. Try again.");
+                            }
+                        }
+                        System.out.println();
+                    }
+                    case TEACHER : {
+                        System.out.println("Operation: \t add \t select " +
+                                "\t update \t delete " +
+                                "\t putTeacherInGroup \t removeTeacherFromGroup");
+                        System.out.println("Code: \t\t 0 " +
+                                "\t\t 1 \t\t\t 2 \t\t\t 3 " +
+                                "\t\t\t 4 \t\t\t\t\t 5 \n");
+                        System.out.print("Enter operation code (int): ");
+                        int opCode = 0;
+                        try {
+                            opCode = in.nextInt();
+                            in.nextLine();
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid operation code. Try again.");
+                            in.nextLine();
+                            break;
+                        }
+                        switch (opCode) {
+                            case 0 :  {
+                                System.out.print("Adding teacher. \nEnter name: ");
+                                String name = in.nextLine();
+
+                                System.out.print("Entering birthday. Enter year: ");
+                                int year;
+                                int month;
+                                int day;
+                                try {
+                                    year = in.nextInt();
+
+                                    System.out.print("Enter month: ");
+                                    month = in.nextInt();
+
+                                    System.out.print("Enter day: ");
+                                    day = in.nextInt();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid birthday. Try again.");
+                                    in.nextLine();
+                                    break;
+                                }
+
+                                if(!checkBirth(year, month, day)) {
+                                    break;
+                                }
+
+                                System.out.print("Enter gender (MALE/FEMALE): ");
+                                String genderInput = in.next();
+                                Gender gender;
+                                try {
+                                    gender = Gender.valueOf(genderInput.toUpperCase());
+                                } catch (IllegalArgumentException e) {
+                                    System.out.println("Invalid gender. Try again.");
+                                    break;
+                                }
+
+                                td.add(new Teacher(
+                                        name,
+                                        year, month, day,
+                                        gender));
+                                System.out.println("Teacher added.");
+                                break;
+                            }
+                            case 1 :  {
+                                System.out.print("Selecting teachers. \n"
+                                        + "Enter criteria ( ");
+                                for (Criteria criteria1 : values()) {
+                                    if(!criteria1.equals(GROUP)) {
+                                        System.out.print(criteria1 + " ");
+                                    }
+                                }
+                                System.out.print("): ");
+                                String crit = in.next().toUpperCase();
+                                in.nextLine();
+                                if(!checkCriteria(crit)) {
+                                    break;
+                                }
+                                Criteria criteria = valueOf(crit);
+                                String critVal;
+
+                                if (!criteria.equals(ALL)) {
+                                    System.out.print("Enter criteria value: ");
+                                    critVal = in.nextLine();
+                                } else {
+                                    critVal = "";
+                                }
+                                if (criteria.equals(ID)) {
+                                    try {
+                                        Integer.parseInt(critVal);
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Invalid id. Try again");
+                                        break;
+                                    }
+                                }
+                                if (criteria.equals(GENDER)) {
+                                    try {
+                                        Gender.valueOf(critVal);
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println("Invalid gender. Try again.");
+                                        break;
+                                    }
+                                }
+                                if (criteria.equals(BIRTH)) {
+                                    try {
+                                        LocalDate d = LocalDate.parse(critVal);
+                                        if (!checkBirth(
+                                                d.getYear(),
+                                                d.getMonth().getValue(),
+                                                d.getDayOfMonth())) {
+                                            break;
+                                        }
+                                    } catch (DateTimeParseException e ) {
+                                        System.out.println("Invalid birthday. Try again.");
+                                        break;
+                                    }
+
+                                }
+                                for (Teacher teacher
+                                        : td.select(criteria, critVal)
+                                ) {
+                                    System.out.println(teacher);
+                                }
+                                break;
+                            }
+                            case 2 :  {
+                                System.out.print("Updating teacher. \nEnter id: ");
+                                int id;
+                                try {
+                                    id = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid id. Try again");
+                                    in.nextLine();
+                                    break;
+                                }
+                                Teacher teacher = td.selectById(id);
+
+                                if(Objects.isNull(teacher)) {
+                                    System.out.println("No teacher with given id. Try again.");
+                                    break;
+                                }
+
+                                System.out.print("Enter criteria " +
+                                        "wich need to update ( ");
+                                for (Criteria cr : values()) {
+                                    if (!cr.equals(ALL) && !cr.equals(ID) && !cr.equals(GROUP)) {
+                                        System.out.print(cr + " ");
+                                    }
+                                }
+                                System.out.print("): ");
                                 String crit = in.next().toUpperCase();
                                 in.nextLine();
                                 if(!checkCriteria(crit)) {
@@ -238,24 +506,245 @@ public class Main {
                                         break;
                                     }
                                 }
-                                if (criteria.equals(GROUP)) {
-                                    Group group_check = gd.select(Integer.parseInt(critVal));
-                                    if (Objects.isNull(group_check)) {
-                                        System.out.println("No group with given number. Try again.");
+                                if (criteria.equals(BIRTH)) {
+                                    try {
+                                        LocalDate d = LocalDate.parse(critVal);
+                                        if (!checkBirth(
+                                                d.getYear(),
+                                                d.getMonth().getValue(),
+                                                d.getDayOfMonth())) {
+                                            break;
+                                        }
+                                    } catch (DateTimeParseException e ) {
+                                        System.out.println("Invalid birthday. Try again.");
+                                        break;
+                                    }
+                                }
+                                td.update(teacher, criteria, critVal);
+                                System.out.println("Teacher updated.");
+                                break;
+                            }
+                            case 3 :  {
+                                System.out.print("Deleting teachers. "
+                                        + "\nEnter criteria ( ");
+                                for (Criteria cr : values()) {
+                                    if(!cr.equals(GROUP)) {
+                                        System.out.print(cr + " ");
+                                    }
+                                }
+                                System.out.print(") ");
+                                String crit = in.next().toUpperCase();
+                                in.nextLine();
+                                if(!checkCriteria(crit)) {
+                                    break;
+                                }
+                                Criteria criteria = valueOf(crit);
+
+                                System.out.print("Enter criteria value: ");
+                                String critVal = in.nextLine();
+
+                                if (criteria.equals(ID)) {
+                                    try {
+                                        Integer.parseInt(critVal);
+                                    } catch (NumberFormatException e) {
+                                        System.out.println("Invalid id. Try again");
+                                        break;
+                                    }
+                                }
+                                if (criteria.equals(GENDER)) {
+                                    try {
+                                        Gender.valueOf(critVal);
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println("Invalid gender. Try again.");
                                         break;
                                     }
                                 }
                                 if (criteria.equals(BIRTH)) {
-                                    LocalDate d = LocalDate.parse(critVal);
-                                    if(!checkBirth(
-                                            d.getYear(),
-                                            d.getMonth().getValue(),
-                                            d.getDayOfMonth())) {
+                                    try {
+                                        LocalDate d = LocalDate.parse(critVal);
+                                        if (!checkBirth(
+                                                d.getYear(),
+                                                d.getMonth().getValue(),
+                                                d.getDayOfMonth())) {
+                                            break;
+                                        }
+                                    } catch (DateTimeParseException e ) {
+                                        System.out.println("Invalid birthday. Try again.");
                                         break;
                                     }
                                 }
                                 sd.delete(criteria, critVal);
-                                System.out.println("Student deleted.");
+                                System.out.println("Teacher deleted.");
+                            }
+                            case 4 :  {
+                                System.out.print("Putting teacher in group." +
+                                        " \nEnter teacher id: ");
+                                int id = 0;
+                                try {
+                                    id = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid id. Try again");
+                                    in.nextLine();
+                                    break;
+                                }
+
+                                System.out.print("Enter group number: ");
+                                int number = 0;
+                                try {
+                                    number = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid group number. Try again");
+                                    in.nextLine();
+                                    break;
+                                }
+
+                                Teacher teacher = td.selectById(id);
+                                Group group = gd.select(number);
+
+                                if (Objects.isNull(teacher)) {
+                                    System.out.println("Invalid teacher id. Try again.");
+                                    break;
+                                }
+                                if (Objects.isNull(group)) {
+                                    System.out.println("No group with given number. " +
+                                            "Try again.");
+                                    break;
+                                }
+                                td.putTeacherInGroup(teacher, group);
+                                break;
+                            }
+                            case 5 :  {
+                                System.out.print("Putting teacher in group." +
+                                        " \nEnter teacher id: ");
+                                int id = 0;
+                                try {
+                                    id = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid id. Try again");
+                                    in.nextLine();
+                                    break;
+                                }
+
+                                System.out.print("Enter group number: ");
+                                int number = 0;
+                                try {
+                                    number = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid group number. Try again");
+                                    in.nextLine();
+                                    break;
+                                }
+
+                                Teacher teacher = td.selectById(id);
+                                Group group = gd.select(number);
+
+                                if (Objects.isNull(teacher)) {
+                                    System.out.println("Invalid teacher id. Try again.");
+                                    break;
+                                }
+                                if (Objects.isNull(group)) {
+                                    System.out.println("No group with given number. Try again.");
+                                    break;
+                                }
+                                td.removeTeacherFromGroup(teacher, group);
+
+                                break;
+                            }
+                            default : {
+                                System.out.println("Invalid operation code. Try again.");
+                            }
+                        }
+                        System.out.println();
+                    }
+                    case GROUP : {
+                        System.out.println("Operation: \t add \t select " +
+                                "\t selectAll \t delete");
+                        System.out.println("Code: \t\t 0 " +
+                                "\t\t 1 \t\t\t 2 \t\t\t 3\n");
+                        System.out.print("Enter operation code (int): ");
+                        int opCode = 0;
+                        try {
+                            opCode = in.nextInt();
+                            in.nextLine();
+                        } catch (InputMismatchException e) {
+                            System.out.println("Invalid operation code. Try again.");
+                            in.nextLine();
+                            break;
+                        }
+                        switch (opCode) {
+                            case 0 :  {
+                                System.out.print("Adding Group. \nEnter number: ");
+                                int number = 0;
+                                try {
+                                    number = in.nextInt();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid group number value. Try again.");
+                                    in.nextLine();
+                                    break;
+                                }
+                                in.nextLine();
+
+                                gd.add(new Group(number));
+                                System.out.println("Group added.");
+                                break;
+                            }
+                            case 1 :  {
+                                System.out.print("Selecting group. \n"
+                                        + "Enter group number: ");
+
+                                int number = 0;
+                                try {
+                                    number = in.nextInt();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid group number value. Try again.");
+                                    in.nextLine();
+                                    break;
+                                }
+                                in.nextLine();
+                                System.out.println(gd.select(number));
+                                break;
+                            }
+                            case 2 :  {
+                                System.out.print("Selecting all...");
+                                for(Group group : gd.selectAll()) {
+                                    System.out.println(group);
+                                }
+                                break;
+                            }
+                            case 3 :  {
+                                System.out.print("Deleting group. "
+                                        + "\nEnter number: ");
+
+                                int number = 0;
+                                try {
+                                    number = in.nextInt();
+                                    in.nextLine();
+                                } catch (InputMismatchException e) {
+                                    System.out.println("Invalid group number value. Try again.");
+                                    in.nextLine();
+                                    break;
+                                }
+
+                                Group group = null;
+                                try {
+                                    group = gd.select(number);
+                                } catch (NullPointerException e) {
+                                    System.out.println("No group with given number. Try again.");
+                                }
+
+                                if(!sd.select(GROUP, Integer.toString(number)).isEmpty()) {
+                                    System.out.println("Cannot delete group. Some students is in." +
+                                            " Unbind them first.");
+                                    break;
+                                }
+
+                                gd.delete(group);
+
+                                break;
                             }
                             default : {
                                 System.out.println("Invalid operation code. Try again.");
@@ -264,495 +753,10 @@ public class Main {
                         System.out.println();
                     }
                 }
-
-
-
-
-
-
             }
-
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-        /*try {
-            Database DB = new Database();
-            Scanner input = new Scanner(System.in);
-
-            getMethods("Student");
-            getMethods("Teacher");
-            getMethods("Group");
-
-            String methodName = "";
-            while (!methodName.equals("exit")) {
-                System.out.print("\nEnter method's name or \"exit\" to stop: ");
-                methodName = input.next();
-                input.nextLine();
-                switch (methodName) {
-                    // student methods begin
-                    case "addStudent":
-                        System.out.print("Adding student. \nEnter name: ");
-                        String name = input.nextLine();
-
-                        System.out.print("Entering birthday. Enter year: ");
-                        int year = input.nextInt();
-
-                        System.out.print("Enter month: ");
-                        int month = input.nextInt();
-
-                        System.out.print("Enter day: ");
-                        int day = input.nextInt();
-
-                        if(!checkBirth(year, month, day)) {
-                            break;
-                        }
-
-                        System.out.print("Enter gender (MALE/FEMALE): ");
-                        String genderInput = input.next();
-                        Gender gender;
-                        try {
-                            gender = Gender.valueOf(genderInput);
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Invalid gender. Try again.");
-                            break;
-                        }
-
-                        System.out.print("Enter student's group number: ");
-                        int number = input.nextInt();
-                        Group group = DB.selectGroup(number);
-                        if (Objects.isNull(group)) {
-                            System.out.println("No group with given number. Try again.");
-                            break;
-                        }
-                        int group_id = group.getId();
-
-                        DB.addStudent(new Student(
-                                name,
-                                year, month, day,
-                                gender,
-                                group_id));
-                        break;
-
-                    case "select":
-                        System.out.print("Selecting students. \n"
-                                + "Enter criteria. Available variants: ");
-                        for (Criteria criteria1 : Criteria.values()) {
-                            System.out.print(criteria1 + " ");
-                        }
-                        System.out.print(": ");
-                        String crit = input.next();
-                        input.nextLine();
-                        if(!checkCriteria(crit)) {
-                            break;
-                        }
-                        Criteria criteria = Criteria.valueOf(crit);
-                        String critVal;
-
-                        if (!criteria.equals(Criteria.ALL)) {
-                            System.out.print("Enter criteria value: ");
-                            critVal = input.nextLine();
-                        } else {
-                            critVal = "";
-                        }
-                        if (criteria.equals(Criteria.GENDER)) {
-                            try {
-                                Gender.valueOf(critVal);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid gender. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.GROUP)) {
-                            Group group_check = DB.selectGroup(Integer.parseInt(critVal));
-                            if (Objects.isNull(group_check)) {
-                                System.out.println("No group with given number. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.BIRTH)) {
-                            LocalDate d = LocalDate.parse(critVal);
-                            if(!checkBirth(
-                                    d.getYear(),
-                                    d.getDayOfMonth(),
-                                    d.getDayOfMonth())) {
-                                break;
-                            }
-                        }
-                        for (Student student
-                                : DB.selectStudent(criteria, critVal)
-                        ) {
-                            System.out.println(student);
-                        }
-                        break;
-
-                    case "deleteStudent":
-                        System.out.print("Deleting studetns. "
-                                + "\nEnter criteria. Available variants: ");
-                        for (Criteria criteria2 : Criteria.values()) {
-                            System.out.print(criteria2 + " ");
-                        }
-                        System.out.print(": ");
-                        crit = input.next();
-                        input.nextLine();
-                        if(!checkCriteria(crit)) {
-                            break;
-                        }
-                        criteria = Criteria.valueOf(crit);
-
-                        System.out.print("Enter criteria value: ");
-                        critVal = input.nextLine();
-
-                        if (criteria.equals(Criteria.GENDER)) {
-                            try {
-                                Gender.valueOf(critVal);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid gender. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.GROUP)) {
-                            Group group_check = DB.selectGroup(Integer.parseInt(critVal));
-                            if (Objects.isNull(group_check)) {
-                                System.out.println("No group with given number. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.BIRTH)) {
-                            LocalDate d = LocalDate.parse(critVal);
-                            if(!checkBirth(
-                                    d.getYear(),
-                                    d.getDayOfMonth(),
-                                    d.getDayOfMonth())) {
-                                break;
-                            }
-                        }
-                        DB.deleteStudent(criteria, critVal);
-                        break;
-
-                    case "updateStudent":
-                        System.out.print("Updating student. \nEnter id: ");
-                        int id = input.nextInt();
-
-                        System.out.print("Enter criteria " +
-                                "wich need to update. Available variants: ");
-                        for (Criteria cr : Criteria.values()) {
-                            if (!cr.equals(Criteria.ALL) && !cr.equals(Criteria.ID)) {
-                                System.out.print(cr + " ");
-                            }
-                        }
-                        System.out.print(": ");
-                        crit = input.next();
-                        input.nextLine();
-                        if(!checkCriteria(crit)) {
-                            break;
-                        }
-                        criteria = Criteria.valueOf(crit);
-
-                        System.out.print("Enter criteria value: ");
-                        critVal = input.nextLine();
-
-                        if (criteria.equals(Criteria.GENDER)) {
-                            try {
-                                Gender.valueOf(critVal);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid gender. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.GROUP)) {
-                            Group group_check = DB.selectGroup(
-                                    Integer.parseInt(critVal));
-                            if (Objects.isNull(group_check)) {
-                                System.out.println("No group with given number." +
-                                        " Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.BIRTH)) {
-                            LocalDate d = LocalDate.parse(critVal);
-                            if(!checkBirth(
-                                    d.getYear(),
-                                    d.getDayOfMonth(),
-                                    d.getDayOfMonth())) {
-                                break;
-                            }
-                        }
-                        DB.updateStudent(id, criteria, critVal);
-                        break;
-                    // student methods end
-
-
-                    // teacher methods begin
-                    case "addTeacher":
-                        System.out.print("Adding teacher. \nEnter name: ");
-                        name = input.nextLine();
-
-                        System.out.print("Entering birthday. Enter year: ");
-                        year = input.nextInt();
-
-                        System.out.print("Enter month: ");
-                        month = input.nextInt();
-
-                        System.out.print("Enter day: ");
-                        day = input.nextInt();
-
-                        if(!checkBirth(year, month, day)) {
-                            break;
-                        }
-
-                        System.out.print("Enter gender (MALE/FEMALE): ");
-                        genderInput = input.next();
-                        try {
-                            gender = Gender.valueOf(genderInput);
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Invalid gender. Try again.");
-                            break;
-                        }
-
-                        DB.addTeacher(new Teacher(name,
-                                year, month, day,
-                                gender)
-                        );
-                        break;
-
-                    case "selectTeacher":
-                        System.out.print("Selecting teachers. " +
-                                "\nEnter criteria. Available variants: ");
-                        for (Criteria criteria1 : Criteria.values()) {
-                            if (!criteria1.equals(Criteria.GROUP)) {
-                                System.out.print(criteria1 + " ");
-                            }
-                        }
-                        System.out.print(": ");
-                        crit = input.next();
-                        input.nextLine();
-                        if(!checkCriteria(crit)) {
-                            break;
-                        }
-                        criteria = Criteria.valueOf(crit);
-
-                        if (!criteria.equals(Criteria.ALL)) {
-                            System.out.print("Enter criteria value: ");
-                            critVal = input.nextLine();
-                        } else {
-                            critVal = "";
-                        }
-                        if (criteria.equals(Criteria.GENDER)) {
-                            try {
-                                Gender.valueOf(critVal);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid gender. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.BIRTH)) {
-                            try {
-                                LocalDate.parse(critVal);
-                            } catch (DateTimeException e) {
-                                System.out.println("Invalid birthday. Try again.");
-                                break;
-                            }
-                        }
-                        for (Teacher teacher : DB.selectTeacher(
-                                criteria,
-                                critVal)
-                        ) {
-                            System.out.println(teacher);
-                        }
-                        break;
-
-                    case "deleteTeacher":
-                        System.out.print("Deleting teachers. " +
-                                "\nEnter criteria. Available variants: ");
-                        for (Criteria criteria2 : Criteria.values()) {
-                            if (!criteria2.equals(Criteria.GROUP)) {
-                                System.out.print(criteria2 + " ");
-                            }
-                        }
-                        System.out.print(": ");
-                        crit = input.next();
-                        input.nextLine();
-                        if(!checkCriteria(crit)) {
-                            break;
-                        }
-                        criteria = Criteria.valueOf(crit);
-
-                        System.out.print("Enter criteria value: ");
-                        critVal = input.nextLine();
-
-
-
-                        if (criteria.equals(Criteria.GENDER)) {
-                            try {
-                                Gender.valueOf(critVal);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid gender. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.BIRTH)) {
-                            try {
-                                LocalDate.parse(critVal);
-                            } catch (DateTimeException e) {
-                                System.out.println("Invalid birthday. Try again.");
-                                break;
-                            }
-                        }
-                        DB.deleteTeacher(criteria, critVal);
-                        break;
-
-                    case "updateTeacher":
-                        System.out.print("Updating teacher. \nEnter id: ");
-                        id = input.nextInt();
-
-                        System.out.print("Enter criteria " +
-                                "wich need to update. Available variants: ");
-                        for (Criteria cr : Criteria.values()) {
-                            if (!cr.equals(Criteria.GROUP)
-                                    && !cr.equals(Criteria.ID)
-                                    && !cr.equals(Criteria.ALL)) {
-                                System.out.print(cr + " ");
-                            }
-                        }
-                        System.out.print(": ");
-                        crit = input.next();
-                        if(!checkCriteria(crit)) {
-                            break;
-                        }
-                        criteria = Criteria.valueOf(crit);
-
-                        System.out.print("Enter criteria value: ");
-                        critVal = input.next();
-
-                        if (criteria.equals(Criteria.GENDER)) {
-                            try {
-                                Gender.valueOf(critVal);
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Invalid gender. Try again.");
-                                break;
-                            }
-                        }
-                        if (criteria.equals(Criteria.BIRTH)) {
-                            try {
-                                LocalDate.parse(critVal);
-                            } catch (DateTimeException e) {
-                                System.out.println("Invalid birthday. Try again.");
-                                break;
-                            }
-                        }
-                        DB.updateTeacher(id, criteria, critVal);
-                        break;
-
-                    case "selectTeachersGroup":
-                        System.out.print("Selecting teacher's groups." +
-                                " \nEnter teacher id: ");
-                        id = input.nextInt();
-                        for (Group gr : DB.selectTeachersGroup(id)) {
-                            System.out.println(gr);
-                        }
-                        break;
-
-                    case "putTeacherInGroup":
-                        System.out.print("Putting teacher in group." +
-                                " \nEnter teacher id: ");
-                        id = input.nextInt();
-                        System.out.print("Enter group number: ");
-                        number = input.nextInt();
-
-                        if (Objects.isNull(DB.selectTeacher(Criteria.ID,
-                                Integer.toString(id)).get(0))) {
-                            System.out.println("Invalid teacher id. Try again.");
-                            break;
-                        }
-                        if (Objects.isNull(DB.selectGroup(number))) {
-                            System.out.println("No group with given number. " +
-                                    "Try again.");
-                            break;
-                        }
-                        DB.putTeacherInGroup(id, number);
-                        break;
-
-                    case "deleteTeacherFromGroup":
-                        System.out.print("Putting teacher in group." +
-                                " \nEnter teacher id: ");
-                        id = input.nextInt();
-                        System.out.print("Enter group number: ");
-                        number = input.nextInt();
-                        if (Objects.isNull(DB.selectTeacher(Criteria.ID,
-                                Integer.toString(id)).get(0))) {
-                            System.out.println("Invalid teacher id. Try again.");
-                            break;
-                        }
-                        if (Objects.isNull(DB.selectGroup(number))) {
-                            System.out.println("No group with given number. Try again.");
-                            break;
-                        }
-                        DB.deleteTeacherFromGroup(id, number);
-
-                        break;
-                    // teacher methods end
-
-
-                    // group methods begin
-                    case "addGroup":
-                        System.out.print("Adding group. " +
-                                "\nEnter group number: ");
-                        number = input.nextInt();
-                        DB.addGroup(new Group(number));
-                        break;
-
-                    case "selectGroup":
-                        System.out.print("Selecting group. " +
-                                "\nEnter group number: ");
-                        number = input.nextInt();
-
-                        System.out.println(DB.selectGroup(number));
-                        break;
-                    case "selectAllGroups":
-                        System.out.println("Selecting all groups.");
-                        for (Group gr : DB.selectAllGroups()) {
-                            System.out.println(gr);
-                        }
-                        break;
-                    case "deleteGroup":
-                        System.out.print("Deleting group. Enter group number: ");
-                        number = input.nextInt();
-                        Group g = DB.selectGroup(number);
-                        if(Objects.isNull(g)) {
-                            System.out.println("Invalid group. Try again.");
-                            break;
-                        }
-                        DB.deleteGroup(g);
-                        break;
-                    // group methods end
-
-
-                    // general methods begin
-                    case "exit":
-                        System.out.print("Shutting down.");
-                        break;
-
-                    default:
-                        System.out.println("No method with selected name.");
-                        // general methods end
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Some error occured.");
-            e.printStackTrace();
-        }*/
     }
 }

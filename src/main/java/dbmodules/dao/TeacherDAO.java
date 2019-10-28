@@ -52,7 +52,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
             String name = res.getString(2);
             LocalDate birth = res.getDate(3).toLocalDate();
             Gender gender = Gender.valueOf(res.getString(4));
-            int group_id = res.getInt(5);
             statement.close();
 
             return new Teacher(
@@ -165,7 +164,11 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         PreparedStatement statement = getConnection()
                 .prepareStatement(query);
         statement.setString(1, person.getName());
-        statement.setDate(2, java.sql.Date.valueOf(person.getBirth()));
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedBirth = dateTimeFormatter.format(person.getBirth());
+        statement.setString(2, formattedBirth);
+
         statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
         statement.setInt(4, person.getId());
         statement.executeUpdate();
@@ -196,7 +199,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
 
         statement.executeUpdate();
         statement.close();
-        //teacher.addGroup(group);
     }
     public void removeTeacherFromGroup(Teacher teacher, Group group)
             throws SQLException, IOException {
@@ -208,7 +210,6 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
 
         statement.executeUpdate();
         statement.close();
-        //teacher.addGroup(group);
     }
 
 

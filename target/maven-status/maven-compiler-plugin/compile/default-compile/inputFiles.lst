@@ -1,9 +1,14 @@
-C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\database\Database.java
-C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\tables\Table.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\dao\StudentDAO.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\interfaces\PersonTable.java
 C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\types\TableType.java
 C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\main\Main.java
 C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\tables\Teacher.java
 C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\types\Criteria.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\tables\Student.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\tables\Table.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\dao\TableDAO.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\interfaces\GroupTable.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\dao\TeacherDAO.java
+C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\dao\GroupDAO.java
 C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\types\Gender.java
 C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\tables\Group.java
-C:\Users\MagomedovIM\IdeaProjects\JDBC-Project\src\main\java\dbmodules\tables\Student.java

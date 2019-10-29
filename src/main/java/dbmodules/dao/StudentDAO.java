@@ -85,9 +85,9 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
             }
             case NAME : {
                 query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".Name = ?";
+                        + getTableName() + " WHERE " + getTableName() + ".Name LIKE ?";
                 statement = getConnection().prepareStatement(query);
-                statement.setString(1, value);
+                statement.setString(1, "%" + value + "%");
 
                 ResultSet res = statement.executeQuery();
                 while (res.next()) {

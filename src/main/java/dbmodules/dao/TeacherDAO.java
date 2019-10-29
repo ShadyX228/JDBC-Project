@@ -1,5 +1,6 @@
 package dbmodules.dao;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
@@ -47,14 +48,16 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         statement.setInt(1, id);
         ResultSet res = statement.executeQuery();
 
+        Teacher teacher = null;
+
+        boolean check = false;
         if (res.next()) {
             int s_id = res.getInt(1);
             String name = res.getString(2);
             LocalDate birth = res.getDate(3).toLocalDate();
             Gender gender = Gender.valueOf(res.getString(4));
-            statement.close();
 
-            return new Teacher(
+            teacher = new Teacher(
                     s_id,
                     name,
                     birth.getYear(),
@@ -62,8 +65,29 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
                     birth.getDayOfMonth(),
                     gender
             );
+            check = true;
         }
-        return null;
+        if(check) {
+            query = "SELECT * FROM " + getDBName() + ".groupteacher " +
+                    "WHERE groupteacher.teacher_id = ?;";
+            statement = getConnection().prepareStatement(query);
+            statement.setInt(1, teacher.getId());
+            res = statement.executeQuery();
+
+            while(res.next()) {
+                Group group;
+                try {
+                    group = new GroupDAO().selectById(res.getInt(2));
+                } catch (IOException e) {
+                    statement.close();
+                    System.out.println("Some error occured while selecting teacher by id.");
+                    return null;
+                }
+                teacher.addGroup(group);
+            }
+        }
+        statement.close();
+        return teacher;
     }
     public List<Teacher> select(Criteria criteria, String value)
             throws SQLException, IOException {
@@ -80,9 +104,9 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
             }
             case NAME : {
                 query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".Name = ?";
+                        + getTableName() + " WHERE " + getTableName() + "ые.Name LIKE ?";
                 statement = getConnection().prepareStatement(query);
-                statement.setString(1, value);
+                statement.setString(1, "%" + value + "%");
 
                 ResultSet res = statement.executeQuery();
                 while (res.next()) {
@@ -188,7 +212,7 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         }
     }
     public void putTeacherInGroup(Teacher teacher, Group group)
-            throws SQLException, IOException {
+            throws SQLException {
         String query = "INSERT INTO " + getDBName() + ".groupteacher"
                 + " " +
                 "(group_id, teacher_id) " +
@@ -200,8 +224,12 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
         statement.executeUpdate();
         statement.close();
     }
+    public List<Group> getTeacherGroups(int id) throws SQLException {
+        Teacher teacher = selectById(id);
+        return teacher.getGroups();
+    }
     public void removeTeacherFromGroup(Teacher teacher, Group group)
-            throws SQLException, IOException {
+            throws SQLException {
         String query = "DELETE FROM " + getDBName() + ".groupteacher"
                 + " WHERE group_id = ? AND teacher_id = ?;";
         PreparedStatement statement = getConnection().prepareStatement(query);

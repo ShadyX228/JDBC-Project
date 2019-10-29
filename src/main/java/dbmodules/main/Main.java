@@ -384,10 +384,12 @@ public class Main {
                         System.out.println("Operation: \t add \t select " +
                                 "\t update \t delete " +
                                 "\t putTeacherInGroup \t " +
+                                "\t getTeachersGroup \t" +
                                 "removeTeacherFromGroup");
                         System.out.println("Code: \t\t 0 " +
                                 "\t\t 1 \t\t\t 2 \t\t\t 3 " +
-                                "\t\t\t 4 \t\t\t\t\t 5 \n");
+                                "\t\t\t 4 \t\t\t\t\t\t 5" +
+                                "\t\t\t\t\t6 \n");
                         System.out.print("Enter operation code (int): ");
                         int opCode = 0;
                         try {
@@ -673,6 +675,24 @@ public class Main {
                                     break;
                                 }
                                 case 5 :  {
+                                    System.out.print("Getting teacher groups." +
+                                            " \nEnter teacher id: ");
+                                    int id = 0;
+                                    try {
+                                        id = input.nextInt();
+                                        input.nextLine();
+                                    } catch (InputMismatchException e) {
+                                        System.out.println("Invalid id. Try again");
+                                        input.nextLine();
+                                        break;
+                                    }
+                                    List<Group> list = teacherDAO.getTeacherGroups(id);
+                                    for(Group group : list) {
+                                        System.out.println(group);
+                                    }
+                                    break;
+                                }
+                                case 6 :  {
                                     System.out.print("Putting teacher in group." +
                                             " \nEnter teacher id: ");
                                     int id = 0;

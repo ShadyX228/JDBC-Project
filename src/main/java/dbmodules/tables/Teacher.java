@@ -54,6 +54,9 @@ public class Teacher extends Table {
     public void setGender(Gender gender) throws SQLException {
         this.gender = gender;
     }
+    public void addGroup(Group group) {
+        groups.add(group);
+    }
 
     public String toString() {
         return "teacher_id: " + id + "; name: " + name + "; " +

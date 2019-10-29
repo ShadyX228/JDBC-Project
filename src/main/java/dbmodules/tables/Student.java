@@ -9,23 +9,23 @@ public class Student extends Table {
     private String name;
     private LocalDate birthday;
     private Gender gender;
-    private int group_id;
+    private Group group;
 
     public Student(int id, String name, int year, int month, int day,
-            Gender gender, int group_id) {
+            Gender gender, Group group) {
         this.id = id;
         this.name = name;
         birthday = LocalDate.of(year,month,day);
         this.gender = gender;
-        this.group_id = group_id;
+        this.group = group;
     }
 
     public Student(String name, int year, int month, int day,
-            Gender gender, int group_id) {
+            Gender gender, Group group) {
         this.name = name;
         birthday = LocalDate.of(year,month,day);
         this.gender = gender;
-        this.group_id = group_id;
+        this.group = group;
 
     }
 
@@ -38,8 +38,8 @@ public class Student extends Table {
     public LocalDate getBirth() {
         return birthday;
     }
-    public int getGroup_id() {
-        return group_id;
+    public Group getGroup() {
+        return group;
     }
     public Gender getGender() {
         return gender;
@@ -54,15 +54,15 @@ public class Student extends Table {
     public void setGender(Gender gender) {
         this.gender = gender;
     }
-    public void setGroup_id(int group_id) {
-        this.group_id = group_id;
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
 
     public String toString() {
         return  "student_id: " + id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; gender: " + gender +
-                "; group_id: " + group_id;
+                "; group_id: " + group.getId();
     }
 
 }

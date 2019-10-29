@@ -121,12 +121,12 @@ public class Main {
                                         System.out.println("No group with given number. Try again.");
                                         break;
                                     }
-                                    int group_id = group.getId();
+
                                     studentDAO.add(new Student(
                                             name,
                                             year, month, day,
                                             gender,
-                                            group_id));
+                                            group));
                                     System.out.println("Student added.");
                                     break;
                                 }
@@ -778,6 +778,13 @@ public class Main {
                                         break;
                                     }
                                     input.nextLine();
+
+                                    Group groupCheck = groupDAO.select(number);
+                                    if(!Objects.isNull(groupCheck)) {
+                                        System.out.println("Group with given number is exist." +
+                                                " Select another number.");
+                                        break;
+                                    }
 
                                     groupDAO.add(new Group(number));
                                     System.out.println("Group added.");

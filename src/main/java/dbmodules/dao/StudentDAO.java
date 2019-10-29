@@ -1,6 +1,7 @@
 package dbmodules.dao;
 
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
@@ -38,12 +39,12 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.setString(2, formattedBirth);
 
         statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
-        statement.setInt(4, person.getGroup_id());
+        statement.setInt(4, person.getGroup().getId());
         statement.executeUpdate();
         statement.close();
     }
     public Student selectById(int id)
-            throws SQLException {
+            throws SQLException, IOException {
         String query = "SELECT * FROM " + getDBName() + "."
                 + getTableName() + " WHERE " + getTableName() + "." + getTableName() + "_id = ?";
         PreparedStatement statement = getConnection().prepareStatement(query);
@@ -65,7 +66,7 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                         birth.getMonth().getValue(),
                         birth.getDayOfMonth(),
                         gender,
-                        group_id
+                        new GroupDAO().selectById(group_id)
                 );
         }
         return null;
@@ -130,9 +131,9 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 break;
             }
             case GROUP : {
-                GroupDAO gd = new GroupDAO();
+                GroupDAO groupDAO = new GroupDAO();
 
-                Group group = gd.select(Integer.parseInt(value));
+                Group group = groupDAO.select(Integer.parseInt(value));
 
                 query = "SELECT * FROM " + getDBName() + "."
                         + getTableName() + " WHERE " + getTableName() + ".group_id = ?";
@@ -178,10 +179,9 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 break;
             }
             case GROUP : {
-                GroupDAO gd = new GroupDAO();
-                Group group = gd.select(Integer.parseInt(value));
-                int group_id = group.getId();
-                person.setGroup_id(group_id);
+                GroupDAO groupDAO = new GroupDAO();
+                Group group = groupDAO.select(Integer.parseInt(value));
+                person.setGroup(group);
                 break;
             }
         }
@@ -198,7 +198,7 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
         statement.setString(2, formattedBirth);
 
         statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
-        statement.setInt(4, person.getGroup_id());
+        statement.setInt(4, person.getGroup().getId());
         statement.setInt(5, person.getId());
         statement.executeUpdate();
         statement.close();
@@ -220,7 +220,7 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
 
 
     private Student getStudentFromRS(ResultSet res)
-            throws SQLException {
+            throws SQLException, IOException {
         int id = res.getInt(1);
         String name = res.getString(2);
         LocalDate birth = res.getDate(3).toLocalDate();
@@ -233,7 +233,7 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 birth.getMonth().getValue(),
                 birth.getDayOfMonth(),
                 gender,
-                group_id
+                new GroupDAO().selectById(group_id)
         );
     }
 }

@@ -104,7 +104,7 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
             }
             case NAME : {
                 query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + "ые.Name LIKE ?";
+                        + getTableName() + " WHERE " + getTableName() + ".Name LIKE ?";
                 statement = getConnection().prepareStatement(query);
                 statement.setString(1, "%" + value + "%");
 

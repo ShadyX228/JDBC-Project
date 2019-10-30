@@ -1,22 +1,25 @@
 package dbmodules.tables;
 
-import dbmodules.types.TableType;
+import javax.persistence.*;
 
-import java.io.IOException;
-import java.sql.*;
-
-
+@Entity
+@javax.persistence.Table (name = "studentgroupteacher.group")
 public class Group extends Table {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="group_id")
     private int id;
+
+    @Column(name = "Number")
     private int number;
 
-    public Group(int id, int number) throws SQLException, IOException {
+    public Group() {}
+    public Group(int id, int number)  {
         this.id = id;
         this.number = number;
 
     }
-
-    public Group(int number) throws SQLException, IOException {
+    public Group(int number) {
         this.number = number;
     }
 

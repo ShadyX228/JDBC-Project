@@ -2,98 +2,43 @@ package dbmodules.dao;
 
 import dbmodules.interfaces.GroupTable;
 import dbmodules.tables.Group;
-
-import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import hibernate.HibernateSessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import java.util.List;
-import java.util.Objects;
 
-import static dbmodules.types.TableType.GROUP;
+public class GroupDAO implements GroupTable {
+    public void add(Group group) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.save(group);
+        tx1.commit();
+        session.close();
+    }
+    public Group selectById(int id) {
+        return HibernateSessionFactory.getSessionFactory().openSession().get(Group.class, id);
+    }
+    public Group select(int number)  {
+        Query query = HibernateSessionFactory
+                .getSessionFactory()
+                .openSession()
+                .createQuery("FROM Group WHERE Number = :number");
+        query.setParameter("number", number);
 
-public class GroupDAO extends TableDAO implements GroupTable {
-    public GroupDAO() throws IOException, SQLException {
-        super(GROUP);
+        List<Group> list = query.list();
+        return list.get(0);
     }
-
-    public void add(Group group) throws SQLException, IOException {
-        if(Objects.isNull(select(group.getNumber()))) {
-            String query = "INSERT INTO " + getDBName() + "."
-                    + getTableName() + " " +
-                    "(Number) " +
-                    "VALUES (?)";
-            PreparedStatement statement = getConnection().prepareStatement(query);
-            statement.setInt(1, group.getNumber());
-            statement.executeUpdate();
-            statement.close();
-        }
-    }
-    public Group selectById(int id) throws SQLException, IOException {
-        String query = "SELECT * FROM " + getDBName() + "."
-                + getTableName() + " WHERE " + getTableName() + "_id = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, id);
-        ResultSet res = statement.executeQuery();
-        if (res.next()) {
-            int number = res.getInt(2);
-            statement.close();
-            return new Group(
-                    id,
-                    number
-            );
-        }
-        return null;
-    }
-    public Group select(int number)  throws SQLException, IOException {
-        String query = "SELECT * FROM " + getDBName() + "."
-                + getTableName() + " WHERE "
-                + getTableName() + ".Number = ? LIMIT 0,1";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, number);
-        ResultSet res = statement.executeQuery();
-        if(res.next()) {
-            return new Group(
-                    res.getInt(1),
-                    number
-            );
-        }
-        return null;
-    }
-    public List<Group> selectAll()  throws SQLException, IOException {
-        String query = "SELECT * FROM " + getDBName() + "."
-                + getTableName();
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        ResultSet res = statement.executeQuery();
-        List<Group> list = new ArrayList<>();
-        while(res.next()) {
-            list.add(new Group(
-                    res.getInt(1),
-                    res.getInt(2)
-            ));
-        }
+    public List<Group> selectAll() {
+        Query query = HibernateSessionFactory.getSessionFactory().openSession().createQuery("FROM Group");
+        List<Group> list = query.list();
         return list;
     }
-    public void delete(Group group) throws SQLException {
-        String query = "SELECT * FROM " + getDBName() + ".groupteacher" +
-                 " WHERE groupteacher.group_id = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, group.getId());
-
-        ResultSet res = statement.executeQuery();
-        if(res.next()) {
-            System.out.println("Cannot delete group. " +
-                    "Some teachers teach in this group. " +
-                    "Unbind them first.");
-        } else {
-            query = "DELETE FROM " + getDBName() + "."
-                    + getTableName() +
-                    " WHERE " + getTableName() + "."
-                    + getTableName() + "_id = ?";
-            statement = getConnection().prepareStatement(query);
-            statement.setInt(1,group.getId());
-            statement.executeUpdate();
-        }
+    public void delete(Group group) {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.delete(group);
+        tx1.commit();
+        session.close();
     }
 }

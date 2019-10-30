@@ -2,13 +2,23 @@ package dbmodules.tables;
 
 import dbmodules.types.*;
 
+import javax.persistence.*;
 import java.time.*;
 
+@Entity
+@javax.persistence.Table (name = "studentgroupteacher.student")
 public class Student extends Table {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="student_id")
     private int id;
+    @Column(name="Name")
     private String name;
+    @Column(name="Birthday")
     private LocalDate birthday;
+    @Column(name="Gender")
     private Gender gender;
+    @OneToMany
     private Group group;
 
     public Student(int id, String name, int year, int month, int day,

@@ -3,9 +3,13 @@ package dbmodules.main;
 import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
+
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.logging.Level;
 
 import static dbmodules.types.Criteria.*;
 
@@ -29,7 +33,8 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, SQLException {
+
         try {
             StudentDAO studentDAO = new StudentDAO();
             TeacherDAO teacherDAO = new TeacherDAO();
@@ -44,6 +49,9 @@ public class Main {
                 tableName = input.next();
                 input.nextLine();
                 TableType table;
+                if(tableName.equals("e")) {
+                    break;
+                }
                 try {
                     table = TableType.valueOf(tableName.toUpperCase());
                 } catch (IllegalArgumentException e) {
@@ -772,12 +780,12 @@ public class Main {
                                     int number = 0;
                                     try {
                                         number = input.nextInt();
+                                        input.nextLine();
                                     } catch (InputMismatchException e) {
                                         System.out.println("Invalid group number value. Try again.");
                                         input.nextLine();
                                         break;
                                     }
-                                    input.nextLine();
 
                                     Group groupCheck = groupDAO.select(number);
                                     if(!Objects.isNull(groupCheck)) {
@@ -807,7 +815,7 @@ public class Main {
                                     break;
                                 }
                                 case 2 :  {
-                                    System.out.print("Selecting all...");
+                                    System.out.println("Selecting all...");
                                     for(Group group : groupDAO.selectAll()) {
                                         System.out.println(group);
                                     }
@@ -842,7 +850,7 @@ public class Main {
                                     }
 
                                     groupDAO.delete(group);
-
+                                    System.out.print("Group deleted.");
                                     break;
                                 }
                                 default : {
@@ -870,8 +878,7 @@ public class Main {
                     }
                 }
             }
-
-            TableDAO.closeConnection();
+            input.nextLine();
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();

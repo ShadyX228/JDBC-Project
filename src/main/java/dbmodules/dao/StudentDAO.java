@@ -7,6 +7,10 @@ import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
+import hibernate.HibernateSessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -20,63 +24,22 @@ import java.util.List;
 import static dbmodules.types.TableType.STUDENT;
 
 
-public class StudentDAO extends TableDAO implements PersonTable<Student> {
-    public StudentDAO() throws IOException, SQLException {
-        super(STUDENT);
-    }
-
+public class StudentDAO implements PersonTable<Student> {
     public void add(Student person)
             throws SQLException {
-        String query = "INSERT INTO " + getDBName() + "."
-                + getTableName() + " " +
-                "(Name, Birthday, Gender, group_id) " +
-                "VALUES (?, ?, ?, ?);";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setString(1, person.getName());
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedBirth = dateTimeFormatter.format(person.getBirth());
-        statement.setString(2, formattedBirth);
-
-        statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
-        statement.setInt(4, person.getGroup().getId());
-        statement.executeUpdate();
-        statement.close();
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction tx1 = session.beginTransaction();
+        session.save(person);
+        tx1.commit();
+        session.close();
     }
     public Student selectById(int id)
             throws SQLException, IOException {
-        String query = "SELECT * FROM " + getDBName() + "."
-                + getTableName() + " WHERE " + getTableName() + "." + getTableName() + "_id = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        statement.setInt(1, id);
-        ResultSet res = statement.executeQuery();
-
-        if (res.next()) {
-            int s_id = res.getInt(1);
-            String name = res.getString(2);
-            LocalDate birth = res.getDate(3).toLocalDate();
-            Gender gender = Gender.valueOf(res.getString(4));
-            int group_id = res.getInt(5);
-            statement.close();
-
-            return new Student(
-                        s_id,
-                        name,
-                        birth.getYear(),
-                        birth.getMonth().getValue(),
-                        birth.getDayOfMonth(),
-                        gender,
-                        new GroupDAO().selectById(group_id)
-                );
-        }
-        return null;
+        return HibernateSessionFactory.getSessionFactory().openSession().get(Student.class, id);
     }
     public List<Student> select(Criteria criteria, String value)
             throws SQLException, IOException {
-        String query = "SELECT * FROM " + getDBName() + "."
-                + getTableName();
-        PreparedStatement statement = getConnection().
-                prepareStatement(query);
+        Query query = null;
         List<Student> list = new ArrayList<>();
 
         switch (criteria) {
@@ -85,15 +48,11 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 break;
             }
             case NAME : {
-                query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".Name LIKE ?";
-                statement = getConnection().prepareStatement(query);
-                statement.setString(1, "%" + value + "%");
-
-                ResultSet res = statement.executeQuery();
-                while (res.next()) {
-                    list.add(getStudentFromRS(res));
-                }
+                query = HibernateSessionFactory
+                        .getSessionFactory()
+                        .openSession()
+                        .createQuery("FROM Student WHERE Name = :name");
+                query.setParameter("name", value);
                 break;
             }
             case BIRTH : {
@@ -105,56 +64,42 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 String formattedBirth = dateTimeFormatter.format(birth);
 
-                query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".Birthday = ?";
-                statement = getConnection().prepareStatement(query);
-                statement.setString(1, formattedBirth);
-
-                ResultSet res = statement.executeQuery();
-                while (res.next()) {
-                    list.add(getStudentFromRS(res));
-                }
+                query = HibernateSessionFactory
+                        .getSessionFactory()
+                        .openSession()
+                        .createQuery("FROM Student WHERE Birthday = :birthday");
+                query.setParameter("birthday", formattedBirth);
                 break;
             }
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
-                query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".Gender = ?";
-                statement = getConnection().prepareStatement(query);
-                statement.setObject(1, gender.getValue(),
-                        java.sql.Types.CHAR);
-
-                ResultSet res = statement.executeQuery();
-                while (res.next()) {
-                    list.add(getStudentFromRS(res));
-                }
+                query = HibernateSessionFactory
+                        .getSessionFactory()
+                        .openSession()
+                        .createQuery("FROM Student WHERE Gender = :gender");
+                query.setParameter("gender", gender.getValue());
                 break;
             }
             case GROUP : {
                 GroupDAO groupDAO = new GroupDAO();
-
                 Group group = groupDAO.select(Integer.parseInt(value));
 
-                query = "SELECT * FROM " + getDBName() + "."
-                        + getTableName() + " WHERE " + getTableName() + ".group_id = ?";
-                statement = getConnection().prepareStatement(query);
-                statement.setInt(1, group.getId());
-
-                ResultSet res = statement.executeQuery();
-                while (res.next()) {
-                    list.add(getStudentFromRS(res));
-                }
+                query = HibernateSessionFactory
+                        .getSessionFactory()
+                        .openSession()
+                        .createQuery("FROM Student WHERE group_id = :group_id");
+                query.setParameter("gender", group.getId());
                 break;
             }
             case ALL : {
-                ResultSet res = statement.executeQuery();
-                while (res.next()) {
-                    list.add(getStudentFromRS(res));
-                }
+                query = HibernateSessionFactory
+                        .getSessionFactory()
+                        .openSession()
+                        .createQuery("FROM Student");
                 break;
             }
         }
-        statement.close();
+        list = query.list();
         return list;
     }
     public void update(Student person, Criteria criteria, String value)
@@ -218,22 +163,4 @@ public class StudentDAO extends TableDAO implements PersonTable<Student> {
     }
 
 
-
-    private Student getStudentFromRS(ResultSet res)
-            throws SQLException, IOException {
-        int id = res.getInt(1);
-        String name = res.getString(2);
-        LocalDate birth = res.getDate(3).toLocalDate();
-        Gender gender = Gender.valueOf(res.getString(4));
-        int group_id = res.getInt(5);
-        return new Student(
-                id,
-                name,
-                birth.getYear(),
-                birth.getMonth().getValue(),
-                birth.getDayOfMonth(),
-                gender,
-                new GroupDAO().selectById(group_id)
-        );
-    }
 }

@@ -33,17 +33,15 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) throws IOException, SQLException {
-
+    public static void main(String[] args) {
         try {
             StudentDAO studentDAO = new StudentDAO();
-            TeacherDAO teacherDAO = new TeacherDAO();
+            //TeacherDAO teacherDAO = new TeacherDAO();
             GroupDAO groupDAO = new GroupDAO();
             Scanner input = new Scanner(System.in);
 
             String tableName = "";
-
-            while(!tableName.equals("e")) {
+            while(true) {
                 System.out.print("Enter table name or \"e\" " +
                         "to stop (string): ");
                 tableName = input.next();
@@ -388,7 +386,7 @@ public class Main {
                         }
                         break;
                     }
-                    case TEACHER : {
+                    /*case TEACHER : {
                         System.out.println("Operation: \t add \t select " +
                                 "\t update \t delete " +
                                 "\t putTeacherInGroup \t " +
@@ -757,7 +755,7 @@ public class Main {
                         }
                         System.out.println();
                         break;
-                    }
+                    }*/
                     case GROUP   : {
                         System.out.println("Operation: \t add \t select " +
                                 "\t selectAll \t delete");

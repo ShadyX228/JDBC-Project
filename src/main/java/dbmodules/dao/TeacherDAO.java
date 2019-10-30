@@ -75,14 +75,7 @@ public class TeacherDAO extends TableDAO implements PersonTable<Teacher> {
             res = statement.executeQuery();
 
             while(res.next()) {
-                Group group;
-                try {
-                    group = new GroupDAO().selectById(res.getInt(2));
-                } catch (IOException e) {
-                    statement.close();
-                    System.out.println("Some error occured while selecting teacher by id.");
-                    return null;
-                }
+                Group group = new GroupDAO().selectById(res.getInt(2));
                 teacher.addGroup(group);
             }
         }

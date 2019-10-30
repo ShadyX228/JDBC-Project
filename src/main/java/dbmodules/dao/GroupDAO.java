@@ -11,9 +11,9 @@ import java.util.List;
 public class GroupDAO implements GroupTable {
     public void add(Group group) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction tx1 = session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         session.save(group);
-        tx1.commit();
+        transaction.commit();
         session.close();
     }
     public Group selectById(int id) {
@@ -36,9 +36,9 @@ public class GroupDAO implements GroupTable {
     }
     public void delete(Group group) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction tx1 = session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         session.delete(group);
-        tx1.commit();
+        transaction.commit();
         session.close();
     }
 }

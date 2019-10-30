@@ -12,15 +12,21 @@ public class Student extends Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="student_id")
     private int id;
+
     @Column(name="Name")
     private String name;
+
     @Column(name="Birthday")
     private LocalDate birthday;
+
     @Column(name="Gender")
     private Gender gender;
-    @OneToMany
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
     private Group group;
 
+    public Student() {}
     public Student(int id, String name, int year, int month, int day,
             Gender gender, Group group) {
         this.id = id;
@@ -29,7 +35,6 @@ public class Student extends Table {
         this.gender = gender;
         this.group = group;
     }
-
     public Student(String name, int year, int month, int day,
             Gender gender, Group group) {
         this.name = name;

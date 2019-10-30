@@ -13,24 +13,21 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static dbmodules.types.TableType.STUDENT;
 
 
 public class StudentDAO implements PersonTable<Student> {
     public void add(Student person)
             throws SQLException {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction tx1 = session.beginTransaction();
+        Transaction transaction = session.beginTransaction();
         session.save(person);
-        tx1.commit();
+        transaction.commit();
         session.close();
     }
     public Student selectById(int id)
@@ -130,37 +127,35 @@ public class StudentDAO implements PersonTable<Student> {
                 break;
             }
         }
-        String query = "UPDATE " + getDBName() + "." + getTableName()
-                + " SET Name = ?, Birthday = ?, Gender = ?, group_id = ? " +
-                "WHERE " + getTableName() + "."
-                + getTableName() + "_id = ?;";
-        PreparedStatement statement = getConnection()
-                .prepareStatement(query);
-        statement.setString(1, person.getName());
+        Query query = HibernateSessionFactory
+                .getSessionFactory()
+                .openSession()
+                .createQuery("UPDATE student SET Name = :name, Birthday = :birth, Gender = :gender, Group = :group_id WHERE student_id = :student_id");
+
+        query.setParameter("name",person.getName());
 
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedBirth = dateTimeFormatter.format(person.getBirth());
-        statement.setString(2, formattedBirth);
+        query.setParameter("birth",formattedBirth);
 
-        statement.setObject(3, person.getGender().getValue(), java.sql.Types.CHAR);
-        statement.setInt(4, person.getGroup().getId());
-        statement.setInt(5, person.getId());
-        statement.executeUpdate();
-        statement.close();
+        query.setParameter("gender",person.getGender().getValue());
+        query.setParameter("group_id",person.getGroup().getId());
+        query.setParameter("student_id",person.getId());
+
     }
     public void delete(Criteria criteria, String value)
             throws SQLException, IOException {
         List<Student> students = select(criteria,value);
-        String query = "DELETE FROM " + getDBName() + "."
-                + getTableName() +
-                " WHERE " + getTableName() + "."
-                + getTableName() + "_id = ?";
-        PreparedStatement statement = getConnection().prepareStatement(query);
-        for(Student student : students) {
-            statement.setInt(1, student.getId());
-            statement.executeUpdate();
-        }
-    }
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
 
+        for(Student student : students) {
+            session.delete(student);
+        }
+
+        transaction.commit();
+        session.close();
+
+    }
 
 }

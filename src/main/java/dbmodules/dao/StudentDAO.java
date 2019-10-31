@@ -1,7 +1,5 @@
 package dbmodules.dao;
 
-
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
@@ -11,15 +9,12 @@ import hibernate.HibernateSessionFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-
 
 public class StudentDAO implements PersonTable<Student> {
     public void add(Student person)
@@ -42,14 +37,14 @@ public class StudentDAO implements PersonTable<Student> {
         switch (criteria) {
             case ID : {
                 list.add(selectById(Integer.parseInt(value)));
-                break;
+                return list;
             }
             case NAME : {
                 query = HibernateSessionFactory
                         .getSessionFactory()
                         .openSession()
-                        .createQuery("FROM Student WHERE Name = :name");
-                query.setParameter("name", value);
+                        .createQuery("FROM Student WHERE Name LIKE :name");
+                query.setParameter("name", "%" + value + "%");
                 break;
             }
             case BIRTH : {
@@ -85,7 +80,7 @@ public class StudentDAO implements PersonTable<Student> {
                         .getSessionFactory()
                         .openSession()
                         .createQuery("FROM Student WHERE group_id = :group_id");
-                query.setParameter("gender", group.getId());
+                query.setParameter("group_id", group.getId());
                 break;
             }
             case ALL : {
@@ -101,6 +96,8 @@ public class StudentDAO implements PersonTable<Student> {
     }
     public void update(Student person, Criteria criteria, String value)
             throws SQLException, IOException {
+        Session session = HibernateSessionFactory.getSessionFactory().openSession();
+        session.beginTransaction();
         switch (criteria) {
             case NAME : {
                 person.setName(value);
@@ -127,21 +124,9 @@ public class StudentDAO implements PersonTable<Student> {
                 break;
             }
         }
-        Query query = HibernateSessionFactory
-                .getSessionFactory()
-                .openSession()
-                .createQuery("UPDATE student SET Name = :name, Birthday = :birth, Gender = :gender, Group = :group_id WHERE student_id = :student_id");
-
-        query.setParameter("name",person.getName());
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedBirth = dateTimeFormatter.format(person.getBirth());
-        query.setParameter("birth",formattedBirth);
-
-        query.setParameter("gender",person.getGender().getValue());
-        query.setParameter("group_id",person.getGroup().getId());
-        query.setParameter("student_id",person.getId());
-
+        session.update(person);
+        session.getTransaction().commit();
+        session.close();
     }
     public void delete(Criteria criteria, String value)
             throws SQLException, IOException {
@@ -155,7 +140,6 @@ public class StudentDAO implements PersonTable<Student> {
 
         transaction.commit();
         session.close();
-
     }
 
 }

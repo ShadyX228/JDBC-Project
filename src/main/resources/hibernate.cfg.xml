@@ -7,7 +7,7 @@
 
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
-        <property name="show_sql">false</property>
+        <property name="show_sql">true</property>
         <property name="connection.url">jdbc:mysql://localhost?serverTimezone=UTC</property>
         <property name="connection.username">root</property>
         <property name="connection.password">12345</property>
@@ -15,6 +15,7 @@
 
         <mapping class="main.java.dbmodules.tables.Group"/>
         <mapping class="main.java.dbmodules.tables.Student"/>
+        <mapping class="main.java.dbmodules.tables.Teacher"/>
     </session-factory>
 
 </hibernate-configuration>

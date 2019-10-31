@@ -19,6 +19,7 @@ public class Student extends Table {
     @Column(name="Birthday")
     private LocalDate birthday;
 
+    @Enumerated(EnumType.STRING)
     @Column(name="Gender")
     private Gender gender;
 
@@ -27,21 +28,12 @@ public class Student extends Table {
     private Group group;
 
     public Student() {}
-    public Student(int id, String name, int year, int month, int day,
-            Gender gender, Group group) {
-        this.id = id;
-        this.name = name;
-        birthday = LocalDate.of(year,month,day);
-        this.gender = gender;
-        this.group = group;
-    }
     public Student(String name, int year, int month, int day,
             Gender gender, Group group) {
         this.name = name;
         birthday = LocalDate.of(year,month,day);
         this.gender = gender;
         this.group = group;
-
     }
 
     public int getId() {
@@ -79,5 +71,4 @@ public class Student extends Table {
                 "birthday: " + birthday + "; gender: " + gender +
                 "; group_id: " + group.getId();
     }
-
 }

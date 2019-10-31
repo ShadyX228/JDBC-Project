@@ -1,27 +1,35 @@
 package dbmodules.tables;
 
 import dbmodules.types.Gender;
-import dbmodules.types.TableType;
-import dbmodules.types.Criteria;
 
-import java.io.IOException;
+import javax.persistence.*;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
+@Entity
+@javax.persistence.Table (name = "studentgroupteacher.teacher")
 public class Teacher extends Table {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="teacher_id")
     private int id;
+
+    @Column(name="Name")
     private String name;
+
+    @Column(name="Birthday")
     private LocalDate birthday;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="Gender")
     private Gender gender;
+
+    @ManyToMany(mappedBy = "teachers")
     private List<Group> groups = new ArrayList<>();
 
 
-    public Teacher(int id, String name, int year, int month, int day, Gender gender) {
-        this.id = id;
-        this.name = name;
-        birthday = LocalDate.of(year,month,day);
-        this.gender = gender;
+    public Teacher() {
     }
     public Teacher(String name, int year, int month, int day, Gender gender) {
         this.name = name;
@@ -61,5 +69,13 @@ public class Teacher extends Table {
     public String toString() {
         return "teacher_id: " + id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; gender: " + gender;
+    }
+
+    public boolean equals(Teacher teacher) {
+        if(this.id == teacher.id) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

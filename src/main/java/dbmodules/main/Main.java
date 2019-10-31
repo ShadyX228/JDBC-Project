@@ -3,6 +3,9 @@ package dbmodules.main;
 import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
+import hibernate.HibernateSessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,7 +39,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             StudentDAO studentDAO = new StudentDAO();
-            //TeacherDAO teacherDAO = new TeacherDAO();
+            TeacherDAO teacherDAO = new TeacherDAO();
             GroupDAO groupDAO = new GroupDAO();
             Scanner input = new Scanner(System.in);
 
@@ -48,7 +51,8 @@ public class Main {
                 input.nextLine();
                 TableType table;
                 if(tableName.equals("e")) {
-                    break;
+                    System.out.println("Shutting down.");
+                    System.exit(0);
                 }
                 try {
                     table = TableType.valueOf(tableName.toUpperCase());
@@ -64,14 +68,15 @@ public class Main {
                         System.out.println("Operation: \t add \t select " +
                                 "\t update \t delete");
                         System.out.println("Code: \t\t 0 \t\t 1 " +
-                                "\t\t\t 2 \t\t\t 3 \n");
+                                "\t\t\t 2 \t\t\t 3");
                         System.out.print("Enter operation code or -1 to exit (int): ");
-                        int opCode = 0;
+
+                        int opCode;
                         try {
                             opCode = input.nextInt();
                             input.nextLine();
                         } catch (InputMismatchException e) {
-                            System.out.println("Invalid operation code. Try again.");
+                            System.out.print("Invalid operation code. Returning to table select.\n");
                             input.nextLine();
                             break;
                         }
@@ -265,14 +270,10 @@ public class Main {
                                         try {
                                             Group groupCheck = groupDAO.select(
                                                     Integer.parseInt(critVal));
-                                            if (Objects.isNull(groupCheck)) {
-                                                System.out.println("No group with " +
-                                                        "given number. Try again.");
-                                                break;
-                                            }
-                                        } catch (NumberFormatException e) {
+                                        } catch (Exception e) {
                                             System.out.println("Invalid group " +
-                                                    "number. Try again.");
+                                                    "number or " +
+                                                    "group with given number doesn't exist. Try again.");
                                             break;
                                         }
                                     }
@@ -295,7 +296,7 @@ public class Main {
                                     System.out.println("Student updated.");
                                     break;
                                 }
-                                case 3: {
+                                case 3:  {
                                     System.out.print("Deleting studetns. "
                                             + "\nEnter criteria ( ");
                                     for (Criteria criteria : values()) {
@@ -386,7 +387,7 @@ public class Main {
                         }
                         break;
                     }
-                    /*case TEACHER : {
+                    case TEACHER : {
                         System.out.println("Operation: \t add \t select " +
                                 "\t update \t delete " +
                                 "\t putTeacherInGroup \t " +
@@ -395,14 +396,14 @@ public class Main {
                         System.out.println("Code: \t\t 0 " +
                                 "\t\t 1 \t\t\t 2 \t\t\t 3 " +
                                 "\t\t\t 4 \t\t\t\t\t\t 5" +
-                                "\t\t\t\t\t6 \n");
+                                "\t\t\t\t\t6");
                         System.out.print("Enter operation code (int): ");
-                        int opCode = 0;
+                        int opCode;
                         try {
                             opCode = input.nextInt();
                             input.nextLine();
                         } catch (InputMismatchException e) {
-                            System.out.println("Invalid operation code. Try again.");
+                            System.out.println("Invalid operation code. Returning tot table select.");
                             input.nextLine();
                             break;
                         }
@@ -644,7 +645,7 @@ public class Main {
                                 case 4 :  {
                                     System.out.print("Putting teacher in group." +
                                             " \nEnter teacher id: ");
-                                    int id = 0;
+                                    int id;
                                     try {
                                         id = input.nextInt();
                                         input.nextLine();
@@ -655,7 +656,7 @@ public class Main {
                                     }
 
                                     System.out.print("Enter group number: ");
-                                    int number = 0;
+                                    int number;
                                     try {
                                         number = input.nextInt();
                                         input.nextLine();
@@ -683,7 +684,7 @@ public class Main {
                                 case 5 :  {
                                     System.out.print("Getting teacher groups." +
                                             " \nEnter teacher id: ");
-                                    int id = 0;
+                                    int id;
                                     try {
                                         id = input.nextInt();
                                         input.nextLine();
@@ -701,7 +702,7 @@ public class Main {
                                 case 6 :  {
                                     System.out.print("Putting teacher in group." +
                                             " \nEnter teacher id: ");
-                                    int id = 0;
+                                    int id;
                                     try {
                                         id = input.nextInt();
                                         input.nextLine();
@@ -712,7 +713,7 @@ public class Main {
                                     }
 
                                     System.out.print("Enter group number: ");
-                                    int number = 0;
+                                    int number;
                                     try {
                                         number = input.nextInt();
                                         input.nextLine();
@@ -755,19 +756,19 @@ public class Main {
                         }
                         System.out.println();
                         break;
-                    }*/
+                    }
                     case GROUP   : {
                         System.out.println("Operation: \t add \t select " +
                                 "\t selectAll \t delete");
                         System.out.println("Code: \t\t 0 " +
-                                "\t\t 1 \t\t\t 2 \t\t\t 3\n");
+                                "\t\t 1 \t\t\t 2 \t\t\t 3");
                         System.out.print("Enter operation code (int): ");
-                        int opCode = 0;
+                        int opCode;
                         try {
                             opCode = input.nextInt();
                             input.nextLine();
                         } catch (InputMismatchException e) {
-                            System.out.println("Invalid operation code. Try again.");
+                            System.out.println("Invalid operation code. Returning to table select.");
                             input.nextLine();
                             break;
                         }
@@ -784,6 +785,7 @@ public class Main {
                                         input.nextLine();
                                         break;
                                     }
+
 
                                     Group groupCheck = groupDAO.select(number);
                                     if(!Objects.isNull(groupCheck)) {
@@ -809,7 +811,12 @@ public class Main {
                                         break;
                                     }
                                     input.nextLine();
-                                    System.out.println(groupDAO.select(number));
+                                    try {
+                                        System.out.println(groupDAO.select(number));
+                                    } catch (IndexOutOfBoundsException e ) {
+                                        System.out.println("Group with given number doesn't exist." +
+                                                " Select another number.");
+                                    }
                                     break;
                                 }
                                 case 2 :  {
@@ -870,13 +877,8 @@ public class Main {
                         System.out.println();
                         break;
                     }
-                    default      : {
-                        System.out.println("Shutting down.");
-                        break;
-                    }
                 }
             }
-            input.nextLine();
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();

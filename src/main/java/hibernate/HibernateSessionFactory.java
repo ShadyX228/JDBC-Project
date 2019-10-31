@@ -19,6 +19,7 @@ public class HibernateSessionFactory {
 
                 configuration.addAnnotatedClass(Group.class);
                 configuration.addAnnotatedClass(Student.class);
+                configuration.addAnnotatedClass(Teacher.class);
 
                 StandardServiceRegistryBuilder builder = new
                         StandardServiceRegistryBuilder()

@@ -71,7 +71,9 @@ public class Teacher extends Table {
                 "birthday: " + birthday + "; gender: " + gender;
     }
 
-    public boolean equals(Teacher teacher) {
+    @Override
+    public boolean equals(Object obj) {
+        Teacher teacher = (Teacher) obj;
         if(this.id == teacher.id) {
             return true;
         } else {

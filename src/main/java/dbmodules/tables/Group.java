@@ -48,7 +48,7 @@ public class Group extends Table {
         teachers.add(teacher);
     }
     public void removeTeacher(Teacher teacher) {
-        teachers.remove(0); // сделать шо-то
+        teachers.remove(teacher);
     }
 
 

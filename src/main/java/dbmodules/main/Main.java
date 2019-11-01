@@ -31,16 +31,17 @@ public class Main {
             return checkBirth(input);
         }
     }
-    private static boolean checkCriteria(String crit) {
+    private static Criteria checkCriteria(Scanner input) {
         try {
-            Criteria.valueOf(crit);
-            return true;
+            String crit = input.next().toUpperCase();
+            input.nextLine();
+            return Criteria.valueOf(crit.toUpperCase());
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid criteria. Try again.");
-            return false;
+            System.out.print("Invalid criteria. Try again: ");
+            return checkCriteria(input);
         }
     }
-    public static int getOpCode(Scanner input) {
+    private static int getOpCode(Scanner input) {
         try {
             int opCode = input.nextInt();
             input.nextLine();
@@ -50,6 +51,73 @@ public class Main {
             input.nextLine();
             return getOpCode(input);
         }
+    }
+    private static Gender checkGender(Scanner input) {
+        try {
+            String genderInput = input.next();
+            return Gender.valueOf(genderInput.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            System.out.print("Invalid gender. Try again: ");
+            return checkGender(input);
+        }
+    }
+    private static Group checkGroup(Scanner input, GroupDAO groupDAO) {
+        try {
+            int number = input.nextInt();
+            return groupDAO.select(number);
+        } catch (Exception e) {
+            System.out.println("Invalid group number. Try again.");
+            input.nextLine();
+            return checkGroup(input, groupDAO);
+        }
+    }
+    private static String parseCriteria(Criteria criteria, Scanner input, GroupDAO groupDAO) {
+        String critVal;
+
+        if (!criteria.equals(ALL)) {
+            System.out.print("Enter criteria value: ");
+            critVal = input.nextLine();
+        } else {
+            critVal = "";
+        }
+        if (criteria.equals(ID)) {
+            try {
+                Integer.parseInt(critVal);
+            } catch (Exception e) {
+                System.out.println("Invalid id. " +
+                        "Try again");
+                return parseCriteria(criteria, input, groupDAO);
+            }
+        }
+        if (criteria.equals(GENDER)) {
+            try {
+                Gender.valueOf(critVal.toUpperCase());
+            } catch (Exception e) {
+                System.out.println("Invalid gender. " +
+                        "Try again.");
+                return parseCriteria(criteria, input, groupDAO);
+            }
+        }
+        if (criteria.equals(GROUP)) {
+            try {
+                groupDAO.select(Integer.parseInt(critVal));
+            } catch (Exception e) {
+                System.out.println("Invalid group" +
+                        " number. Try again.");
+                return parseCriteria(criteria, input, groupDAO);
+            }
+        }
+        if (criteria.equals(BIRTH)) {
+            try {
+               LocalDate.parse(critVal);
+            } catch (Exception e) {
+                System.out.println("Invalid " +
+                        "birthday. Try again.");
+                return parseCriteria(criteria, input, groupDAO);
+            }
+
+        }
+        return critVal;
     }
 
 
@@ -63,7 +131,7 @@ public class Main {
 
             while(true) {
                 System.out.print("Enter table name or \"e\" " +
-                        "to stop (string): ");
+                        "to stop (student/group/teacher): ");
                 tableName = input.next();
                 input.nextLine();
                 TableType table;
@@ -75,7 +143,7 @@ public class Main {
                     table = TableType.valueOf(tableName.toUpperCase());
                 } catch (IllegalArgumentException e) {
                     System.out.println("No table with entered name. " +
-                            "Try again.");
+                            "Try again. ");
                     continue;
                 }
 
@@ -90,7 +158,7 @@ public class Main {
 
                         while(opCode != -1) {
                             switch (opCode) {
-                                case 0: {
+                                case 0:  {
                                     System.out.print("Adding student. \nEnter name: ");
                                     String name = input.nextLine();
 
@@ -98,29 +166,10 @@ public class Main {
                                     LocalDate birthday = checkBirth(input);
 
                                     System.out.print("Enter gender (MALE/FEMALE): ");
-                                    String genderInput = input.next();
-                                    Gender gender;
-                                    try {
-                                        gender = Gender.valueOf(genderInput.toUpperCase());
-                                    } catch (IllegalArgumentException e) {
-                                        System.out.println("Invalid gender. Try again.");
-                                        break;
-                                    }
+                                    Gender gender = checkGender(input);
 
                                     System.out.print("Enter student's group number: ");
-                                    int number = 0;
-                                    try {
-                                        number = input.nextInt();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid group number. Try again.");
-                                        input.nextLine();
-                                        break;
-                                    }
-                                    Group group = groupDAO.select(number);
-                                    if (Objects.isNull(group)) {
-                                        System.out.println("No group with given number. Try again.");
-                                        break;
-                                    }
+                                    Group group = checkGroup(input, groupDAO);
 
                                     studentDAO.add(new Student(
                                             name,
@@ -132,76 +181,18 @@ public class Main {
                                     System.out.println("Student added.");
                                     break;
                                 }
-                                case 1: {
+                                case 1:  {
                                     System.out.print("Selecting students. \n"
                                             + "Enter criteria ( ");
                                     for (Criteria criteria : values()) {
                                         System.out.print(criteria + " ");
                                     }
                                     System.out.print("): ");
-                                    String crit = input.next().toUpperCase();
-                                    input.nextLine();
-                                    if (!checkCriteria(crit)) {
-                                        break;
-                                    }
-                                    Criteria criteria = valueOf(crit);
-                                    String critVal;
+                                    Criteria criteria = checkCriteria(input);
 
-                                    if (!criteria.equals(ALL)) {
-                                        System.out.print("Enter criteria value: ");
-                                        critVal = input.nextLine();
-                                    } else {
-                                        critVal = "";
-                                    }
-                                    if (criteria.equals(ID)) {
-                                        try {
-                                            Integer.parseInt(critVal);
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid id. " +
-                                                    "Try again");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(GENDER)) {
-                                        try {
-                                            Gender.valueOf(critVal.toUpperCase());
-                                        } catch (IllegalArgumentException e) {
-                                            System.out.println("Invalid gender. " +
-                                                    "Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(GROUP)) {
-                                        try {
-                                            Group groupCheck = groupDAO.select(
-                                                    Integer.parseInt(critVal));
-                                            if (Objects.isNull(groupCheck)) {
-                                                System.out.println("No group with " +
-                                                        "given number. Try again.");
-                                                break;
-                                            }
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid group" +
-                                                    " number. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(BIRTH)) {
-                                        try {
-                                            LocalDate d = LocalDate.parse(critVal);
-                                            //if (!checkBirth(
-                                            //        d.getYear(),
-                                            //        d.getMonth().getValue(),
-                                            //        d.getDayOfMonth())) {
-                                            //    break;
-                                            //}
-                                        } catch (DateTimeParseException e) {
-                                            System.out.println("Invalid " +
-                                                    "birthday. Try again.");
-                                            break;
-                                        }
+                                    String critVal = parseCriteria(criteria, input, groupDAO);
 
-                                    }
+
                                     for (Student student
                                             : studentDAO.select(criteria, critVal)
                                     ) {
@@ -209,7 +200,7 @@ public class Main {
                                     }
                                     break;
                                 }
-                                case 2: {
+                                case 2:  {
                                     System.out.print("Updating student. " +
                                             "\nEnter id: ");
                                     int id;
@@ -238,12 +229,7 @@ public class Main {
                                         }
                                     }
                                     System.out.print("): ");
-                                    String crit = input.next().toUpperCase();
-                                    input.nextLine();
-                                    if (!checkCriteria(crit)) {
-                                        break;
-                                    }
-                                    Criteria criteria = valueOf(crit);
+                                    Criteria criteria = checkCriteria(input);
 
                                     System.out.print("Enter criteria value: ");
                                     String critVal = input.nextLine();
@@ -294,12 +280,7 @@ public class Main {
                                         System.out.print(criteria + " ");
                                     }
                                     System.out.print(") ");
-                                    String crit = input.next().toUpperCase();
-                                    input.nextLine();
-                                    if (!checkCriteria(crit)) {
-                                        break;
-                                    }
-                                    Criteria criteria = valueOf(crit);
+                                    Criteria criteria = checkCriteria(input);
 
                                     System.out.print("Enter criteria value: ");
                                     String critVal = input.nextLine();
@@ -405,14 +386,7 @@ public class Main {
 
                                     System.out.print("Enter gender " +
                                             "(MALE/FEMALE): ");
-                                    String genderInput = input.next();
-                                    Gender gender;
-                                    try {
-                                        gender = Gender.valueOf(genderInput.toUpperCase());
-                                    } catch (IllegalArgumentException e) {
-                                        System.out.println("Invalid gender. Try again.");
-                                        break;
-                                    }
+                                    Gender gender = checkGender(input);
 
                                     teacherDAO.add(new Teacher(
                                             name,
@@ -432,12 +406,8 @@ public class Main {
                                         }
                                     }
                                     System.out.print("): ");
-                                    String crit = input.next().toUpperCase();
-                                    input.nextLine();
-                                    if(!checkCriteria(crit)) {
-                                        break;
-                                    }
-                                    Criteria criteria = valueOf(crit);
+                                    Criteria criteria = checkCriteria(input);
+
                                     String critVal;
 
                                     if (!criteria.equals(ALL)) {
@@ -522,9 +492,9 @@ public class Main {
                                     System.out.print("): ");
                                     String crit = input.next().toUpperCase();
                                     input.nextLine();
-                                    if(!checkCriteria(crit)) {
-                                        break;
-                                    }
+                                    //if(!checkCriteria(crit)) {
+                                    //    break;
+                                    //}
                                     Criteria criteria = valueOf(crit);
 
                                     System.out.print("Enter criteria value: ");
@@ -569,9 +539,9 @@ public class Main {
                                     System.out.print(") ");
                                     String crit = input.next().toUpperCase();
                                     input.nextLine();
-                                    if(!checkCriteria(crit)) {
-                                        break;
-                                    }
+                                    //if(!checkCriteria(crit)) {
+                                    //    break;
+                                    //}
                                     Criteria criteria = valueOf(crit);
 
                                     System.out.print("Enter criteria value: ");

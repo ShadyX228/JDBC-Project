@@ -25,7 +25,8 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="ef797ce8-3834-4ef8-8c16-986e07376754">
-        <schema name="studentgroupteacher" object-types="table, view" />
+        <schema name="phpmyadmin" object-types="function, procedure, table, view" />
+        <schema name="studentgroupteacher" object-types="index, dataset trigger, column, function, procedure, constraint, table, view" />
       </connection>
     </loaded-nodes>
   </component>
@@ -35,7 +36,9 @@
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="ef797ce8-3834-4ef8-8c16-986e07376754" object-ref="schemas/studentgroupteacher/tables/student" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="ef797ce8-3834-4ef8-8c16-986e07376754" />

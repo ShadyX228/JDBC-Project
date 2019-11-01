@@ -3,27 +3,32 @@ package dbmodules.main;
 import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
-import hibernate.HibernateSessionFactory;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
-import java.io.IOException;
-import java.sql.SQLException;
 import java.time.*;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.logging.Level;
 
 import static dbmodules.types.Criteria.*;
 
 public class Main {
-    private static boolean checkBirth(int year, int month, int day) {
+    // исправить null-pointer в последних методах учителя.
+    private static LocalDate checkBirth(Scanner input) {
         try {
-            LocalDate.of(year, month, day);
-            return true;
-        } catch (DateTimeException e) {
+            System.out.print("Enter year: ");
+            int year = input.nextInt();
+
+            System.out.print("Enter month: ");
+            int month = input.nextInt();
+
+            System.out.print("Enter day: ");
+            int day = input.nextInt();
+
+            input.nextLine();
+
+            return LocalDate.of(year, month, day);
+        } catch (Exception e) {
+            input.nextLine();
             System.out.println("Invalid birthday. Try again.");
-            return false;
+            return checkBirth(input);
         }
     }
     private static boolean checkCriteria(String crit) {
@@ -35,6 +40,18 @@ public class Main {
             return false;
         }
     }
+    public static int getOpCode(Scanner input) {
+        try {
+            int opCode = input.nextInt();
+            input.nextLine();
+            return opCode;
+        } catch (InputMismatchException e) {
+            System.out.print("Invalid operation code. Try again: ");
+            input.nextLine();
+            return getOpCode(input);
+        }
+    }
+
 
     public static void main(String[] args) {
         try {
@@ -42,8 +59,8 @@ public class Main {
             TeacherDAO teacherDAO = new TeacherDAO();
             GroupDAO groupDAO = new GroupDAO();
             Scanner input = new Scanner(System.in);
+            String tableName;
 
-            String tableName = "";
             while(true) {
                 System.out.print("Enter table name or \"e\" " +
                         "to stop (string): ");
@@ -62,51 +79,23 @@ public class Main {
                     continue;
                 }
 
-
                 switch (table) {
                     case STUDENT : {
                         System.out.println("Operation: \t add \t select " +
                                 "\t update \t delete");
                         System.out.println("Code: \t\t 0 \t\t 1 " +
                                 "\t\t\t 2 \t\t\t 3");
-                        System.out.print("Enter operation code or -1 to exit (int): ");
+                        System.out.print("Enter operation code or -1 to exit: ");
+                        int opCode = getOpCode(input);
 
-                        int opCode;
-                        try {
-                            opCode = input.nextInt();
-                            input.nextLine();
-                        } catch (InputMismatchException e) {
-                            System.out.print("Invalid operation code. Returning to table select.\n");
-                            input.nextLine();
-                            break;
-                        }
                         while(opCode != -1) {
                             switch (opCode) {
                                 case 0: {
                                     System.out.print("Adding student. \nEnter name: ");
                                     String name = input.nextLine();
 
-                                    System.out.print("Entering birthday. Enter year: ");
-                                    int year;
-                                    int month;
-                                    int day;
-                                    try {
-                                        year = input.nextInt();
-
-                                        System.out.print("Enter month: ");
-                                        month = input.nextInt();
-
-                                        System.out.print("Enter day: ");
-                                        day = input.nextInt();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid birthday. Try again.");
-                                        input.nextLine();
-                                        break;
-                                    }
-
-                                    if (!checkBirth(year, month, day)) {
-                                        break;
-                                    }
+                                    System.out.println("Entering birthday.");
+                                    LocalDate birthday = checkBirth(input);
 
                                     System.out.print("Enter gender (MALE/FEMALE): ");
                                     String genderInput = input.next();
@@ -135,7 +124,9 @@ public class Main {
 
                                     studentDAO.add(new Student(
                                             name,
-                                            year, month, day,
+                                            birthday.getYear(),
+                                            birthday.getMonth().getValue(),
+                                            birthday.getDayOfMonth(),
                                             gender,
                                             group));
                                     System.out.println("Student added.");
@@ -173,7 +164,7 @@ public class Main {
                                     }
                                     if (criteria.equals(GENDER)) {
                                         try {
-                                            Gender.valueOf(critVal);
+                                            Gender.valueOf(critVal.toUpperCase());
                                         } catch (IllegalArgumentException e) {
                                             System.out.println("Invalid gender. " +
                                                     "Try again.");
@@ -198,12 +189,12 @@ public class Main {
                                     if (criteria.equals(BIRTH)) {
                                         try {
                                             LocalDate d = LocalDate.parse(critVal);
-                                            if (!checkBirth(
-                                                    d.getYear(),
-                                                    d.getMonth().getValue(),
-                                                    d.getDayOfMonth())) {
-                                                break;
-                                            }
+                                            //if (!checkBirth(
+                                            //        d.getYear(),
+                                            //        d.getMonth().getValue(),
+                                            //        d.getDayOfMonth())) {
+                                            //    break;
+                                            //}
                                         } catch (DateTimeParseException e) {
                                             System.out.println("Invalid " +
                                                     "birthday. Try again.");
@@ -259,7 +250,7 @@ public class Main {
 
                                     if (criteria.equals(GENDER)) {
                                         try {
-                                            Gender.valueOf(critVal);
+                                            Gender.valueOf(critVal.toUpperCase());
                                         } catch (IllegalArgumentException e) {
                                             System.out.println("Invalid" +
                                                     " gender. Try again.");
@@ -280,12 +271,12 @@ public class Main {
                                     if (criteria.equals(BIRTH)) {
                                         try {
                                             LocalDate d = LocalDate.parse(critVal);
-                                            if (!checkBirth(
-                                                    d.getYear(),
-                                                    d.getMonth().getValue(),
-                                                    d.getDayOfMonth())) {
-                                                break;
-                                            }
+                                            //if (!checkBirth(
+                                            //        d.getYear(),
+                                            //        d.getMonth().getValue(),
+                                            //        d.getDayOfMonth())) {
+                                            //    break;
+                                            //}
                                         } catch (DateTimeParseException e) {
                                             System.out.println("Invalid " +
                                                     "birthday. Try again.");
@@ -324,7 +315,7 @@ public class Main {
                                     }
                                     if (criteria.equals(GENDER)) {
                                         try {
-                                            Gender.valueOf(critVal);
+                                            Gender.valueOf(critVal.toUpperCase());
                                         } catch (IllegalArgumentException e) {
                                             System.out.println("Invalid " +
                                                     "gender. Try again.");
@@ -349,12 +340,12 @@ public class Main {
                                     if (criteria.equals(BIRTH)) {
                                         try {
                                             LocalDate d = LocalDate.parse(critVal);
-                                            if (!checkBirth(
-                                                    d.getYear(),
-                                                    d.getMonth().getValue(),
-                                                    d.getDayOfMonth())) {
-                                                break;
-                                            }
+                                            //if (!checkBirth(
+                                            //        d.getYear(),
+                                            //        d.getMonth().getValue(),
+                                            //        d.getDayOfMonth())) {
+                                            //    break;
+                                            //}
                                         } catch (DateTimeParseException e) {
                                             System.out.println("Invalid birthday." +
                                                     " Try again.");
@@ -397,16 +388,9 @@ public class Main {
                                 "\t\t 1 \t\t\t 2 \t\t\t 3 " +
                                 "\t\t\t 4 \t\t\t\t\t\t 5" +
                                 "\t\t\t\t\t6");
-                        System.out.print("Enter operation code (int): ");
-                        int opCode;
-                        try {
-                            opCode = input.nextInt();
-                            input.nextLine();
-                        } catch (InputMismatchException e) {
-                            System.out.println("Invalid operation code. Returning tot table select.");
-                            input.nextLine();
-                            break;
-                        }
+                        System.out.print("Enter operation code: ");
+                        int opCode = getOpCode(input);
+
                         while(opCode != -1) {
                             switch (opCode) {
                                 case 0 :  {
@@ -416,27 +400,8 @@ public class Main {
 
                                     System.out.print("Entering birthday. " +
                                             "Enter year: ");
-                                    int year;
-                                    int month;
-                                    int day;
-                                    try {
-                                        year = input.nextInt();
 
-                                        System.out.print("Enter month: ");
-                                        month = input.nextInt();
-
-                                        System.out.print("Enter day: ");
-                                        day = input.nextInt();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid " +
-                                                "birthday. Try again.");
-                                        input.nextLine();
-                                        break;
-                                    }
-
-                                    if(!checkBirth(year, month, day)) {
-                                        break;
-                                    }
+                                    LocalDate birthday = checkBirth(input);
 
                                     System.out.print("Enter gender " +
                                             "(MALE/FEMALE): ");
@@ -451,7 +416,9 @@ public class Main {
 
                                     teacherDAO.add(new Teacher(
                                             name,
-                                            year, month, day,
+                                            birthday.getYear(),
+                                            birthday.getMonth().getValue(),
+                                            birthday.getDayOfMonth(),
                                             gender));
                                     System.out.println("Teacher added.");
                                     break;
@@ -490,7 +457,9 @@ public class Main {
                                     }
                                     if (criteria.equals(GENDER)) {
                                         try {
-                                            Gender.valueOf(critVal);
+                                            critVal = critVal.toUpperCase();
+                                            Gender.valueOf(critVal.toUpperCase());
+
                                         } catch (IllegalArgumentException e) {
                                             System.out.println("Invalid gender. " +
                                                     "Try again.");
@@ -500,12 +469,12 @@ public class Main {
                                     if (criteria.equals(BIRTH)) {
                                         try {
                                             LocalDate d = LocalDate.parse(critVal);
-                                            if (!checkBirth(
-                                                    d.getYear(),
-                                                    d.getMonth().getValue(),
-                                                    d.getDayOfMonth())) {
-                                                break;
-                                            }
+                                            //if (!checkBirth(
+                                            //        d.getYear(),
+                                            //        d.getMonth().getValue(),
+                                            //        d.getDayOfMonth())) {
+                                            //    break;
+                                            //}
                                         } catch (DateTimeParseException e ) {
                                             System.out.println("Invalid " +
                                                     "birthday. Try again.");
@@ -563,7 +532,7 @@ public class Main {
 
                                     if (criteria.equals(GENDER)) {
                                         try {
-                                            Gender.valueOf(critVal);
+                                            Gender.valueOf(critVal.toUpperCase());
                                         } catch (IllegalArgumentException e) {
                                             System.out.println("Invalid " +
                                                     "gender. Try again.");
@@ -573,12 +542,12 @@ public class Main {
                                     if (criteria.equals(BIRTH)) {
                                         try {
                                             LocalDate d = LocalDate.parse(critVal);
-                                            if (!checkBirth(
-                                                    d.getYear(),
-                                                    d.getMonth().getValue(),
-                                                    d.getDayOfMonth())) {
-                                                break;
-                                            }
+                                            //if (!checkBirth(
+                                            //        d.getYear(),
+                                            //        d.getMonth().getValue(),
+                                            //        d.getDayOfMonth())) {
+                                            //    break;
+                                            //}
                                         } catch (DateTimeParseException e ) {
                                             System.out.println("Invalid " +
                                                     "birthday. Try again.");
@@ -618,7 +587,7 @@ public class Main {
                                     }
                                     if (criteria.equals(GENDER)) {
                                         try {
-                                            Gender.valueOf(critVal);
+                                            Gender.valueOf(critVal.toUpperCase());
                                         } catch (IllegalArgumentException e) {
                                             System.out.println("Invalid gender. Try again.");
                                             break;
@@ -627,12 +596,12 @@ public class Main {
                                     if (criteria.equals(BIRTH)) {
                                         try {
                                             LocalDate d = LocalDate.parse(critVal);
-                                            if (!checkBirth(
-                                                    d.getYear(),
-                                                    d.getMonth().getValue(),
-                                                    d.getDayOfMonth())) {
-                                                break;
-                                            }
+                                            //if (!checkBirth(
+                                            //        d.getYear(),
+                                            //        d.getMonth().getValue(),
+                                            //        d.getDayOfMonth())) {
+                                            //    break;
+                                            //}
                                         } catch (DateTimeParseException e ) {
                                             System.out.println("Invalid birthday. Try again.");
                                             break;
@@ -723,18 +692,14 @@ public class Main {
                                         break;
                                     }
 
-                                    Teacher teacher = teacherDAO.selectById(id);
-                                    Group group = groupDAO.select(number);
 
-                                    if (Objects.isNull(teacher)) {
-                                        System.out.println("Invalid teacher id. Try again.");
-                                        break;
+                                    try {
+                                        Teacher teacher = teacherDAO.selectById(id);
+                                        Group group = groupDAO.select(number);
+                                        teacherDAO.removeTeacherFromGroup(teacher, group);
+                                    } catch (NullPointerException e) {
+                                        System.out.println("No teacher or group. Try again.");
                                     }
-                                    if (Objects.isNull(group)) {
-                                        System.out.println("No group with given number. Try again.");
-                                        break;
-                                    }
-                                    teacherDAO.removeTeacherFromGroup(teacher, group);
 
                                     break;
                                 }
@@ -748,7 +713,7 @@ public class Main {
                                 opCode = input.nextInt();
                                 input.nextLine();
                             } catch (InputMismatchException e) {
-                                System.out.println("Invalid operation code. Try again.");
+                                System.out.println("Invalid operation code. Returning to table select..");
                                 input.nextLine();
                                 break;
                             }
@@ -763,15 +728,8 @@ public class Main {
                         System.out.println("Code: \t\t 0 " +
                                 "\t\t 1 \t\t\t 2 \t\t\t 3");
                         System.out.print("Enter operation code (int): ");
-                        int opCode;
-                        try {
-                            opCode = input.nextInt();
-                            input.nextLine();
-                        } catch (InputMismatchException e) {
-                            System.out.println("Invalid operation code. Returning to table select.");
-                            input.nextLine();
-                            break;
-                        }
+                        int opCode = getOpCode(input);
+
                         while(opCode != -1) {
                             switch (opCode) {
                                 case 0 :  {

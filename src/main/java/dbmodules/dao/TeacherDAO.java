@@ -29,7 +29,6 @@ public class TeacherDAO implements PersonTable<Teacher> {
     public Teacher selectById(int id)
             throws SQLException {
         return HibernateSessionFactory.getSessionFactory().openSession().get(Teacher.class, id);
-
     }
     public List<Teacher> select(Criteria criteria, String value)
             throws SQLException, IOException {
@@ -109,7 +108,7 @@ public class TeacherDAO implements PersonTable<Teacher> {
                 break;
             }
         }
-        session.update(person);
+        session.merge(person);
         session.getTransaction().commit();
         session.close();
     }
@@ -133,6 +132,7 @@ public class TeacherDAO implements PersonTable<Teacher> {
         group.addTeacher(teacher);
         session.merge(group);
         transaction.commit();
+        session.close();
     }
     public List<Group> getTeacherGroups(int id) throws SQLException {
         Teacher teacher = selectById(id);
@@ -145,6 +145,7 @@ public class TeacherDAO implements PersonTable<Teacher> {
         group.removeTeacher(teacher);
         session.merge(group);
         transaction.commit();
+        session.close();
     }
 
 }

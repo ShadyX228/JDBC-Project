@@ -25,8 +25,7 @@
     <show-object-properties value="true" />
     <loaded-nodes>
       <connection connection-id="ef797ce8-3834-4ef8-8c16-986e07376754">
-        <schema name="phpmyadmin" object-types="function, procedure, table, view" />
-        <schema name="studentgroupteacher" object-types="index, dataset trigger, column, function, procedure, constraint, table, view" />
+        <schema name="studentgroupteacher" object-types="view, table" />
       </connection>
     </loaded-nodes>
   </component>
@@ -36,14 +35,13 @@
     </connection>
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="ef797ce8-3834-4ef8-8c16-986e07376754" object-ref="schemas/studentgroupteacher/tables/student" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="ef797ce8-3834-4ef8-8c16-986e07376754" />
   </component>
   <component name="DBNavigator.Project.DatasetFilterManager">
+    <filter-actions connection-id="ef797ce8-3834-4ef8-8c16-986e07376754" dataset="studentgroupteacher.groupteacher" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="ef797ce8-3834-4ef8-8c16-986e07376754" dataset="studentgroupteacher.group" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="ef797ce8-3834-4ef8-8c16-986e07376754" dataset="studentgroupteacher.teacher" active-filter-id="EMPTY_FILTER" />
     <filter-actions connection-id="ef797ce8-3834-4ef8-8c16-986e07376754" dataset="studentgroupteacher.student" active-filter-id="EMPTY_FILTER">

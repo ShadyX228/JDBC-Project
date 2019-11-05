@@ -92,6 +92,7 @@ public class Main {
         if (criteria.equals(GENDER)) {
             try {
                 Gender.valueOf(critVal.toUpperCase());
+                critVal = critVal.toUpperCase();
             } catch (Exception e) {
                 System.out.println("Invalid gender. " +
                         "Try again.");
@@ -103,7 +104,7 @@ public class Main {
                 groupDAO.select(Integer.parseInt(critVal));
             } catch (Exception e) {
                 System.out.println("Invalid group" +
-                        " number. Try again.");
+                        " number. Try again. ");
                 return parseCriteria(criteria, input, groupDAO);
             }
         }
@@ -115,7 +116,6 @@ public class Main {
                         "birthday. Try again.");
                 return parseCriteria(criteria, input, groupDAO);
             }
-
         }
         return critVal;
     }
@@ -208,7 +208,7 @@ public class Main {
                                         id = input.nextInt();
                                         input.nextLine();
                                     } catch (InputMismatchException e) {
-                                        System.out.println("Invalid id. Try again");
+                                        System.out.println("Invalid id. Abort operation.");
                                         input.nextLine();
                                         break;
                                     }
@@ -229,46 +229,18 @@ public class Main {
                                         }
                                     }
                                     System.out.print("): ");
+
                                     Criteria criteria = checkCriteria(input);
 
-                                    System.out.print("Enter criteria value: ");
-                                    String critVal = input.nextLine();
+                                    if(criteria.equals(ID)
+                                            || criteria.equals(ALL)) {
+                                        System.out.println("Incorrect criteria. Abort operation.");
+                                        break;
+                                    }
 
-                                    if (criteria.equals(GENDER)) {
-                                        try {
-                                            Gender.valueOf(critVal.toUpperCase());
-                                        } catch (IllegalArgumentException e) {
-                                            System.out.println("Invalid" +
-                                                    " gender. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(GROUP)) {
-                                        try {
-                                            Group groupCheck = groupDAO.select(
-                                                    Integer.parseInt(critVal));
-                                        } catch (Exception e) {
-                                            System.out.println("Invalid group " +
-                                                    "number or " +
-                                                    "group with given number doesn't exist. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(BIRTH)) {
-                                        try {
-                                            LocalDate d = LocalDate.parse(critVal);
-                                            //if (!checkBirth(
-                                            //        d.getYear(),
-                                            //        d.getMonth().getValue(),
-                                            //        d.getDayOfMonth())) {
-                                            //    break;
-                                            //}
-                                        } catch (DateTimeParseException e) {
-                                            System.out.println("Invalid " +
-                                                    "birthday. Try again.");
-                                            break;
-                                        }
-                                    }
+                                    System.out.print("Enter criteria value: ");
+                                    String critVal = parseCriteria(criteria, input, groupDAO);
+
                                     studentDAO.update(student, criteria, critVal);
                                     System.out.println("Student updated.");
                                     break;
@@ -283,56 +255,18 @@ public class Main {
                                     Criteria criteria = checkCriteria(input);
 
                                     System.out.print("Enter criteria value: ");
-                                    String critVal = input.nextLine();
+                                    String critVal = parseCriteria(criteria, input, groupDAO);
 
-                                    if (criteria.equals(ID)) {
-                                        try {
-                                            Integer.parseInt(critVal);
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid " +
-                                                    "id. Try again");
-                                            break;
-                                        }
+                                    if(criteria.equals(ID)
+                                            && (studentDAO
+                                            .selectById(Integer
+                                                    .parseInt(critVal)) == null)) {
+                                        studentDAO.selectById(Integer.parseInt(critVal));
+                                        System.out.println("No student with given id. " +
+                                                    "Abort operation.");
+                                        break;
                                     }
-                                    if (criteria.equals(GENDER)) {
-                                        try {
-                                            Gender.valueOf(critVal.toUpperCase());
-                                        } catch (IllegalArgumentException e) {
-                                            System.out.println("Invalid " +
-                                                    "gender. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(GROUP)) {
-                                        try {
-                                            Group groupCheck = groupDAO.select(
-                                                    Integer.parseInt(critVal));
-                                            if (Objects.isNull(groupCheck)) {
-                                                System.out.println("No group with " +
-                                                        "given number. Try again.");
-                                                break;
-                                            }
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid group number. " +
-                                                    "Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(BIRTH)) {
-                                        try {
-                                            LocalDate d = LocalDate.parse(critVal);
-                                            //if (!checkBirth(
-                                            //        d.getYear(),
-                                            //        d.getMonth().getValue(),
-                                            //        d.getDayOfMonth())) {
-                                            //    break;
-                                            //}
-                                        } catch (DateTimeParseException e) {
-                                            System.out.println("Invalid birthday." +
-                                                    " Try again.");
-                                            break;
-                                        }
-                                    }
+
                                     studentDAO.delete(criteria, critVal);
                                     System.out.println("Student deleted.");
                                     break;
@@ -408,50 +342,9 @@ public class Main {
                                     System.out.print("): ");
                                     Criteria criteria = checkCriteria(input);
 
-                                    String critVal;
+                                    String critVal = parseCriteria(criteria, input, groupDAO);
 
-                                    if (!criteria.equals(ALL)) {
-                                        System.out.print("Enter criteria value: ");
-                                        critVal = input.nextLine();
-                                    } else {
-                                        critVal = "";
-                                    }
-                                    if (criteria.equals(ID)) {
-                                        try {
-                                            Integer.parseInt(critVal);
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid " +
-                                                    "id. Try again");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(GENDER)) {
-                                        try {
-                                            critVal = critVal.toUpperCase();
-                                            Gender.valueOf(critVal.toUpperCase());
 
-                                        } catch (IllegalArgumentException e) {
-                                            System.out.println("Invalid gender. " +
-                                                    "Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(BIRTH)) {
-                                        try {
-                                            LocalDate d = LocalDate.parse(critVal);
-                                            //if (!checkBirth(
-                                            //        d.getYear(),
-                                            //        d.getMonth().getValue(),
-                                            //        d.getDayOfMonth())) {
-                                            //    break;
-                                            //}
-                                        } catch (DateTimeParseException e ) {
-                                            System.out.println("Invalid " +
-                                                    "birthday. Try again.");
-                                            break;
-                                        }
-
-                                    }
                                     for (Teacher teacher
                                             : teacherDAO.select(criteria, critVal)
                                     ) {
@@ -490,40 +383,18 @@ public class Main {
                                         }
                                     }
                                     System.out.print("): ");
-                                    String crit = input.next().toUpperCase();
-                                    input.nextLine();
-                                    //if(!checkCriteria(crit)) {
-                                    //    break;
-                                    //}
-                                    Criteria criteria = valueOf(crit);
+
+                                    Criteria criteria = checkCriteria(input);
+                                    if(criteria.equals(ID)
+                                            || criteria.equals(GROUP)
+                                            || criteria.equals(ALL)) {
+                                        System.out.println("Incorrect criteria. Abort operation.");
+                                        break;
+                                    }
 
                                     System.out.print("Enter criteria value: ");
-                                    String critVal = input.nextLine();
+                                    String critVal = parseCriteria(criteria, input, groupDAO);
 
-                                    if (criteria.equals(GENDER)) {
-                                        try {
-                                            Gender.valueOf(critVal.toUpperCase());
-                                        } catch (IllegalArgumentException e) {
-                                            System.out.println("Invalid " +
-                                                    "gender. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(BIRTH)) {
-                                        try {
-                                            LocalDate d = LocalDate.parse(critVal);
-                                            //if (!checkBirth(
-                                            //        d.getYear(),
-                                            //        d.getMonth().getValue(),
-                                            //        d.getDayOfMonth())) {
-                                            //    break;
-                                            //}
-                                        } catch (DateTimeParseException e ) {
-                                            System.out.println("Invalid " +
-                                                    "birthday. Try again.");
-                                            break;
-                                        }
-                                    }
                                     teacherDAO.update(teacher, criteria, critVal);
                                     System.out.println("Teacher updated.");
                                     break;
@@ -537,47 +408,14 @@ public class Main {
                                         }
                                     }
                                     System.out.print(") ");
-                                    String crit = input.next().toUpperCase();
-                                    input.nextLine();
-                                    //if(!checkCriteria(crit)) {
-                                    //    break;
-                                    //}
-                                    Criteria criteria = valueOf(crit);
+
+                                    Criteria criteria = checkCriteria(input);
 
                                     System.out.print("Enter criteria value: ");
-                                    String critVal = input.nextLine();
+                                    String critVal = parseCriteria(criteria, input, groupDAO);
 
-                                    if (criteria.equals(ID)) {
-                                        try {
-                                            Integer.parseInt(critVal);
-                                        } catch (NumberFormatException e) {
-                                            System.out.println("Invalid id. Try again");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(GENDER)) {
-                                        try {
-                                            Gender.valueOf(critVal.toUpperCase());
-                                        } catch (IllegalArgumentException e) {
-                                            System.out.println("Invalid gender. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    if (criteria.equals(BIRTH)) {
-                                        try {
-                                            LocalDate d = LocalDate.parse(critVal);
-                                            //if (!checkBirth(
-                                            //        d.getYear(),
-                                            //        d.getMonth().getValue(),
-                                            //        d.getDayOfMonth())) {
-                                            //    break;
-                                            //}
-                                        } catch (DateTimeParseException e ) {
-                                            System.out.println("Invalid birthday. Try again.");
-                                            break;
-                                        }
-                                    }
-                                    studentDAO.delete(criteria, critVal);
+
+                                    teacherDAO.delete(criteria, critVal);
                                     System.out.println("Teacher deleted.");
                                     break;
                                 }

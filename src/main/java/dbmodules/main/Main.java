@@ -563,12 +563,17 @@ public class Main {
                                     }
 
 
-                                    Group groupCheck = groupDAO.select(number);
-                                    if(!Objects.isNull(groupCheck)) {
-                                        System.out.println("Group with given number is exist." +
-                                                " Select another number.");
-                                        break;
+                                    try {
+                                        Group groupCheck = groupDAO.select(number);
+                                        if(!Objects.isNull(groupCheck)) {
+                                            System.out.println("Group with given number is exist." +
+                                                    " Select another number.");
+                                            break;
+                                        }
+                                    } catch (Exception e) {
+                                        System.out.println("Correct.");
                                     }
+
 
                                     groupDAO.add(new Group(number));
                                     System.out.println("Group added.");

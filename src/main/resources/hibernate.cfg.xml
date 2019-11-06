@@ -8,7 +8,7 @@
     <session-factory>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
         <property name="show_sql">true</property>
-        <property name="connection.url">jdbc:mysql://212.193.37.123</property>
+        <property name="connection.url">jdbc:mysql://10.0.16.31</property>
         <property name="connection.username">root</property>
         <property name="connection.password">12345</property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>

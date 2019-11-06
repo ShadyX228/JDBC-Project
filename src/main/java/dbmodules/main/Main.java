@@ -256,7 +256,7 @@ public class Main {
                                 }
                                 case 3:  {
                                     System.out.print("Deleting studetns. "
-                                            + "\nEnter criteria ( ");
+                                            + "\nCriterias ( ");
                                     for (Criteria criteria : values()) {
                                         System.out.print(criteria + " ");
                                     }
@@ -421,12 +421,16 @@ public class Main {
 
                                     Criteria criteria = checkCriteria(input);
 
-                                    System.out.print("Enter criteria value: ");
                                     String critVal = parseCriteria(criteria, input, groupDAO);
 
 
-                                    teacherDAO.delete(criteria, critVal);
-                                    System.out.println("Teacher deleted.");
+                                    try {
+                                        teacherDAO.delete(criteria, critVal);
+                                        System.out.println("Teacher deleted.");
+                                    } catch (Exception e) {
+                                        System.out.println("This teacher is working in some groups. " +
+                                                "Unbind them first.");
+                                    }
                                     break;
                                 }
                                 case 4 :  {

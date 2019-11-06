@@ -9,9 +9,6 @@ import hibernate.HibernateSessionFactory;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
-import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,21 +23,36 @@ public class TeacherDAO implements PersonTable<Teacher> {
         session.close();
     }
     public Teacher selectById(int id) {
-        return HibernateSessionFactory.getSessionFactory().openSession().get(Teacher.class, id);
+        Session session = null;
+        Teacher teacher = null;
+        try {
+            session = HibernateSessionFactory.getSessionFactory().openSession();
+            teacher = session.load(Teacher.class, id);
+        } catch (Exception e) {
+            System.out.println("Hibernate error.");
+            e.printStackTrace();
+        } finally {
+            if (session != null && session.isOpen()) {
+                session.close();
+            }
+        }
+        return teacher;
     }
     public List<Teacher> select(Criteria criteria, String value) {
         Query query = null;
+        Session session = HibernateSessionFactory
+                .getSessionFactory()
+                .openSession();
         List<Teacher> list = new ArrayList<>();
 
         switch (criteria) {
             case ID : {
                 list.add(selectById(Integer.parseInt(value)));
+                session.close();
                 return list;
             }
             case NAME : {
-                query = HibernateSessionFactory
-                        .getSessionFactory()
-                        .openSession()
+                query = session
                         .createQuery("FROM Teacher WHERE Name LIKE :name");
                 query.setParameter("name", "%" + value + "%");
                 break;
@@ -54,31 +66,26 @@ public class TeacherDAO implements PersonTable<Teacher> {
                 DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 String formattedBirth = dateTimeFormatter.format(birth);
 
-                query = HibernateSessionFactory
-                        .getSessionFactory()
-                        .openSession()
+                query = session
                         .createQuery("FROM Teacher WHERE Birthday = :birthday");
                 query.setParameter("birthday", formattedBirth);
                 break;
             }
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
-                query = HibernateSessionFactory
-                        .getSessionFactory()
-                        .openSession()
+                query = session
                         .createQuery("FROM Teacher WHERE Gender = :gender");
                 query.setParameter("gender", gender.getValue());
                 break;
             }
             case ALL : {
-                query = HibernateSessionFactory
-                        .getSessionFactory()
-                        .openSession()
+                query = session
                         .createQuery("FROM Teacher");
                 break;
             }
         }
         list = query.list();
+        session.close();
         return list;
     }
     public void update(Teacher person, Criteria criteria, String value) {

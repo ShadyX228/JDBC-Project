@@ -3,15 +3,16 @@ package dbmodules.main;
 import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
+import hibernate.HibernateSessionFactory;
+
 import java.time.*;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static dbmodules.types.Criteria.*;
 
 public class Main {
-    // исправить null-pointer в последних методах учителя.
-    private static LocalDate checkBirth(Scanner input) {
+    private static LocalDate checkBirth
+            (Scanner input) {
         try {
             System.out.print("Enter year: ");
             int year = input.nextInt();
@@ -61,17 +62,19 @@ public class Main {
             return checkGender(input);
         }
     }
-    private static Group checkGroup(Scanner input, GroupDAO groupDAO) {
+    private static Group checkGroup
+            (Scanner input, GroupDAO groupDAO) {
         try {
             int number = input.nextInt();
             return groupDAO.select(number);
         } catch (Exception e) {
-            System.out.println("Invalid group number. Try again.");
+            System.out.println("Invalid group number or group is not exist. Try again: ");
             input.nextLine();
             return checkGroup(input, groupDAO);
         }
     }
-    private static String parseCriteria(Criteria criteria, Scanner input, GroupDAO groupDAO) {
+    private static String parseCriteria
+            (Criteria criteria, Scanner input, GroupDAO groupDAO) {
         String critVal;
 
         if (!criteria.equals(ALL)) {
@@ -137,6 +140,12 @@ public class Main {
                 TableType table;
                 if(tableName.equals("e")) {
                     System.out.println("Shutting down.");
+                    if(!Objects.isNull(HibernateSessionFactory
+                            .getSessionFactory())) {
+                        System.out.println(1);
+                        HibernateSessionFactory
+                                .getSessionFactory().close();
+                    }
                     System.exit(0);
                 }
                 try {
@@ -280,6 +289,7 @@ public class Main {
                                     break;
                                 }
                             }
+
                             System.out.print("\nEnter operation code or -1 to exit (int): ");
                             try {
                                 opCode = input.nextInt();
@@ -516,6 +526,7 @@ public class Main {
                                     break;
                                 }
                             }
+
                             System.out.print("\nEnter operation code or -1 to exit (int): ");
                             try {
                                 opCode = input.nextInt();
@@ -527,7 +538,6 @@ public class Main {
                             }
                             System.out.println();
                         }
-                        System.out.println();
                         break;
                     }
                     case GROUP   : {
@@ -540,9 +550,9 @@ public class Main {
 
                         while(opCode != -1) {
                             switch (opCode) {
-                                case 0 :  {
+                                case 0  :  {
                                     System.out.print("Adding Group. \nEnter number: ");
-                                    int number = 0;
+                                    int number;
                                     try {
                                         number = input.nextInt();
                                         input.nextLine();
@@ -564,58 +574,53 @@ public class Main {
                                     System.out.println("Group added.");
                                     break;
                                 }
-                                case 1 :  {
+                                case 1  :  {
                                     System.out.print("Selecting group. \n"
                                             + "Enter group number: ");
 
-                                    int number = 0;
-                                    try {
-                                        number = input.nextInt();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid group number value. Try again.");
-                                        input.nextLine();
-                                        break;
-                                    }
-                                    input.nextLine();
-                                    try {
-                                        System.out.println(groupDAO.select(number));
-                                    } catch (IndexOutOfBoundsException e ) {
-                                        System.out.println("Group with given number doesn't exist." +
-                                                " Select another number.");
-                                    }
+                                    System.out.println(checkGroup(input, groupDAO));
+
                                     break;
                                 }
-                                case 2 :  {
+                                case 2  :  {
                                     System.out.println("Selecting all...");
                                     for(Group group : groupDAO.selectAll()) {
                                         System.out.println(group);
                                     }
                                     break;
                                 }
-                                case 3 :  {
+                                case 3  :  {
                                     System.out.print("Deleting group. "
                                             + "\nEnter number: ");
 
-                                    int number = 0;
+                                    int number;
                                     try {
                                         number = input.nextInt();
                                         input.nextLine();
                                     } catch (InputMismatchException e) {
-                                        System.out.println("Invalid group number value. Try again.");
+                                        System.out.println("Invalid " +
+                                                "group number value." +
+                                                " Try again.");
                                         input.nextLine();
                                         break;
                                     }
 
-                                    Group group = null;
+                                    Group group;
                                     try {
                                         group = groupDAO.select(number);
                                     } catch (NullPointerException e) {
-                                        System.out.println("No group with given number. Try again.");
+                                        System.out.println("No group " +
+                                                "with given number. " +
+                                                "Abort operation..");
                                         break;
                                     }
 
-                                    if(!studentDAO.select(GROUP, Integer.toString(number)).isEmpty()) {
-                                        System.out.println("Cannot delete group. Some students is in." +
+                                    if(!studentDAO.select(GROUP,
+                                            Integer.toString(number))
+                                            .isEmpty()) {
+                                        System.out.println("Cannot " +
+                                                "delete group. " +
+                                                "Some students is in." +
                                                 " Unbind them first.");
                                         break;
                                     }
@@ -624,7 +629,7 @@ public class Main {
                                     System.out.print("Group deleted.");
                                     break;
                                 }
-                                default : {
+                                default :  {
                                     System.out.println("Invalid operation code. Try again.");
                                     break;
                                 }
@@ -640,7 +645,6 @@ public class Main {
                             }
                             System.out.println();
                         }
-                        System.out.println();
                         break;
                     }
                 }

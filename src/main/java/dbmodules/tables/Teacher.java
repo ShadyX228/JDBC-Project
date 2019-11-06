@@ -25,7 +25,7 @@ public class Teacher extends Table {
     @Column(name="Gender")
     private Gender gender;
 
-    @ManyToMany(mappedBy = "teachers")
+    @ManyToMany(mappedBy = "teachers", fetch = FetchType.LAZY)
     private List<Group> groups = new ArrayList<>();
 
 
@@ -53,13 +53,13 @@ public class Teacher extends Table {
         return groups;
     }
 
-    public void setName(String name) throws SQLException {
+    public void setName(String name) {
         this.name = name;
     }
-    public void setBirthday(LocalDate birthday) throws SQLException {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
-    public void setGender(Gender gender) throws SQLException {
+    public void setGender(Gender gender)  {
         this.gender = gender;
     }
     public void addGroup(Group group) {
@@ -74,10 +74,6 @@ public class Teacher extends Table {
     @Override
     public boolean equals(Object obj) {
         Teacher teacher = (Teacher) obj;
-        if(this.id == teacher.id) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.id == teacher.id;
     }
 }

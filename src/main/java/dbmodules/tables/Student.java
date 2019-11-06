@@ -23,7 +23,7 @@ public class Student extends Table {
     @Column(name="Gender")
     private Gender gender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
     private Group group;
 

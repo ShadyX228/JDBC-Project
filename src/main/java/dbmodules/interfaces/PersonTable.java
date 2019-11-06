@@ -9,9 +9,9 @@ import java.util.List;
 
 
 public interface PersonTable<T extends Table> {
-    void add(T person) throws SQLException;
-    T selectById(int id) throws SQLException, IOException;
-    List<T> select(Criteria criteria, String value) throws SQLException, IOException;
-    void update(T person, Criteria criteria, String value) throws SQLException, IOException;
-    void delete(Criteria criteria, String value) throws SQLException, IOException;
+    void add(T person);
+    T selectById(int id);
+    List<T> select(Criteria criteria, String value);
+    void update(T person, Criteria criteria, String value);
+    void delete(Criteria criteria, String value);
 }

@@ -18,7 +18,7 @@ public class Group extends Table {
 
     @ManyToMany(cascade = {
             CascadeType.ALL
-    })
+    }, fetch = FetchType.LAZY)
     @JoinTable(
             name = "studentgroupteacher.groupteacher",
             joinColumns = {@JoinColumn(name = "group_id")},

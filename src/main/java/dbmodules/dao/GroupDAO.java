@@ -30,9 +30,12 @@ public class GroupDAO implements GroupTable {
         return list.get(0);
     }
     public List<Group> selectAll() {
-        Query query = HibernateSessionFactory.getSessionFactory().openSession().createQuery("FROM Group");
-        List<Group> list = query.list();
-        return list;
+        Query query = HibernateSessionFactory
+                .getSessionFactory()
+                .openSession()
+                .createQuery("FROM Group");
+
+        return query.list();
     }
     public void delete(Group group) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();

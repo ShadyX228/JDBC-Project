@@ -18,20 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherDAO implements PersonTable<Teacher> {
-    public void add(Teacher person)
-            throws SQLException {
+    public void add(Teacher person) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.save(person);
         transaction.commit();
         session.close();
     }
-    public Teacher selectById(int id)
-            throws SQLException {
+    public Teacher selectById(int id) {
         return HibernateSessionFactory.getSessionFactory().openSession().get(Teacher.class, id);
     }
-    public List<Teacher> select(Criteria criteria, String value)
-            throws SQLException, IOException {
+    public List<Teacher> select(Criteria criteria, String value) {
         Query query = null;
         List<Teacher> list = new ArrayList<>();
 
@@ -84,8 +81,7 @@ public class TeacherDAO implements PersonTable<Teacher> {
         list = query.list();
         return list;
     }
-    public void update(Teacher person, Criteria criteria, String value)
-            throws SQLException, IOException {
+    public void update(Teacher person, Criteria criteria, String value) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         session.beginTransaction();
         switch (criteria) {
@@ -112,8 +108,7 @@ public class TeacherDAO implements PersonTable<Teacher> {
         session.getTransaction().commit();
         session.close();
     }
-    public void delete(Criteria criteria, String value)
-            throws SQLException, IOException {
+    public void delete(Criteria criteria, String value) {
         List<Teacher> teachers = select(criteria,value);
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
@@ -125,8 +120,7 @@ public class TeacherDAO implements PersonTable<Teacher> {
         transaction.commit();
         session.close();
     }
-    public void putTeacherInGroup(Teacher teacher, Group group)
-            throws SQLException {
+    public void putTeacherInGroup(Teacher teacher, Group group) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         group.addTeacher(teacher);
@@ -134,12 +128,11 @@ public class TeacherDAO implements PersonTable<Teacher> {
         transaction.commit();
         session.close();
     }
-    public List<Group> getTeacherGroups(int id) throws SQLException {
+    public List<Group> getTeacherGroups(int id) {
         Teacher teacher = selectById(id);
         return teacher.getGroups();
     }
-    public void removeTeacherFromGroup(Teacher teacher, Group group)
-            throws SQLException {
+    public void removeTeacherFromGroup(Teacher teacher, Group group) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         group.removeTeacher(teacher);

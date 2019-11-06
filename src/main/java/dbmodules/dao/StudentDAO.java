@@ -17,20 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDAO implements PersonTable<Student> {
-    public void add(Student person)
-            throws SQLException {
+    public void add(Student person) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
         session.save(person);
         transaction.commit();
         session.close();
     }
-    public Student selectById(int id)
-            throws SQLException, IOException {
+    public Student selectById(int id) {
         return HibernateSessionFactory.getSessionFactory().openSession().get(Student.class, id);
     }
-    public List<Student> select(Criteria criteria, String value)
-            throws SQLException, IOException {
+    public List<Student> select(Criteria criteria, String value) {
         Query query = null;
         List<Student> list = new ArrayList<>();
 
@@ -94,8 +91,7 @@ public class StudentDAO implements PersonTable<Student> {
         list = query.list();
         return list;
     }
-    public void update(Student person, Criteria criteria, String value)
-            throws SQLException, IOException {
+    public void update(Student person, Criteria criteria, String value) {
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         session.beginTransaction();
         switch (criteria) {
@@ -128,8 +124,7 @@ public class StudentDAO implements PersonTable<Student> {
         session.getTransaction().commit();
         session.close();
     }
-    public void delete(Criteria criteria, String value)
-            throws SQLException, IOException {
+    public void delete(Criteria criteria, String value) {
         List<Student> students = select(criteria,value);
         Session session = HibernateSessionFactory.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();

@@ -2,10 +2,11 @@ package dbmodules.tables;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
-@javax.persistence.Table (name = "group", schema = "studentgroupteacher")
+@javax.persistence.Table (name = "group", catalog = "studentgroupteacher")
 public class Group extends Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

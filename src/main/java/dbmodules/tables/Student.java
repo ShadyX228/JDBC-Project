@@ -5,9 +5,6 @@ import dbmodules.types.*;
 import javax.persistence.*;
 import java.time.*;
 
-// в hibernate не работает schema
-// юзаем пока catalog
-// нужно перейти на jpa
 @Entity
 @javax.persistence.Table (catalog = "studentgroupteacher", name = "student")
 public class Student extends Table {

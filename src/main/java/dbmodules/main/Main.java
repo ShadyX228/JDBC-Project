@@ -3,7 +3,7 @@ package dbmodules.main;
 import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
-import hibernate.HibernateSessionFactory;
+import hibernate.JPAUtil;
 
 import java.time.*;
 import java.util.*;
@@ -68,7 +68,7 @@ public class Main {
             int number = input.nextInt();
             return groupDAO.select(number);
         } catch (Exception e) {
-            System.out.println("Invalid group number or group is not exist. Try again: ");
+            System.out.print("Invalid group number or group is not exist. Try again: ");
             input.nextLine();
             return checkGroup(input, groupDAO);
         }
@@ -140,12 +140,7 @@ public class Main {
                 TableType table;
                 if(tableName.equals("e")) {
                     System.out.println("Shutting down.");
-                    if(!Objects.isNull(HibernateSessionFactory
-                            .getSessionFactory())) {
-                        System.out.println(1);
-                        HibernateSessionFactory
-                                .getSessionFactory().close();
-                    }
+                    JPAUtil.close();
                     System.exit(0);
                 }
                 try {
@@ -658,6 +653,7 @@ public class Main {
                     }
                 }
             }
+
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();

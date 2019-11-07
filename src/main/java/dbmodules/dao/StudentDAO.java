@@ -6,36 +6,31 @@ import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import hibernate.HibernateSessionFactory;
+import hibernate.JPAUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDAO implements PersonTable<Student> {
+public class StudentDAO extends JPAUtil implements PersonTable<Student> {
     public void add(Student person) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(person);
-        transaction.commit();
-        session.close();
+        EntityManager entityManager = getEntityManager();
+        entityManager.getTransaction().begin();
+        entityManager.persist(person);
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
     public Student selectById(int id) {
-        Session session = null;
-        Student student = null;
-        try {
-            session = HibernateSessionFactory.getSessionFactory().openSession();
-            student = session.load(Student.class, id);
-        } catch (Exception e) {
-            System.out.println("Hibernate error.");
-            e.printStackTrace();
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+        EntityManager entityManager = getEntityManager();
+        Student student = entityManager.find(Student.class, id);
+        entityManager.close();
         return student;
     }
     public List<Student> select(Criteria criteria, String value) {
@@ -48,7 +43,7 @@ public class StudentDAO implements PersonTable<Student> {
         switch (criteria) {
             case ID : {
                 list.add(selectById(Integer.parseInt(value)));
-                session.close();
+                //session.close();
                 return list;
             }
             case NAME : {
@@ -94,7 +89,7 @@ public class StudentDAO implements PersonTable<Student> {
             }
         }
         list = query.list();
-        session.close();
+        //session.close();
         return list;
     }
     public void update(Student person, Criteria criteria, String value) {

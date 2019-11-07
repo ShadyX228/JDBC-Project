@@ -5,22 +5,25 @@ import dbmodules.types.*;
 import javax.persistence.*;
 import java.time.*;
 
+// в hibernate не работает schema
+// юзаем пока catalog
+// нужно перейти на jpa
 @Entity
-@javax.persistence.Table (name = "studentgroupteacher.student")
+@javax.persistence.Table (catalog = "studentgroupteacher", name = "student")
 public class Student extends Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="student_id")
     private int id;
 
-    @Column(name="Name")
+    @Column(name="name")
     private String name;
 
-    @Column(name="Birthday")
+    @Column(name="birthday")
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="Gender")
+    @Column(name="gender")
     private Gender gender;
 
     @ManyToOne(fetch = FetchType.LAZY)

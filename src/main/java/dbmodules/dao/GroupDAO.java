@@ -23,7 +23,7 @@ public class GroupDAO implements GroupTable {
         Query query = HibernateSessionFactory
                 .getSessionFactory()
                 .openSession()
-                .createQuery("FROM Group WHERE Number = :number");
+                .createQuery("FROM Group WHERE number = :number");
         query.setParameter("number", number);
 
         List<Group> list = query.list();

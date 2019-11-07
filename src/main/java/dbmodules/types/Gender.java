@@ -1,7 +1,6 @@
 package dbmodules.types;
 
 public enum Gender {
-    NULL("NULL"),
     MALE("MALE"),
     FEMALE("FEMALE");
 

@@ -8,21 +8,21 @@ import java.time.LocalDate;
 import java.util.*;
 
 @Entity
-@javax.persistence.Table (name = "studentgroupteacher.teacher")
+@javax.persistence.Table (name = "teacher", schema = "studentgroupteacher")
 public class Teacher extends Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="teacher_id")
     private int id;
 
-    @Column(name="Name")
+    @Column(name="name")
     private String name;
 
-    @Column(name="Birthday")
+    @Column(name="birthday")
     private LocalDate birthday;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="Gender")
+    @Column(name="gender")
     private Gender gender;
 
     @ManyToMany(mappedBy = "teachers", fetch = FetchType.LAZY)

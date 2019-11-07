@@ -53,7 +53,7 @@ public class StudentDAO implements PersonTable<Student> {
             }
             case NAME : {
                 query = session
-                        .createQuery("FROM Student WHERE Name LIKE :name");
+                        .createQuery("FROM Student WHERE name LIKE :name");
                 query.setParameter("name", "%" + value + "%");
                 break;
             }
@@ -67,14 +67,14 @@ public class StudentDAO implements PersonTable<Student> {
                 String formattedBirth = dateTimeFormatter.format(birth);
 
                 query = session
-                        .createQuery("FROM Student WHERE Birthday = :birthday");
+                        .createQuery("FROM Student WHERE birthday = :birthday");
                 query.setParameter("birthday", formattedBirth);
                 break;
             }
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
                 query = session
-                        .createQuery("FROM Student WHERE Gender = :gender");
+                        .createQuery("FROM Student WHERE gender = :gender");
                 query.setParameter("gender", gender.getValue());
                 break;
             }

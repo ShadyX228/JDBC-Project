@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@javax.persistence.Table (name = "studentgroupteacher.group")
+@javax.persistence.Table (name = "group", schema = "studentgroupteacher")
 public class Group extends Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="group_id")
     private int id;
 
-    @Column(name = "Number")
+    @Column(name = "number")
     private int number;
 
 
@@ -20,7 +20,7 @@ public class Group extends Table {
             CascadeType.ALL
     }, fetch = FetchType.LAZY)
     @JoinTable(
-            name = "studentgroupteacher.groupteacher",
+            name = "groupteacher",
             joinColumns = {@JoinColumn(name = "group_id")},
             inverseJoinColumns = {@JoinColumn(name = "teacher_id")}
     )

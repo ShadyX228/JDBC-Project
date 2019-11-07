@@ -67,14 +67,14 @@ public class TeacherDAO implements PersonTable<Teacher> {
                 String formattedBirth = dateTimeFormatter.format(birth);
 
                 query = session
-                        .createQuery("FROM Teacher WHERE Birthday = :birthday");
+                        .createQuery("FROM Teacher WHERE birthday = :birthday");
                 query.setParameter("birthday", formattedBirth);
                 break;
             }
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
                 query = session
-                        .createQuery("FROM Teacher WHERE Gender = :gender");
+                        .createQuery("FROM Teacher WHERE gender = :gender");
                 query.setParameter("gender", gender.getValue());
                 break;
             }

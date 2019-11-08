@@ -1,14 +1,12 @@
 package dbmodules.tables;
 
 import dbmodules.types.Gender;
-
 import javax.persistence.*;
-import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
 
 @Entity
-@javax.persistence.Table (name = "teacher", schema = "studentgroupteacher")
+@javax.persistence.Table (catalog = "studentgroupteacher", name = "teacher")
 public class Teacher extends Table {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +23,13 @@ public class Teacher extends Table {
     @Column(name="gender")
     private Gender gender;
 
-    @ManyToMany(mappedBy = "teachers", fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {
+            CascadeType.ALL
+    }, fetch = FetchType.LAZY)
+    @JoinTable(name = "groupteacher",
+            joinColumns = {@JoinColumn(name = "teacher_id")},
+            inverseJoinColumns = {@JoinColumn(name = "group_id")}
+    )
     private List<Group> groups = new ArrayList<>();
 
 
@@ -65,6 +69,9 @@ public class Teacher extends Table {
     public void addGroup(Group group) {
         groups.add(group);
     }
+    public void removeGroup(Group group) {
+        groups.remove(group);
+    }
 
     public String toString() {
         return "teacher_id: " + id + "; name: " + name + "; " +
@@ -72,8 +79,14 @@ public class Teacher extends Table {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        Teacher teacher = (Teacher) obj;
-        return this.id == teacher.id;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teacher teacher = (Teacher) o;
+        return id == teacher.id &&
+                name.equals(teacher.name) &&
+                birthday.equals(teacher.birthday) &&
+                gender == teacher.gender &&
+                Objects.equals(groups, teacher.groups);
     }
 }

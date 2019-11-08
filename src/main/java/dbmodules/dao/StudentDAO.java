@@ -5,51 +5,33 @@ import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
-import hibernate.HibernateSessionFactory;
 import hibernate.JPAUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
-
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDAO extends JPAUtil implements PersonTable<Student> {
-    public void add(Student person) {
-        EntityManager entityManager = getEntityManager();
-        entityManager.getTransaction().begin();
-        entityManager.persist(person);
-        entityManager.getTransaction().commit();
-        entityManager.close();
-    }
+public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
     public Student selectById(int id) {
         EntityManager entityManager = getEntityManager();
-        Student student = entityManager.find(Student.class, id);
+        Student entity = entityManager.find(Student.class, id);
         entityManager.close();
-        return student;
+        return entity;
     }
     public List<Student> select(Criteria criteria, String value) {
-        Query query = null;
-        Session session = HibernateSessionFactory
-                .getSessionFactory()
-                .openSession();
+        EntityManager entityManager = getEntityManager();
         List<Student> list = new ArrayList<>();
 
         switch (criteria) {
             case ID : {
                 list.add(selectById(Integer.parseInt(value)));
-                //session.close();
-                return list;
+                break;
             }
             case NAME : {
-                query = session
-                        .createQuery("FROM Student WHERE name LIKE :name");
-                query.setParameter("name", "%" + value + "%");
+                list = entityManager
+                        .createQuery("FROM Student WHERE Name LIKE :name")
+                        .setParameter("name", "%" + value + "%")
+                        .getResultList();
                 break;
             }
             case BIRTH : {
@@ -58,43 +40,45 @@ public class StudentDAO extends JPAUtil implements PersonTable<Student> {
                         LocalDate.parse(value).getMonth(),
                         LocalDate.parse(value).getDayOfMonth()
                 );
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String formattedBirth = dateTimeFormatter.format(birth);
 
-                query = session
-                        .createQuery("FROM Student WHERE birthday = :birthday");
-                query.setParameter("birthday", formattedBirth);
+                list = entityManager
+                        .createQuery("FROM Student WHERE birthday = :birthday")
+                        .setParameter("birthday", birth)
+                        .getResultList()
+                ;
                 break;
             }
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
-                query = session
-                        .createQuery("FROM Student WHERE gender = :gender");
-                query.setParameter("gender", gender.getValue());
+                list = entityManager
+                        .createQuery("FROM Student WHERE gender = :gender")
+                        .setParameter("gender", gender)
+                        .getResultList();
                 break;
             }
-            case GROUP : {
-                GroupDAO groupDAO = new GroupDAO();
-                Group group = groupDAO.select(Integer.parseInt(value));
-
-                query = session
-                        .createQuery("FROM Student WHERE group_id = :group_id");
-                query.setParameter("group_id", group.getId());
+            case GROUP  : {
+                int groupNumber = Integer.parseInt(value);
+                list = entityManager
+                        .createQuery("FROM Student WHERE group_number = :group_number")
+                        .setParameter("group_number", groupNumber)
+                        .getResultList();
                 break;
             }
             case ALL : {
-                query = session
-                        .createQuery("FROM Student");
+                list = entityManager
+                        .createQuery("FROM Student")
+                        .getResultList();
                 break;
             }
         }
-        list = query.list();
-        //session.close();
+        entityManager.close();
         return list;
     }
     public void update(Student person, Criteria criteria, String value) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        EntityManager entityManager = getEntityManager();
+        entityManager.getTransaction().begin();
+
+        person = entityManager.merge(person);
         switch (criteria) {
             case NAME : {
                 person.setName(value);
@@ -121,21 +105,8 @@ public class StudentDAO extends JPAUtil implements PersonTable<Student> {
                 break;
             }
         }
-        session.update(person);
-        session.getTransaction().commit();
-        session.close();
+        entityManager.persist(person);
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
-    public void delete(Criteria criteria, String value) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        List<Student> students = select(criteria,value);
-
-        for(Student student : students) {
-            session.delete(student);
-        }
-
-        transaction.commit();
-        session.close();
-    }
-
 }

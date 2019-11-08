@@ -271,7 +271,11 @@ public class Main {
                                         break;
                                     }
 
-                                    studentDAO.delete(criteria, critVal);
+                                    List<Student> studentsToDelete = studentDAO.select(criteria, critVal);
+
+                                    for(Student student : studentsToDelete) {
+                                        studentDAO.delete(student);
+                                    }
                                     System.out.println("Student deleted.");
                                     break;
                                 }
@@ -418,9 +422,12 @@ public class Main {
 
                                     String critVal = parseCriteria(criteria, input, groupDAO);
 
+                                    List<Teacher> teachersToDelete = teacherDAO.select(criteria, critVal);
 
                                     try {
-                                        teacherDAO.delete(criteria, critVal);
+                                        for(Teacher teacher : teachersToDelete) {
+                                            teacherDAO.delete(teacher);
+                                        }
                                         System.out.println("Teacher deleted.");
                                     } catch (Exception e) {
                                         System.out.println("This teacher is working in some groups. " +

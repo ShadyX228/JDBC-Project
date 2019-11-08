@@ -6,55 +6,35 @@ import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import hibernate.HibernateSessionFactory;
+import hibernate.JPAUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TeacherDAO implements PersonTable<Teacher> {
-    public void add(Teacher person) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(person);
-        transaction.commit();
-        session.close();
-    }
+public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher> {
     public Teacher selectById(int id) {
-        Session session = null;
-        Teacher teacher = null;
-        try {
-            session = HibernateSessionFactory.getSessionFactory().openSession();
-            teacher = session.load(Teacher.class, id);
-        } catch (Exception e) {
-            System.out.println("Hibernate error.");
-            e.printStackTrace();
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-        return teacher;
+        EntityManager entityManager = getEntityManager();
+        Teacher entity = entityManager.find(Teacher.class, id);
+        entityManager.close();
+        return entity;
     }
     public List<Teacher> select(Criteria criteria, String value) {
-        Query query = null;
-        Session session = HibernateSessionFactory
-                .getSessionFactory()
-                .openSession();
+        EntityManager entityManager = getEntityManager();
         List<Teacher> list = new ArrayList<>();
 
         switch (criteria) {
             case ID : {
                 list.add(selectById(Integer.parseInt(value)));
-                session.close();
-                return list;
+                break;
             }
             case NAME : {
-                query = session
-                        .createQuery("FROM Teacher WHERE Name LIKE :name");
-                query.setParameter("name", "%" + value + "%");
+                list = entityManager
+                        .createQuery("FROM Teacher WHERE Name LIKE :name")
+                        .setParameter("name", "%" + value + "%")
+                        .getResultList();
                 break;
             }
             case BIRTH : {
@@ -63,34 +43,37 @@ public class TeacherDAO implements PersonTable<Teacher> {
                         LocalDate.parse(value).getMonth(),
                         LocalDate.parse(value).getDayOfMonth()
                 );
-                DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                String formattedBirth = dateTimeFormatter.format(birth);
 
-                query = session
-                        .createQuery("FROM Teacher WHERE birthday = :birthday");
-                query.setParameter("birthday", formattedBirth);
+                list = entityManager
+                        .createQuery("FROM Teacher WHERE birthday = :birthday")
+                        .setParameter("birthday", birth)
+                        .getResultList()
+                ;
                 break;
             }
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
-                query = session
-                        .createQuery("FROM Teacher WHERE gender = :gender");
-                query.setParameter("gender", gender.getValue());
+                list = entityManager
+                        .createQuery("FROM Teacher WHERE gender = :gender")
+                        .setParameter("gender", gender)
+                        .getResultList();
                 break;
             }
             case ALL : {
-                query = session
-                        .createQuery("FROM Teacher");
+                list = entityManager
+                        .createQuery("FROM Teacher")
+                        .getResultList();
                 break;
             }
         }
-        list = query.list();
-        session.close();
+        entityManager.close();
         return list;
     }
     public void update(Teacher person, Criteria criteria, String value) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        session.beginTransaction();
+        EntityManager entityManager = getEntityManager();
+        entityManager.getTransaction().begin();
+
+        person = entityManager.merge(person);
         switch (criteria) {
             case NAME : {
                 person.setName(value);
@@ -111,29 +94,13 @@ public class TeacherDAO implements PersonTable<Teacher> {
                 break;
             }
         }
-        session.merge(person);
-        session.getTransaction().commit();
-        session.close();
+        entityManager.persist(person);
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
-    public void delete(Criteria criteria, String value) {
-        List<Teacher> teachers = select(criteria,value);
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
 
-        for(Teacher teacher : teachers) {
-            session.delete(teacher);
-        }
-
-        transaction.commit();
-        session.close();
-    }
     public void putTeacherInGroup(Teacher teacher, Group group) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
         group.addTeacher(teacher);
-        session.merge(group);
-        transaction.commit();
-        session.close();
     }
     public List<Group> getTeacherGroups(int id) {
         Teacher teacher = selectById(id);

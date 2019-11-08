@@ -13,5 +13,5 @@ public interface PersonTable<T extends Table> {
     T selectById(int id);
     List<T> select(Criteria criteria, String value);
     void update(T person, Criteria criteria, String value);
-    void delete(Criteria criteria, String value);
+    void delete(T entity);
 }

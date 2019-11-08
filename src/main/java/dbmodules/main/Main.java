@@ -487,13 +487,14 @@ public class Main {
                                         break;
                                     }
                                     List<Group> list = teacherDAO.getTeacherGroups(id);
+
                                     for(Group group : list) {
                                         System.out.println(group);
                                     }
                                     break;
                                 }
                                 case 6 :  {
-                                    System.out.print("Putting teacher in group." +
+                                    System.out.print("Removing teacher from group." +
                                             " \nEnter teacher id: ");
                                     int id;
                                     try {

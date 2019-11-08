@@ -18,7 +18,6 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
     public Teacher selectById(int id) {
         EntityManager entityManager = getEntityManager();
         Teacher entity = entityManager.find(Teacher.class, id);
-        entityManager.close();
         return entity;
     }
     public List<Teacher> select(Criteria criteria, String value) {
@@ -99,18 +98,24 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
         entityManager.close();
     }
     public void putTeacherInGroup(Teacher teacher, Group group) {
-        group.addTeacher(teacher);
+        EntityManager entityManager = getEntityManager();
+        entityManager.getTransaction().begin();
+        teacher.addGroup(group);
+        entityManager.merge(teacher);
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
     public List<Group> getTeacherGroups(int id) {
         Teacher teacher = selectById(id);
         return teacher.getGroups();
     }
     public void removeTeacherFromGroup(Teacher teacher, Group group) {
-        Session session = HibernateSessionFactory.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        group.removeTeacher(teacher);
-        session.merge(group);
-        transaction.commit();
-        session.close();
+        EntityManager entityManager = getEntityManager();
+        entityManager.getTransaction().begin();
+        teacher = entityManager.merge(teacher);
+        group = entityManager.merge(group);
+        teacher.removeGroup(group);
+        entityManager.getTransaction().commit();
+        entityManager.close();
     }
 }

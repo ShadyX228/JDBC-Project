@@ -98,7 +98,6 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
         entityManager.getTransaction().commit();
         entityManager.close();
     }
-
     public void putTeacherInGroup(Teacher teacher, Group group) {
         group.addTeacher(teacher);
     }
@@ -114,5 +113,4 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
         transaction.commit();
         session.close();
     }
-
 }

@@ -230,8 +230,13 @@ public class Main {
                                     System.out.print("): ");
                                     Criteria criteria = checkCriteria(input);
 
-                                    System.out.println("Enter criteria value: ");
-                                    String critVal = parseCriteria(criteria, input, groupDAO);
+                                    String critVal;
+                                    if(!criteria.equals(ALL)) {
+                                        System.out.println("Enter criteria value: ");
+                                         critVal = parseCriteria(criteria, input, groupDAO);
+                                    } else {
+                                        critVal = "";
+                                    }
 
 
                                     for (Student student
@@ -385,7 +390,13 @@ public class Main {
                                     System.out.print("): ");
                                     Criteria criteria = checkCriteria(input);
 
-                                    String critVal = parseCriteria(criteria, input, groupDAO);
+                                    String critVal;
+                                    if(!criteria.equals(ALL)) {
+                                        System.out.println("Enter criteria value: ");
+                                        critVal = parseCriteria(criteria, input, groupDAO);
+                                    } else {
+                                        critVal = "";
+                                    }
 
 
                                     for (Teacher teacher
@@ -456,6 +467,7 @@ public class Main {
 
                                     Criteria criteria = checkCriteria(input);
 
+                                    System.out.print("Enter criteria value: ");
                                     String critVal =
                                             parseCriteria(criteria, input, groupDAO);
 
@@ -469,7 +481,6 @@ public class Main {
                                         }
                                         System.out.println("Teacher deleted.");
                                     } catch (Exception e) {
-                                        e.printStackTrace();
                                         System.out.println("This teacher " +
                                                 "is working in some groups. " +
                                                 "Unbind them first.");

@@ -4,8 +4,10 @@ import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
 import hibernate.JPAUtil;
+import jdk.internal.util.xml.impl.Input;
 
 import java.time.*;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 
 import static dbmodules.types.Criteria.*;
@@ -26,11 +28,16 @@ public class Main {
             input.nextLine();
 
             return LocalDate.of(year, month, day);
-        } catch (Exception e) {
+        } catch (DateTimeParseException e) {
             input.nextLine();
-            System.out.println("Invalid birthday. Try again.");
+            System.out.print("Invalid birthday. Try again: ");
+            return checkBirth(input);
+        } catch (InputMismatchException e) {
+            input.nextLine();
+            System.out.print("Int required in date. Try again: ");
             return checkBirth(input);
         }
+
     }
     private static Criteria checkCriteria(Scanner input) {
         try {
@@ -67,8 +74,12 @@ public class Main {
         try {
             int number = input.nextInt();
             return groupDAO.select(number);
-        } catch (Exception e) {
-            System.out.print("Invalid group number or group is not exist. Try again: ");
+        } catch (InputMismatchException e) {
+            System.out.print("Invalid group number. Try again: ");
+            input.nextLine();
+            return checkGroup(input, groupDAO);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.print("Group is not exist. Try again: ");
             input.nextLine();
             return checkGroup(input, groupDAO);
         }
@@ -86,7 +97,7 @@ public class Main {
         if (criteria.equals(ID)) {
             try {
                 Integer.parseInt(critVal);
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid id. " +
                         "Try again");
                 return parseCriteria(criteria, input, groupDAO);
@@ -96,7 +107,7 @@ public class Main {
             try {
                 Gender.valueOf(critVal.toUpperCase());
                 critVal = critVal.toUpperCase();
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 System.out.println("Invalid gender. " +
                         "Try again.");
                 return parseCriteria(criteria, input, groupDAO);
@@ -105,7 +116,7 @@ public class Main {
         if (criteria.equals(GROUP)) {
             try {
                 groupDAO.select(Integer.parseInt(critVal));
-            } catch (Exception e) {
+            } catch (IndexOutOfBoundsException e) {
                 System.out.println("Invalid group" +
                         " number. Try again. ");
                 return parseCriteria(criteria, input, groupDAO);
@@ -114,7 +125,7 @@ public class Main {
         if (criteria.equals(BIRTH)) {
             try {
                LocalDate.parse(critVal);
-            } catch (Exception e) {
+            } catch (DateTimeParseException e) {
                 System.out.println("Invalid " +
                         "birthday. Try again.");
                 return parseCriteria(criteria, input, groupDAO);
@@ -430,6 +441,7 @@ public class Main {
                                         }
                                         System.out.println("Teacher deleted.");
                                     } catch (Exception e) {
+                                        e.printStackTrace();
                                         System.out.println("This teacher is working in some groups. " +
                                                 "Unbind them first.");
                                     }
@@ -487,13 +499,14 @@ public class Main {
                                         break;
                                     }
                                     List<Group> list = teacherDAO.getTeacherGroups(id);
+
                                     for(Group group : list) {
                                         System.out.println(group);
                                     }
                                     break;
                                 }
                                 case 6 :  {
-                                    System.out.print("Putting teacher in group." +
+                                    System.out.print("Removing teacher from group." +
                                             " \nEnter teacher id: ");
                                     int id;
                                     try {

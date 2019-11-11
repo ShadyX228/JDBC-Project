@@ -3,6 +3,7 @@ package dbmodules.tables;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @javax.persistence.Table (catalog= "studentgroupteacher", name = "group")
@@ -16,9 +17,7 @@ public class Group extends Table {
     private int number;
 
 
-    @ManyToMany(cascade = {
-            CascadeType.ALL
-    }, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "groupteacher",
             joinColumns = {@JoinColumn(name = "group_id")},
@@ -44,6 +43,7 @@ public class Group extends Table {
     public void setNumber(int number) {
         this.number = number;
     }
+
     public void addTeacher(Teacher teacher) {
         teachers.add(teacher);
     }
@@ -54,5 +54,15 @@ public class Group extends Table {
 
     public String toString() {
         return "group_id: " + getId() + "; number: " + getNumber();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Group group = (Group) o;
+        return id == group.id &&
+                number == group.number &&
+                Objects.equals(teachers, group.teachers);
     }
 }

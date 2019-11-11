@@ -23,9 +23,7 @@ public class Teacher extends Table {
     @Column(name="gender")
     private Gender gender;
 
-    @ManyToMany(cascade = {
-            CascadeType.ALL
-    }, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(name = "groupteacher",
             joinColumns = {@JoinColumn(name = "teacher_id")},
             inverseJoinColumns = {@JoinColumn(name = "group_id")}

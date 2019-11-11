@@ -5,10 +5,8 @@ import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
-import hibernate.HibernateSessionFactory;
 import hibernate.JPAUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;

@@ -413,9 +413,11 @@ public class Main {
                                     }
 
                                     System.out.print("Enter criteria value: ");
-                                    String critVal = parseCriteria(criteria, input, groupDAO);
+                                    String critVal =
+                                            parseCriteria(criteria, input, groupDAO);
 
-                                    teacherDAO.update(teacher, criteria, critVal);
+                                    teacherDAO
+                                            .update(teacher, criteria, critVal);
                                     System.out.println("Teacher updated.");
                                     break;
                                 }
@@ -431,9 +433,12 @@ public class Main {
 
                                     Criteria criteria = checkCriteria(input);
 
-                                    String critVal = parseCriteria(criteria, input, groupDAO);
+                                    String critVal =
+                                            parseCriteria(criteria, input, groupDAO);
 
-                                    List<Teacher> teachersToDelete = teacherDAO.select(criteria, critVal);
+                                    List<Teacher> teachersToDelete =
+                                            teacherDAO
+                                                    .select(criteria, critVal);
 
                                     try {
                                         for(Teacher teacher : teachersToDelete) {
@@ -442,7 +447,8 @@ public class Main {
                                         System.out.println("Teacher deleted.");
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        System.out.println("This teacher is working in some groups. " +
+                                        System.out.println("This teacher " +
+                                                "is working in some groups. " +
                                                 "Unbind them first.");
                                     }
                                     break;
@@ -460,30 +466,30 @@ public class Main {
                                         break;
                                     }
 
-                                    System.out.print("Enter group number: ");
-                                    int number;
-                                    try {
-                                        number = input.nextInt();
-                                        input.nextLine();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid group number. Try again");
-                                        input.nextLine();
-                                        break;
-                                    }
-
                                     Teacher teacher = teacherDAO.selectById(id);
-                                    Group group = groupDAO.select(number);
-
-                                    if (Objects.isNull(teacher)) {
-                                        System.out.println("Invalid teacher id. Try again.");
+                                    if(Objects.isNull(teacher)) {
+                                        System.out.println("No teacher " +
+                                                "with given id. Abort.");
                                         break;
                                     }
+
+                                    System.out.print("Enter group number: ");
+                                    Group group = checkGroup(input, groupDAO);
                                     if (Objects.isNull(group)) {
-                                        System.out.println("No group with given number. " +
+                                        System.out.println("No " +
+                                                "group with given number. " +
                                                 "Try again.");
                                         break;
                                     }
-                                    teacherDAO.putTeacherInGroup(teacher, group);
+
+                                    try {
+                                        teacherDAO.putTeacherInGroup(teacher, group);
+                                    } catch (IllegalStateException e) {
+                                        System.out.println("This teacher " +
+                                                "is already " +
+                                                "teach this group.");
+                                        break;
+                                    }
                                     break;
                                 }
                                 case 5 :  {
@@ -494,11 +500,20 @@ public class Main {
                                         id = input.nextInt();
                                         input.nextLine();
                                     } catch (InputMismatchException e) {
-                                        System.out.println("Invalid id. Try again");
+                                        System.out.println("Invalid id. " +
+                                                "Try again");
                                         input.nextLine();
                                         break;
                                     }
-                                    List<Group> list = teacherDAO.getTeacherGroups(id);
+
+                                    List<Group> list;
+                                    try {
+                                        list = teacherDAO.getTeacherGroups(id);
+                                    } catch (NullPointerException e) {
+                                        System.out.println("No " +
+                                                "teacher with given id.");
+                                        break;
+                                    }
 
                                     for(Group group : list) {
                                         System.out.println(group);
@@ -506,36 +521,35 @@ public class Main {
                                     break;
                                 }
                                 case 6 :  {
-                                    System.out.print("Removing teacher from group." +
+                                    System.out.print("Removing " +
+                                            "teacher from group." +
                                             " \nEnter teacher id: ");
                                     int id;
                                     try {
                                         id = input.nextInt();
                                         input.nextLine();
                                     } catch (InputMismatchException e) {
-                                        System.out.println("Invalid id. Try again");
+                                        System.out
+                                                .println("Invalid id. Try again.");
                                         input.nextLine();
                                         break;
                                     }
 
                                     System.out.print("Enter group number: ");
-                                    int number;
                                     try {
-                                        number = input.nextInt();
-                                        input.nextLine();
-                                    } catch (InputMismatchException e) {
-                                        System.out.println("Invalid group number. Try again");
-                                        input.nextLine();
-                                        break;
-                                    }
-
-
-                                    try {
-                                        Teacher teacher = teacherDAO.selectById(id);
-                                        Group group = groupDAO.select(number);
-                                        teacherDAO.removeTeacherFromGroup(teacher, group);
+                                        Group group = checkGroup(input, groupDAO);
+                                        Teacher teacher = teacherDAO.
+                                                selectById(id);
+                                        teacherDAO.
+                                                removeTeacherFromGroup(teacher, group);
                                     } catch (NullPointerException e) {
-                                        System.out.println("No teacher or group. Try again.");
+                                        System.out.println("No teacher " +
+                                                "or group. Try again.");
+                                        break;
+                                    } catch (IllegalArgumentException e) {
+                                        System.out.println("Query error. " +
+                                                "Check entered group/teacher.");
+                                        break;
                                     }
 
                                     break;

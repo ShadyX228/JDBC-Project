@@ -16,6 +16,8 @@ public class Group extends Table {
     @Column(name = "number")
     private int number;
 
+    @OneToMany (mappedBy = "group")
+    private List<Student> students = new ArrayList<>();
 
     @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
     @JoinTable(

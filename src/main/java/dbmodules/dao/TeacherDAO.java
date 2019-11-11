@@ -63,7 +63,6 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                 break;
             }
         }
-        entityManager.close();
         return list;
     }
     public void update(Teacher person, Criteria criteria, String value) {

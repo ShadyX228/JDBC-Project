@@ -54,7 +54,6 @@ public class Teacher extends Table {
     public List<Group> getGroups() {
         return groups;
     }
-
     public void setName(String name) {
         this.name = name;
     }

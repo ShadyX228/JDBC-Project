@@ -104,7 +104,7 @@ public class Main {
         }
     }
     private static String parseCriteria
-            (Criteria criteria, Scanner input, GroupDAO groupDAO) {
+            (Criteria criteria, Scanner input) {
 
         String critVal = input.next();
         input.nextLine();
@@ -116,7 +116,7 @@ public class Main {
                 } catch (NumberFormatException e) {
                     System.out.print("Invalid id. " +
                             "Try again: ");
-                    return parseCriteria(criteria, input, groupDAO);
+                    return parseCriteria(criteria, input);
                 }
             }
             case NAME : {
@@ -130,7 +130,7 @@ public class Main {
                 } catch (IllegalArgumentException e) {
                     System.out.print("Invalid gender. " +
                             "Try again: ");
-                    return parseCriteria(criteria, input, groupDAO);
+                    return parseCriteria(criteria, input);
                 }
             }
             case GROUP :  {
@@ -140,7 +140,7 @@ public class Main {
                 } catch (InputMismatchException e) {
                     System.out.print("Invalid group" +
                             " number. Try again: ");
-                    return parseCriteria(criteria, input, groupDAO);
+                    return parseCriteria(criteria, input);
                 }
             }
             case BIRTH : {
@@ -150,7 +150,7 @@ public class Main {
                 } catch (DateTimeParseException e) {
                     System.out.print("Invalid " +
                             "birthday. Try again: ");
-                    return parseCriteria(criteria, input, groupDAO);
+                    return parseCriteria(criteria, input);
                 }
             }
             default : {
@@ -233,7 +233,7 @@ public class Main {
                                     String critVal;
                                     if(!criteria.equals(ALL)) {
                                         System.out.println("Enter criteria value: ");
-                                         critVal = parseCriteria(criteria, input, groupDAO);
+                                         critVal = parseCriteria(criteria, input);
                                     } else {
                                         critVal = "";
                                     }
@@ -285,7 +285,7 @@ public class Main {
                                     }
 
                                     System.out.print("Enter criteria value: ");
-                                    String critVal = parseCriteria(criteria, input, groupDAO);
+                                    String critVal = parseCriteria(criteria, input);
 
                                     studentDAO.update(student, criteria, critVal);
                                     System.out.println("Student updated.");
@@ -301,7 +301,7 @@ public class Main {
                                     Criteria criteria = checkCriteria(input);
 
                                     System.out.print("Enter criteria value: ");
-                                    String critVal = parseCriteria(criteria, input, groupDAO);
+                                    String critVal = parseCriteria(criteria, input);
 
                                     if(criteria.equals(ID)
                                             && (studentDAO
@@ -393,7 +393,7 @@ public class Main {
                                     String critVal;
                                     if(!criteria.equals(ALL)) {
                                         System.out.println("Enter criteria value: ");
-                                        critVal = parseCriteria(criteria, input, groupDAO);
+                                        critVal = parseCriteria(criteria, input);
                                     } else {
                                         critVal = "";
                                     }
@@ -448,7 +448,7 @@ public class Main {
 
                                     System.out.print("Enter criteria value: ");
                                     String critVal =
-                                            parseCriteria(criteria, input, groupDAO);
+                                            parseCriteria(criteria, input);
 
                                     teacherDAO
                                             .update(teacher, criteria, critVal);
@@ -469,22 +469,23 @@ public class Main {
 
                                     System.out.print("Enter criteria value: ");
                                     String critVal =
-                                            parseCriteria(criteria, input, groupDAO);
+                                            parseCriteria(criteria, input);
 
                                     List<Teacher> teachersToDelete =
                                             teacherDAO
                                                     .select(criteria, critVal);
 
-                                    try {
                                         for(Teacher teacher : teachersToDelete) {
-                                            teacherDAO.delete(teacher);
+                                            System.out.print("Teacher#" + teacher.getId() + "... ");
+                                            if(teacher.getGroups().isEmpty()) {
+                                                teacherDAO.delete(teacher);
+                                                System.out.println("deleted.");
+                                            } else {
+                                                System.out.println("This teacher " +
+                                                        "is working in some groups. " +
+                                                        "Unbind them first.");
+                                            }
                                         }
-                                        System.out.println("Teacher deleted.");
-                                    } catch (Exception e) {
-                                        System.out.println("This teacher " +
-                                                "is working in some groups. " +
-                                                "Unbind them first.");
-                                    }
                                     break;
                                 }
                                 case 4 :  {

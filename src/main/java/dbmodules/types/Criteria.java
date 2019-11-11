@@ -6,7 +6,7 @@ public enum Criteria {
     BIRTH(3),
     GENDER(4),
     GROUP(5),
-    ALL(5);
+    ALL(6);
 
     private int critId;
 

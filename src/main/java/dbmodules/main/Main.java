@@ -4,162 +4,27 @@ import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
 import hibernate.JPAUtil;
-
-import javax.persistence.PersistenceException;
-import java.sql.SQLException;
 import java.time.*;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 
+import static dbmodules.main.InputDebugger.*;
 import static dbmodules.types.Criteria.*;
 
+
+/**
+ * Programm can do CRUD-operations with
+ * database of students, groups and teachers.
+ *
+ *
+ * @version 2.0, 11/11/2019
+ */
 public class Main {
-    private static LocalDate checkBirth
-            (Scanner input) {
-        try {
-            System.out.print("Enter year: ");
-            int year = input.nextInt();
-
-            System.out.print("Enter month: ");
-            int month = input.nextInt();
-
-            System.out.print("Enter day: ");
-            int day = input.nextInt();
-
-            input.nextLine();
-
-            return LocalDate.of(year, month, day);
-        } catch (DateTimeParseException e) {
-            input.nextLine();
-            System.out.print("Invalid birthday. Try again: ");
-            return checkBirth(input);
-        } catch (InputMismatchException e) {
-            input.nextLine();
-            System.out.print("Int required in date. Try again: ");
-            return checkBirth(input);
-        }
-
-    }
-    private static Criteria checkCriteria(Scanner input) {
-        String crit = input.next();
-        input.nextLine();
-        switch (crit.toUpperCase()) {
-            case "ID": {
-                return ID;
-            }
-            case "NAME": {
-                return NAME;
-            }
-            case "BIRTH": {
-                return BIRTH;
-            }
-            case "GENDER": {
-                return GENDER;
-            }
-            case "GROUP": {
-                return GROUP;
-            }
-            case "ALL": {
-                return ALL;
-            }
-        }
-
-        System.out.print("Invalid criteria. Try again: ");
-        return checkCriteria(input);
-    }
-    private static int getOpCode(Scanner input) {
-        try {
-            int opCode = input.nextInt();
-            input.nextLine();
-            return opCode;
-        } catch (InputMismatchException e) {
-            System.out.print("Invalid operation code. Try again: ");
-            input.nextLine();
-            return getOpCode(input);
-        }
-    }
-    private static Gender checkGender(Scanner input) {
-        String genderInput = input.next().toUpperCase();
-        for(Gender gender : Gender.values()) {
-            if(gender.getValue().equals(genderInput)) {
-                return Gender.valueOf(genderInput);
-            }
-        }
-        System.out.print("Invalid gender. Try again: ");
-        return checkGender(input);
-    }
-    private static Group checkGroup
-            (Scanner input, GroupDAO groupDAO) {
-        try {
-            int number = input.nextInt();
-            return groupDAO.select(number);
-        } catch (InputMismatchException e) {
-            System.out.print("Invalid group number. Try again: ");
-            input.nextLine();
-            return checkGroup(input, groupDAO);
-        } catch (IndexOutOfBoundsException e) {
-            System.out.print("Group is not exist. Try again: ");
-            input.nextLine();
-            return checkGroup(input, groupDAO);
-        }
-    }
-    private static String parseCriteria
-            (Criteria criteria, Scanner input) {
-
-        String critVal = input.next();
-        input.nextLine();
-        switch (criteria) {
-            case ID :  {
-                try {
-                    Integer.parseInt(critVal);
-                    return critVal;
-                } catch (NumberFormatException e) {
-                    System.out.print("Invalid id. " +
-                            "Try again: ");
-                    return parseCriteria(criteria, input);
-                }
-            }
-            case NAME : {
-                return critVal;
-            }
-            case GENDER : {
-                try {
-                    System.out.print("Enter gender: ");
-                    Gender.valueOf(critVal.toUpperCase());
-                    return critVal.toUpperCase();
-                } catch (IllegalArgumentException e) {
-                    System.out.print("Invalid gender. " +
-                            "Try again: ");
-                    return parseCriteria(criteria, input);
-                }
-            }
-            case GROUP :  {
-                try {
-                    Integer.parseInt(critVal);
-                    return critVal;
-                } catch (InputMismatchException e) {
-                    System.out.print("Invalid group" +
-                            " number. Try again: ");
-                    return parseCriteria(criteria, input);
-                }
-            }
-            case BIRTH : {
-                try {
-                    LocalDate.parse(critVal);
-                    return critVal;
-                } catch (DateTimeParseException e) {
-                    System.out.print("Invalid " +
-                            "birthday. Try again: ");
-                    return parseCriteria(criteria, input);
-                }
-            }
-            default : {
-                return "";
-            }
-        }
-    }
-
-
+    /**
+     * Programm interface:
+     * enter table name (case doesn't matter);
+     * enter operation code;
+     * follow instructions.
+     */
     public static void main(String[] args) {
         try {
             StudentDAO studentDAO = new StudentDAO();
@@ -174,6 +39,7 @@ public class Main {
                 tableName = input.next();
                 input.nextLine();
                 TableType table;
+
                 if(tableName.equals("e")) {
                     System.out.println("Shutting down.");
                     JPAUtil.close();
@@ -361,8 +227,7 @@ public class Main {
                                             "\nEnter name: ");
                                     String name = input.nextLine();
 
-                                    System.out.print("Entering birthday. " +
-                                            "Enter year: ");
+                                    System.out.print("Entering birthday. \n");
 
                                     LocalDate birthday = checkBirth(input);
 
@@ -590,17 +455,20 @@ public class Main {
                                     break;
                                 }
                                 default : {
-                                    System.out.println("Invalid operation code. Try again.");
+                                    System.out.println("Invalid operation" +
+                                            " code. Try again.");
                                     break;
                                 }
                             }
 
-                            System.out.print("\nEnter operation code or -1 to exit (int): ");
+                            System.out.print("\nEnter operation code" +
+                                    " or -1 to exit (int): ");
                             try {
                                 opCode = input.nextInt();
                                 input.nextLine();
                             } catch (InputMismatchException e) {
-                                System.out.println("Invalid operation code. Returning to table select..");
+                                System.out.println("Invalid operation code." +
+                                        " Returning to table select.");
                                 input.nextLine();
                                 break;
                             }
@@ -619,13 +487,15 @@ public class Main {
                         while(opCode != -1) {
                             switch (opCode) {
                                 case 0  :  {
-                                    System.out.print("Adding Group. \nEnter number: ");
+                                    System.out.print("Adding Group." +
+                                            " \nEnter number: ");
                                     int number;
                                     try {
                                         number = input.nextInt();
                                         input.nextLine();
                                     } catch (InputMismatchException e) {
-                                        System.out.println("Invalid group number value. Try again.");
+                                        System.out.println("Invalid " +
+                                                "group number value. Try again.");
                                         input.nextLine();
                                         break;
                                     }
@@ -635,7 +505,8 @@ public class Main {
                                         Group groupCheck = groupDAO.select(number);
                                         System.out.print(groupCheck);
                                         if(!Objects.isNull(groupCheck)) {
-                                            System.out.println("Group with given number is exist." +
+                                            System.out.println("Group " +
+                                                    "with given number is exist." +
                                                     " Select another number.");
                                             break;
                                         }
@@ -704,16 +575,19 @@ public class Main {
                                     break;
                                 }
                                 default :  {
-                                    System.out.println("Invalid operation code. Try again.");
+                                    System.out.println("Invalid " +
+                                            "operation code. Try again.");
                                     break;
                                 }
                             }
-                            System.out.print("\nEnter operation code or -1 to exit (int): ");
+                            System.out.print("\nEnter operation " +
+                                    "code or -1 to exit (int): ");
                             try {
                                 opCode = input.nextInt();
                                 input.nextLine();
                             } catch (InputMismatchException e) {
-                                System.out.println("Invalid operation code. Try again.");
+                                System.out.println("Invalid operation" +
+                                        " code. Try again.");
                                 input.nextLine();
                                 break;
                             }
@@ -723,7 +597,6 @@ public class Main {
                     }
                 }
             }
-
         } catch (Exception e) {
             System.out.println("Some error occured.");
             e.printStackTrace();

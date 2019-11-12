@@ -13,13 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher> {
+    private EntityManager entityManager = getEntityManager();
+
     public Teacher selectById(int id) {
-        EntityManager entityManager = getEntityManager();
-        Teacher entity = entityManager.find(Teacher.class, id);
-        return entity;
+        return entityManager.find(Teacher.class, id);
     }
     public List<Teacher> select(Criteria criteria, String value) {
-        EntityManager entityManager = getEntityManager();
         List<Teacher> list = new ArrayList<>();
 
         switch (criteria) {
@@ -66,7 +65,6 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
         return list;
     }
     public void update(Teacher person, Criteria criteria, String value) {
-        EntityManager entityManager = getEntityManager();
         entityManager.getTransaction().begin();
 
         person = entityManager.merge(person);
@@ -92,27 +90,22 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
         }
         entityManager.persist(person);
         entityManager.getTransaction().commit();
-        entityManager.close();
     }
     public void putTeacherInGroup(Teacher teacher, Group group) {
-        EntityManager entityManager = getEntityManager();
         entityManager.getTransaction().begin();
         teacher.addGroup(group);
         entityManager.merge(teacher);
         entityManager.getTransaction().commit();
-        entityManager.close();
     }
     public List<Group> getTeacherGroups(int id) {
         Teacher teacher = selectById(id);
         return teacher.getGroups();
     }
     public void removeTeacherFromGroup(Teacher teacher, Group group) {
-        EntityManager entityManager = getEntityManager();
         entityManager.getTransaction().begin();
         teacher = entityManager.merge(teacher);
         group = entityManager.merge(group);
         teacher.removeGroup(group);
         entityManager.getTransaction().commit();
-        entityManager.close();
     }
 }

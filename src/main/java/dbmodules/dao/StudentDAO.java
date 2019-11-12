@@ -12,14 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
+    private EntityManager entityManager = getEntityManager();
+
     public Student selectById(int id) {
-        EntityManager entityManager = getEntityManager();
-        Student entity = entityManager.find(Student.class, id);
-        entityManager.close();
-        return entity;
+        return entityManager.find(Student.class, id);
     }
     public List<Student> select(Criteria criteria, String value) {
-        EntityManager entityManager = getEntityManager();
         List<Student> list = new ArrayList<>();
 
         switch (criteria) {
@@ -71,11 +69,9 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
                 break;
             }
         }
-        entityManager.close();
         return list;
     }
     public void update(Student person, Criteria criteria, String value) {
-        EntityManager entityManager = getEntityManager();
         entityManager.getTransaction().begin();
 
         person = entityManager.merge(person);
@@ -107,6 +103,5 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
         }
         entityManager.persist(person);
         entityManager.getTransaction().commit();
-        entityManager.close();
     }
 }

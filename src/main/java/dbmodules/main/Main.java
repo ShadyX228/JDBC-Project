@@ -42,8 +42,7 @@ public class Main {
 
                 if(tableName.equals("e")) {
                     System.out.println("Shutting down.");
-                    JPAUtil.close();
-                    System.exit(0);
+                    break;
                 }
                 try {
                     table = TableType.valueOf(tableName.toUpperCase());
@@ -601,6 +600,9 @@ public class Main {
             System.out.println("Some error occured.");
             e.printStackTrace();
         } finally {
+            StudentDAO.close();
+            TeacherDAO.close();
+            GroupDAO.close();
             JPAUtil.close();
         }
     }

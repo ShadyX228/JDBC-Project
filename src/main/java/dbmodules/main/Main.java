@@ -340,14 +340,18 @@ public class Main {
                                                     .select(criteria, critVal);
 
                                         for(Teacher teacher : teachersToDelete) {
-                                            System.out.print("Teacher#" + teacher.getId() + "... ");
-                                            if(teacher.getGroups().isEmpty()) {
-                                                teacherDAO.delete(teacher);
-                                                System.out.println("deleted.");
-                                            } else {
-                                                System.out.println("This teacher " +
-                                                        "is working in some groups. " +
-                                                        "Unbind them first.");
+                                            try {
+                                                System.out.print("Teacher#" + teacher.getId() + "... ");
+                                                if (teacher.getGroups().isEmpty()) {
+                                                    teacherDAO.delete(teacher);
+                                                    System.out.println("deleted.");
+                                                } else {
+                                                    System.out.println("This teacher " +
+                                                            "is working in some groups. " +
+                                                            "Unbind them first.");
+                                                }
+                                            } catch (NullPointerException e) {
+                                                System.out.println("No teacher with this criteria. Abort.");
                                             }
                                         }
                                     break;
@@ -552,10 +556,10 @@ public class Main {
                                     Group group;
                                     try {
                                         group = groupDAO.select(number);
-                                    } catch (NullPointerException e) {
+                                    } catch (IndexOutOfBoundsException e) {
                                         System.out.println("No group " +
                                                 "with given number. " +
-                                                "Abort operation..");
+                                                "Abort operation.");
                                         break;
                                     }
 
@@ -600,9 +604,6 @@ public class Main {
             System.out.println("Some error occured.");
             e.printStackTrace();
         } finally {
-            StudentDAO.close();
-            TeacherDAO.close();
-            GroupDAO.close();
             JPAUtil.close();
         }
     }

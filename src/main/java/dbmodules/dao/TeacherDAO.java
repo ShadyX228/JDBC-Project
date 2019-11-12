@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher> {
-    private EntityManager entityManager = getEntityManager();
-
     public Teacher selectById(int id) {
         return entityManager.find(Teacher.class, id);
     }

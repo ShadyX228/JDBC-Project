@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
-    private EntityManager entityManager = getEntityManager();
 
     public Student selectById(int id) {
         return entityManager.find(Student.class, id);
@@ -56,9 +55,10 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
             }
             case GROUP  : {
                 int groupNumber = Integer.parseInt(value);
+                Group group = new GroupDAO().select(groupNumber);
                 list = entityManager
-                        .createQuery("FROM Student WHERE group_number = :group_number")
-                        .setParameter("group_number", groupNumber)
+                        .createQuery("FROM Student WHERE group_id = :group_id")
+                        .setParameter("group_id", group.getId())
                         .getResultList();
                 break;
             }

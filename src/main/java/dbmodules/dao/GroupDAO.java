@@ -7,7 +7,6 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 public class GroupDAO extends JPAUtil<Group> implements GroupTable {
-    private EntityManager entityManager = getEntityManager();
 
     public Group selectById(int id) {
         return entityManager.find(Group.class, id);

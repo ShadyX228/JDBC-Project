@@ -4,6 +4,7 @@ import dbmodules.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
+import net.bytebuddy.asm.Advice;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -28,7 +29,9 @@ public class InputDebugger {
 
             input.nextLine();
 
-            return LocalDate.of(year, month, day);
+            LocalDate birth =  LocalDate.of(year, month, day);
+
+            return birth;
         } catch (DateTimeParseException e) {
             input.nextLine();
             System.out.print("Invalid birthday. Try again: ");

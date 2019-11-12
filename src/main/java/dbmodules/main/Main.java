@@ -3,7 +3,7 @@ package dbmodules.main;
 import dbmodules.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
-import hibernate.JPAUtil;
+import utilfactories.JPAUtil;
 import java.time.*;
 import java.util.*;
 

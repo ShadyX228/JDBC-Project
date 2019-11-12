@@ -1,4 +1,4 @@
-package hibernate;
+package utilfactories;
 
 import dbmodules.tables.Table;
 import javax.persistence.EntityManager;

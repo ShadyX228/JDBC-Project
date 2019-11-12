@@ -2,7 +2,7 @@ package dbmodules.dao;
 
 import dbmodules.interfaces.GroupTable;
 import dbmodules.tables.Group;
-import hibernate.JPAUtil;
+import utilfactories.JPAUtil;
 import javax.persistence.EntityManager;
 import java.util.List;
 

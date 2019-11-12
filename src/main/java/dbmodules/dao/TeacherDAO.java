@@ -5,7 +5,7 @@ import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
-import hibernate.JPAUtil;
+import utilfactories.JPAUtil;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDate;

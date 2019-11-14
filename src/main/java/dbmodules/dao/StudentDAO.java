@@ -6,7 +6,6 @@ import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
-import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;

@@ -12,7 +12,7 @@ import static dbmodules.types.Criteria.*;
 
 
 /**
- * Programm can do CRUD-operations with
+ * Program can do CRUD-operations with
  * database of students, groups and teachers.
  *
  *
@@ -20,7 +20,7 @@ import static dbmodules.types.Criteria.*;
  */
 public class Main {
     /**
-     * Programm interface:
+     * Program interface:
      * enter table name (case doesn't matter);
      * enter operation code;
      * follow instructions.

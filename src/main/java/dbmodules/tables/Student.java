@@ -65,7 +65,7 @@ public class Student extends Table {
         this.group = group;
     }
 
-
+    @Override
     public String toString() {
         return  "student_id: " + id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; gender: " + gender +

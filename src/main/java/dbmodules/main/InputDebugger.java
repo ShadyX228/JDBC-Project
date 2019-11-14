@@ -4,8 +4,6 @@ import dbmodules.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
-import net.bytebuddy.asm.Advice;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
@@ -15,7 +13,7 @@ import static dbmodules.types.Criteria.*;
 import static dbmodules.types.Criteria.ALL;
 
 public class InputDebugger {
-    protected static LocalDate checkBirth
+    static LocalDate checkBirth
             (Scanner input) {
         try {
             System.out.print("Enter year: ");
@@ -29,9 +27,7 @@ public class InputDebugger {
 
             input.nextLine();
 
-            LocalDate birth =  LocalDate.of(year, month, day);
-
-            return birth;
+            return LocalDate.of(year, month, day);
         } catch (DateTimeParseException e) {
             input.nextLine();
             System.out.print("Invalid birthday. Try again: ");
@@ -43,7 +39,7 @@ public class InputDebugger {
         }
 
     }
-    protected static Criteria checkCriteria(Scanner input) {
+    static Criteria checkCriteria(Scanner input) {
         String crit = input.next();
         input.nextLine();
         switch (crit.toUpperCase()) {
@@ -70,7 +66,7 @@ public class InputDebugger {
         System.out.print("Invalid criteria. Try again: ");
         return checkCriteria(input);
     }
-    protected static int getOpCode(Scanner input) {
+    static int getOpCode(Scanner input) {
         try {
             int opCode = input.nextInt();
             input.nextLine();
@@ -81,7 +77,7 @@ public class InputDebugger {
             return getOpCode(input);
         }
     }
-    protected static Gender checkGender(Scanner input) {
+    static Gender checkGender(Scanner input) {
         String genderInput = input.next().toUpperCase();
         for(Gender gender : Gender.values()) {
             if(gender.getValue().equals(genderInput)) {
@@ -106,7 +102,7 @@ public class InputDebugger {
             return checkGroup(input, groupDAO);
         }
     }
-    protected static String parseCriteria
+    static String parseCriteria
             (Criteria criteria, Scanner input) {
 
         String critVal = input.next();
@@ -138,8 +134,7 @@ public class InputDebugger {
             }
             case GROUP :  {
                 try {
-                    Integer.parseInt(critVal);
-                    return critVal;
+                    return Integer.toString(Integer.parseInt(critVal));
                 } catch (InputMismatchException e) {
                     System.out.print("Invalid group" +
                             " number. Try again: ");

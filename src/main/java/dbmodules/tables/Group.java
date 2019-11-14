@@ -53,11 +53,10 @@ public class Group extends Table {
         teachers.remove(teacher);
     }
 
-
+    @Override
     public String toString() {
         return "group_id: " + getId() + "; number: " + getNumber();
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

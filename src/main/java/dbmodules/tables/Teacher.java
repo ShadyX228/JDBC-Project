@@ -70,11 +70,11 @@ public class Teacher extends Table {
         groups.remove(group);
     }
 
+    @Override
     public String toString() {
         return "teacher_id: " + id + "; name: " + name + "; " +
                 "birthday: " + birthday + "; gender: " + gender;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

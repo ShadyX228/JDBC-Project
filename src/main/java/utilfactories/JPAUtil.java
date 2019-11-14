@@ -11,10 +11,10 @@ public class JPAUtil <T extends Table> {
             Persistence.createEntityManagerFactory(unitName);
     protected EntityManager entityManager = getEntityManager();
 
-    public static EntityManager getEntityManager(){
+    private EntityManager getEntityManager(){
         return entityManagerFactory.createEntityManager();
     }
-    public static final void close(){
+    public static void close(){
         entityManagerFactory.close();
     }
 

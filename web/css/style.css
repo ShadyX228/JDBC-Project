@@ -1,0 +1,4 @@
+#studentAction, #teacherAction, #groupAction,
+#studentAdd, #studentSelect, #studentUpdate, #studentDelete {
+    display: none;
+}

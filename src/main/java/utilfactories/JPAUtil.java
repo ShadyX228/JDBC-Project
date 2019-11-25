@@ -14,6 +14,7 @@ public class JPAUtil <T extends Table> {
     private EntityManager getEntityManager(){
         return entityManagerFactory.createEntityManager();
     }
+
     public static void close(){
         entityManagerFactory.close();
     }

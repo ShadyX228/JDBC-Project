@@ -1,5 +1,5 @@
 $(document).ready(function(){
-
+    /** Выбор формы **/
     $("#table select").change(
         function() {
             var table = $(this).val();
@@ -9,11 +9,36 @@ $(document).ready(function(){
                 function() {
                     var action = $(this).val();
                     showActionForm(action);
+                    $("#studentSelect select").change(
+                        function () {
+                            var criteria = $(this).val();
+                            $("#studentSelect .criteriaValue").show();
+                            if(criteria == "all") {
+                                $("#studentSelect .criteriaValue").hide();
+                            }
+                        }
+                    );
                 }
             );
 
         }
     )
+    /** /Выбор формы **/
+
+    /** /Ajax-запросы **/
+    $("#studentAdd .submit").click(function () {
+        var name = $("#studentAdd .name").val();
+        var birth = $("#studentAdd .birth").val();
+        var gender = $("#studentAdd .gender input[type=radio]:checked").val();
+        var group = $("#studentAdd .group").val();
+        $.post("studentAdd", {
+            "name" : name,
+            "birth" : birth,
+            "gender" : gender,
+            "group" : group}, function(data) {
+            $(".message").html(data);
+        });
+    });
     $("#studentSelect .submit").click(function () {
         var criteria = $("#studentSelect select").val();
         var criteriaValue = $("#studentSelect input").val();
@@ -21,7 +46,18 @@ $(document).ready(function(){
             $(".message").html(data);
         });
     });
+    $("#studentDelete .submit").click(function () {
+        var criteria = $("#studentDelete select").val();
+        var criteriaValue = $("#studentDelete input").val();
+        $.get("studentDelete", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
+            $(".message").html(data);
+        });
+    });
+    /** /Ajax-запросы **/
 
+
+
+    /** Отображение форм **/
     function showForm(table) {
         switch(table) {
             case "1": {
@@ -92,4 +128,5 @@ $(document).ready(function(){
         }
 
     }
+    /** /Отображение форм **/
 });

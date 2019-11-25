@@ -3,14 +3,45 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
-
+    <!--Сервлеты студентов-->
+    <servlet>
+        <servlet-name>StudentAdder</servlet-name>
+        <servlet-class>servlets.StudentAdder</servlet-class>
+    </servlet>
     <servlet>
         <servlet-name>StudentSelector</servlet-name>
         <servlet-class>servlets.StudentSelector</servlet-class>
-        <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>StudentDeleter</servlet-name>
+        <servlet-class>servlets.StudentDeleter</servlet-class>
+    </servlet>
+    <!--/Сервлеты студентов-->
+
+    <!--Сервлеты преподов-->
+    <!--/Сервлеты преподов-->
+
+    <!--Сервлеты групп-->
+    <!--/Сервлеты групп-->
+
+    <!--Маппинг студентов-->
+    <servlet-mapping>
+        <servlet-name>StudentAdder</servlet-name>
+        <url-pattern>/studentAdd</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StudentSelector</servlet-name>
         <url-pattern>/studentSelect</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StudentDeleter</servlet-name>
+        <url-pattern>/studentDelete</url-pattern>
+    </servlet-mapping>
+    <!--/Маппинг студентов-->
+
+    <!--Маппинг преподов-->
+    <!--/Маппинг преподов-->
+
+    <!--Маппинг преподов-->
+    <!--/Маппинг преподов-->
 </web-app>

@@ -1,0 +1,11 @@
+#studentAction, #teacherAction, #groupAction,
+#studentAdd, #studentSelect, #studentUpdate, #studentDelete {
+    display: none;
+}
+#wrapper {
+    width: 500px;
+    margin: auto;
+}
+#forms {
+    text-align: center;
+}

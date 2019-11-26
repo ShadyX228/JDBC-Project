@@ -13,6 +13,10 @@
         <servlet-class>servlets.StudentSelector</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>StudentUpdater</servlet-name>
+        <servlet-class>servlets.StudentUpdater</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>StudentDeleter</servlet-name>
         <servlet-class>servlets.StudentDeleter</servlet-class>
     </servlet>
@@ -32,6 +36,10 @@
     <servlet-mapping>
         <servlet-name>StudentSelector</servlet-name>
         <url-pattern>/studentSelect</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StudentUpdater</servlet-name>
+        <url-pattern>/studentUpdate</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StudentDeleter</servlet-name>

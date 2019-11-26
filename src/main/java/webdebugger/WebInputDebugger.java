@@ -1,13 +1,16 @@
 package webdebugger;
 
 import dbmodules.dao.GroupDAO;
+import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Group;
+import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static dbmodules.types.Criteria.*;
@@ -82,7 +85,7 @@ public class WebInputDebugger {
         }
     }
     public static String parseCriteria
-            (Criteria criteria, String critVal, GroupDAO groupDAO) {
+            (Criteria criteria, String critVal) {
         switch (criteria) {
             case ID :  {
                 try {
@@ -91,6 +94,7 @@ public class WebInputDebugger {
                 } catch (NumberFormatException e) {
                     return null;
                 }
+
             }
             case NAME : {
                 return critVal;
@@ -105,7 +109,7 @@ public class WebInputDebugger {
             }
             case GROUP :  {
                 try {
-                    Group group = groupDAO.select(Integer.parseInt(critVal));
+                    Group group = new GroupDAO().select(Integer.parseInt(critVal));
                     return Integer.toString(group.getNumber());
                 } catch (InputMismatchException e) {
                     return null;
@@ -126,6 +130,20 @@ public class WebInputDebugger {
             }
         }
         return null;
+    }
+
+    public static String printMessage(int status, String message) {
+        switch(status) {
+            case 1 : {
+                return " - <span class=\"OK\">" + message + "</span><br>";
+            }
+            case 2 : {
+                return " - <span class=\"error\">" + message + "</span><br>";
+            }
+            default: {
+                return " - " + message + "<br>";
+            }
+        }
     }
 
 }

@@ -1,4 +1,10 @@
-<%@ page import="utilfactories.JPAUtil" %><%--
+<%@ page import="utilfactories.JPAUtil" %>
+<%@ page import="dbmodules.types.Criteria" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Arrays" %>
+<%@ page import="java.io.PrintWriter" %>
+<%@ page import="java.io.StringWriter" %><%--
   Created by IntelliJ IDEA.
   User: MagomedovIM
   Date: 21.11.2019
@@ -14,11 +20,19 @@
     <link rel="stylesheet" type="text/css" href="css/style.css">
   </head>
   <body>
+  <%
+    List<Criteria> criterias = Arrays.asList(Criteria.values());
+  %>
     <div  id="wrapper">
-      <header>Шапка</header>
+      <header>
+        <h1>
+          Шапка
+        </h1>
+      </header>
 
       <!--Выбор таблицы-->
       <div id="forms">
+        <h2>Действия с бд</h2>
         <form id="table">
           <select>
             <option value="0">Выберите таблицу</option>
@@ -66,7 +80,7 @@
           <fieldset class="gender" form="studentAdd">
             <legend>Пол</legend>
             <label for="studentM">
-              <input  type="radio" id="studentM" name="gender" value="MALE">М
+              <input type="radio" id="studentM" name="gender" value="MALE">М
             </label>
             <label for="studentF">
               <input type="radio" id="studentF" name="gender" value="FEMALE">Ж<br>
@@ -79,36 +93,49 @@
         </form>
         <form id="studentSelect" name="studentSelect" method="GET">
           <select name="criteria">
-            <option value="default">Выберите критерий выборки</option>
-            <option value="id">ID</option>
-            <option value="name">Имя</option>
-            <option value="birth">День рождения</option>
-            <option value="gender">Пол</option>
-            <option value="group">Группа</option>
-            <option value="all">Все</option>
+            <option value="default">Критерий выборки</option>
+            <%
+              for(Criteria criteria : criterias) {
+            %>
+            <option value="<%=criteria.toString() %>"><%=criteria.toString() %></option>
+            <%
+              }
+            %>
           </select>
           <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
           <button class="submit" type="button">Go</button>
         </form>
         <form id="studentUpdate" name="studentUpdate" method="POST">
+          <input type="text" class="id" name="id" placeholder="ID"><br>
           <select name="criteria">
-            <option value="default">Выберите поле, которое надо обновить</option>
-            <option value="name">Имя</option>
-            <option value="birth">День рождения</option>
-            <option value="gender">Пол</option>
-            <option value="group">Группа</option>
+            <option value="default">Поле, которое надо обновить</option>
+            <%
+              for(Criteria criteria : criterias) {
+                if((!criteria.equals(Criteria.ID))
+                        && (!criteria.equals(Criteria.ALL))) {
+            %>
+            <option value="<%=criteria.toString() %>"><%=criteria.toString() %></option>
+            <%
+                }
+              }
+            %>
           </select>
           <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение поля"><br>
+
           <button class="submit" type="button">Go</button>
         </form>
         <form id="studentDelete" name="studentDelete" method="GET">
           <select name="criteria">
-            <option value="default">Выберите критерий удаления</option>
-            <option value="id">ID</option>
-            <option value="name">Имя</option>
-            <option value="birth">День рождения</option>
-            <option value="gender">Пол</option>
-            <option value="group">Группа</option>
+            <option value="default">Критерий удаления</option>
+            <%
+              for(Criteria criteria : criterias) {
+                if(!criteria.equals(Criteria.ALL)) {
+            %>
+            <option value="<%=criteria.toString() %>"><%=criteria.toString() %></option>
+            <%
+                }
+              }
+            %>
           </select>
           <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
           <button class="submit" type="button">Go</button>
@@ -121,11 +148,19 @@
       <!--Действия с группами-->
       <!--/Действия с группами-->
       </div>
-
+      <aside>
+        <h2>Инструкция</h2>
+        <ol>
+          <li>Выбрать таблицу, с которой хотите работать.</li>
+          <li>Выбрать действие, которое хотите сделать.</li>
+          <li>Выбрать критерий, по которому нужно отбирать записи из таблицы.</li>
+          <li>Нажать "Go".</li>
+        </ol>
+      </aside>
+      <div class="cl"></div>
       <div id="output">
-        <p class="message"> ${message} </p>
-        <p class="output"> ${output} </p>
-        <p class="errors"> ${errors} </p>
+        <p class="status"></p>
+        <p class="message"></p>
       </div>
 
       <footer>Подвал</footer>

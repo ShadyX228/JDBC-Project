@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static dbmodules.types.Criteria.ALL;
+import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
 
 
@@ -35,27 +36,33 @@ public class StudentDeleter extends HttpServlet {
         if(Objects.isNull(criteria) || criteria.equals(ALL)) {
             message += criteriaString;
             if(criteria.equals(ALL)) {
-                message += " - нельзя удалить всех сразу.";
+                message += printMessage(2,"Ошибка. Нельзя удалить всех сразу.");;
             } else {
-                message += " - Ошибка. " +
-                        "Нет такого критерия.<br>";
+                message += printMessage(2,"Ошибка. Нет такого критерия.");
             }
         } else {
-            message += criteria + " - OK.<br>";
+            message += criteria + printMessage(1,"OK.");
             String criteriaValueParsed;
             if(!criteria.equals(ALL)) {
-                message += "Значение критерия: " + criteriaValue + " - ";
-                criteriaValueParsed = parseCriteria(criteria, criteriaValue, new GroupDAO());
+                message += "Значение критерия: " + criteriaValue;
+                criteriaValueParsed = parseCriteria(criteria, criteriaValue);
             } else {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed) ) {
-                message += "Ошибка. " +
-                        "Неверное значение для введенного критерия.";
+                message += printMessage(2,"Ошибка. Неверное значение для введенного критерия.");;
             } else {
-                message += "OK.";
-                List<Student> list = studentDAO.select(criteria, criteriaValueParsed);
-                for(Student student : list) {
+                message += printMessage(1,"OK.");
+                List<Student> list = new ArrayList<>();
+                if(criteria.equals(ID)) {
+                    Student student = studentDAO.selectById(Integer.parseInt(criteriaValueParsed));
+                    if(!Objects.isNull(student)) {
+                        list.add(student);
+                    }
+                } else {
+                    list = studentDAO.select(criteria, criteriaValueParsed);
+                }
+                for (Student student : list) {
                     studentDAO.delete(student);
                 }
                 message += "<br>Удалено " + list.size() + " записей";

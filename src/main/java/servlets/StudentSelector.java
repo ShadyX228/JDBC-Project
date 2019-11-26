@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static dbmodules.types.Criteria.ALL;
+import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
 
 
@@ -35,45 +36,56 @@ public class StudentSelector extends HttpServlet {
 
         Criteria criteria = checkCriteria(criteriaString);
         if(Objects.isNull(criteria)) {
-            message += criteriaString + " - Ошибка. " +
-                    "Нет такого критерия.<br>";
+            message += criteriaString + printMessage(2, "Ошибка. Нет такого критерия.");
         } else {
-            message += criteria + " - OK.<br>";
+            message += criteria + printMessage(1,"OK.");
             String criteriaValueParsed;
             if(!criteria.equals(ALL)) {
-                message += "Значение критерия: " + criteriaValue + " - ";
-                criteriaValueParsed = parseCriteria(criteria, criteriaValue, new GroupDAO());
+                message += "Значение критерия: " + criteriaValue;
+                criteriaValueParsed = parseCriteria(criteria, criteriaValue);
             } else {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed) ) {
-                message += "Ошибка. " +
-                        "Неверное значение для введенного критерия.";
+                message += printMessage(2, "Ошибка. Неверное значение для введенного критерия.");
 
             } else {
-                message += "OK.";
-                list = studentDAO.select(criteria, criteriaValueParsed);
+                if(!criteria.equals(ALL)) {
+                    message += printMessage(1, "OK.");
+                }
+                if(criteria.equals(ID)) {
+                    Student student = studentDAO.selectById(Integer.parseInt(criteriaValueParsed));
+                    if(!Objects.isNull(student)) {
+                        list.add(student);
+                    }
+                } else {
+                    list = studentDAO.select(criteria, criteriaValueParsed);
+                }
             }
         }
 
         response.getWriter().write(message);
-        response.getWriter().write("<table border=1>\n" +
-                "\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>ФИО</td>\n" +
-                "\t\t<td>День рождения</td>\n" +
-                "\t\t<td>Пол</td>\n" +
-                "\t\t<td>Группа</td>\n" +
-                "\t</tr>");
-        for(Student student : list) {
-            response.getWriter().write("<tr>");
-            response.getWriter().write("<td>" + student.getId() + "</td>");
-            response.getWriter().write("<td>" + student.getName() + "</td>");
-            response.getWriter().write("<td>" + student.getBirth() + "</td>");
-            response.getWriter().write("<td>" + student.getGender() + "</td>");
-            response.getWriter().write("<td>" + student.getGroup().getNumber() + "</td>");
-            response.getWriter().write("</tr>");
+        if(!list.isEmpty()) {
+            response.getWriter().write("<table border=1>\n" +
+                    "\t<tr>\n" +
+                    "\t\t<td>ID</td>\n" +
+                    "\t\t<td>ФИО</td>\n" +
+                    "\t\t<td>День рождения</td>\n" +
+                    "\t\t<td>Пол</td>\n" +
+                    "\t\t<td>Группа</td>\n" +
+                    "\t</tr>");
+            for (Student student : list) {
+                response.getWriter().write("<tr>");
+                response.getWriter().write("<td>" + student.getId() + "</td>");
+                response.getWriter().write("<td>" + student.getName() + "</td>");
+                response.getWriter().write("<td>" + student.getBirth() + "</td>");
+                response.getWriter().write("<td>" + student.getGender() + "</td>");
+                response.getWriter().write("<td>" + student.getGroup().getNumber() + "</td>");
+                response.getWriter().write("</tr>");
+            }
+            response.getWriter().write("</table>");
+        } else {
+            response.getWriter().write("Нет записей.");
         }
-        response.getWriter().write("</table>");
     }
 }

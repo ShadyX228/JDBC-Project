@@ -146,6 +146,24 @@
       <!--/Действия с преподавателями-->
 
       <!--Действия с группами-->
+          <form id="groupAdd" name="groupAdd" method="POST">
+              <input type="text" class="number" name="number" placeholder="Номер"><br>
+              <button class="submit" type="button">Go</button>
+          </form>
+          <form id="groupSelect" name="groupSelect" method="GET">
+              <input type="text" class="number" name="number" placeholder="Номер"><br>
+              <button class="submit" type="button">Go</button>
+          </form>
+          <form id="groupDelete" name="groupDelete" method="GET">
+              <select name="criteria">
+                  <option value="default">Критерий выборки</option>
+                  <option value="ALL">ALL</option>
+                  <option value="NUMBER">NUMBER</option>
+              </select>
+              <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
+
+              <button class="submit" type="button">Go</button>
+          </form>
       <!--/Действия с группами-->
       </div>
       <aside>

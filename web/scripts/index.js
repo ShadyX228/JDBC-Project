@@ -20,7 +20,21 @@ $(document).ready(function(){
                     );
                 }
             );
-
+            $("#groupAction select").change(
+                function() {
+                    var action = $(this).val();
+                    showActionForm(action);
+                    $("#groupSelect select").change(
+                        function () {
+                            var criteria = $(this).val();
+                            $("#groupSelect .criteriaValue").show();
+                            if(criteria == "ALL") {
+                                $("#groupSelect .criteriaValue").hide();
+                            }
+                        }
+                    );
+                }
+            );
         }
     )
     /** /Выбор формы **/

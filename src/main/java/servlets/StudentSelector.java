@@ -36,25 +36,28 @@ public class StudentSelector extends HttpServlet {
 
         Criteria criteria = checkCriteria(criteriaString);
         if(Objects.isNull(criteria)) {
-            message += criteriaString + printMessage(2, "Ошибка. Нет такого критерия.");
+            message += criteriaString
+                    + printMessage(2, "Ошибка. Нет такого критерия.");
         } else {
             message += criteria + printMessage(1,"OK.");
             String criteriaValueParsed;
             if(!criteria.equals(ALL)) {
-                message += "Значение критерия: " + criteriaValue;
                 criteriaValueParsed = parseCriteria(criteria, criteriaValue);
             } else {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed) ) {
-                message += printMessage(2, "Ошибка. Неверное значение для введенного критерия.");
+                message += printMessage(2,
+                        "Ошибка. Неверное значение для введенного критерия.");
 
             } else {
                 if(!criteria.equals(ALL)) {
                     message += printMessage(1, "OK.");
                 }
                 if(criteria.equals(ID)) {
-                    Student student = studentDAO.selectById(Integer.parseInt(criteriaValueParsed));
+                    Student student = studentDAO
+                            .selectById(Integer
+                                    .parseInt(criteriaValueParsed));
                     if(!Objects.isNull(student)) {
                         list.add(student);
                     }

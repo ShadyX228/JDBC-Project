@@ -111,9 +111,9 @@ public class WebInputDebugger {
                 try {
                     Group group = new GroupDAO().select(Integer.parseInt(critVal));
                     return Integer.toString(group.getNumber());
-                } catch (InputMismatchException e) {
-                    return null;
-                } catch (IndexOutOfBoundsException e) {
+                } catch (InputMismatchException
+                        | IndexOutOfBoundsException
+                        | NumberFormatException e) {
                     return null;
                 }
             }

@@ -1,10 +1,10 @@
+dbmodules\types\Gender.class
+dbmodules\tables\Table.class
+dbmodules\main\Main.class
+dbmodules\tables\Teacher.class
 dbmodules\main\InputDebugger.class
 dbmodules\main\InputDebugger$1.class
 dbmodules\tables\Student.class
-dbmodules\types\Gender.class
-dbmodules\tables\Table.class
 dbmodules\types\Criteria.class
 dbmodules\tables\Group.class
-dbmodules\main\Main.class
 dbmodules\types\TableType.class
-dbmodules\tables\Teacher.class

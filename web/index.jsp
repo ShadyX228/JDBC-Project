@@ -162,8 +162,6 @@
         <p class="status"></p>
         <p class="message"></p>
       </div>
-
-      <footer>Подвал</footer>
     </div>
   </body>
 </html>

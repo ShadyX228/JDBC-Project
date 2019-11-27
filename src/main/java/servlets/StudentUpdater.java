@@ -33,30 +33,35 @@ public class StudentUpdater extends HttpServlet {
         StudentDAO studentDAO = new StudentDAO();
 
         String idParsed = parseCriteria(ID, idString);
-        Student student = studentDAO.selectById(Integer.parseInt(idParsed));
-        if(Objects.isNull(student)) {
-            message += printMessage(2,"Ошибка. Нет студента с таким ID или ID введен не верно.");;
-        } else {
-            message += printMessage(1,"OK.");
-            message += "Поле, которое надо обновить: " + criteriaString;
-            Criteria criteria = checkCriteria(criteriaString);
-            if (Objects.isNull(criteria)
-                    || criteria.equals(ALL)
-                    || criteria.equals(ID)) {
-                message += printMessage(2, "Ошибка. Нет такого поля.");
+        if(!Objects.isNull(idParsed)) {
+            Student student = studentDAO.selectById(Integer.parseInt(idParsed));
+            if (Objects.isNull(student)) {
+                message += printMessage(2, "Ошибка. Нет студента с таким ID или ID введен не верно.");
+                ;
             } else {
                 message += printMessage(1, "OK.");
-                message += "Новое значение: " + criteriaValue;
-                String criteriaValueParsed = parseCriteria(criteria, criteriaValue);
-
-                if (Objects.isNull(criteriaValueParsed)) {
-                    message += printMessage(2, "Ошибка. Неверное значение для введенного поля.");
+                message += "Поле, которое надо обновить: " + criteriaString;
+                Criteria criteria = checkCriteria(criteriaString);
+                if (Objects.isNull(criteria)
+                        || criteria.equals(ALL)
+                        || criteria.equals(ID)) {
+                    message += printMessage(2, "Ошибка. Нет такого поля.");
                 } else {
                     message += printMessage(1, "OK.");
-                    studentDAO.update(student, criteria, criteriaValueParsed);
-                    message += "Запись обновлена.";
+                    message += "Новое значение: " + criteriaValue;
+                    String criteriaValueParsed = parseCriteria(criteria, criteriaValue);
+
+                    if (Objects.isNull(criteriaValueParsed)) {
+                        message += printMessage(2, "Ошибка. Неверное значение для введенного поля.");
+                    } else {
+                        message += printMessage(1, "OK.");
+                        studentDAO.update(student, criteria, criteriaValueParsed);
+                        message += "Запись обновлена.";
+                    }
                 }
             }
+        } else {
+            message += printMessage(2,"Некорректно введенный id.");
         }
         response.getWriter().write(message);
     }

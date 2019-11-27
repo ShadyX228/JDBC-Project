@@ -26,6 +26,10 @@
     <!--/Сервлеты преподов-->
 
     <!--Сервлеты групп-->
+    <servlet>
+        <servlet-name>GroupSelector</servlet-name>
+        <servlet-class>servlets.GroupSelector</servlet-class>
+    </servlet>
     <!--/Сервлеты групп-->
 
     <!--Маппинг студентов-->
@@ -50,6 +54,10 @@
     <!--Маппинг преподов-->
     <!--/Маппинг преподов-->
 
-    <!--Маппинг преподов-->
-    <!--/Маппинг преподов-->
+    <!--Маппинг групп-->
+    <servlet-mapping>
+        <servlet-name>GroupSelector</servlet-name>
+        <url-pattern>/groupSelect</url-pattern>
+    </servlet-mapping>
+    <!--/Маппинг групп-->
 </web-app>

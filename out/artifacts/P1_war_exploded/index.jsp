@@ -146,6 +146,17 @@
       <!--/Действия с преподавателями-->
 
       <!--Действия с группами-->
+        <form id="groupAdd" name="groupAdd" method="POST">
+          <input class="number" type="text" name="number" placeholder="Номер"><br>
+          <button class="submit" type="button">Go</button>
+        </form>
+        <form id="groupSelect" name="groupSelect" method="GET">
+          <input type="checkbox" value="ALL" id="groupAll">
+          <label for="groupAll">Все</label>
+
+          <input type="text" class="number" name="number" placeholder="Номер"><br>
+          <button class="submit" type="button">Go</button>
+        </form>
       <!--/Действия с группами-->
       </div>
       <aside>
@@ -162,8 +173,9 @@
         <p class="status"></p>
         <p class="message"></p>
       </div>
-
-      <footer>Подвал</footer>
+      <footer>
+        Подвал.
+      </footer>
     </div>
   </body>
 </html>

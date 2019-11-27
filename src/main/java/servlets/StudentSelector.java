@@ -46,6 +46,7 @@ public class StudentSelector extends HttpServlet {
             } else {
                 criteriaValueParsed = "";
             }
+            message += "Статус ";
             if(Objects.isNull(criteriaValueParsed) ) {
                 message += printMessage(2,
                         "Ошибка. Неверное значение для введенного критерия.");

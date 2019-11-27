@@ -8,7 +8,7 @@ $(document).ready(function(){
             $("#studentAction select").change(
                 function() {
                     var action = $(this).val();
-                    showActionForm(action);
+                    showStudentActionForm(action);
                     $("#studentSelect select").change(
                         function () {
                             var criteria = $(this).val();
@@ -18,6 +18,22 @@ $(document).ready(function(){
                             }
                         }
                     );
+                }
+            );
+            $("#groupAction select").change(
+                function() {
+                    var action = $(this).val();
+                    showGroupActionForm(action);
+                    var check = $(this).is(":not(:checked)");
+                    var number = $("#groupSelect .number");
+                    $("#groupSelect input[type=checkbox]").click(function () {
+                        check = $(this).is(":not(:checked)");
+                        if(check) {
+                            number.show();
+                        } else {
+                            number.hide();
+                        }
+                    })
                 }
             );
 
@@ -69,6 +85,16 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
+
+    $("#groupSelect .submit").click(function () {
+        $(".status").html("Загружаю...");
+        var number = $("#groupSelect .number").val();
+        var checkAll = $("#groupSelect input[type=checkbox]").is(":not(:checked)");
+        $.get("groupSelect", {"number" : number, "checkAll" : checkAll}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
     /** /Ajax-запросы **/
 
 
@@ -101,45 +127,69 @@ $(document).ready(function(){
             }
         }
     }
-    function showActionForm(action) {
+    function showStudentActionForm(action) {
+        hideAll(2);
         switch(action) {
             case "1": {
-                hideAll(2);
                 $("#studentAdd").show();
                 break;
             }
             case "2": {
-                hideAll(2);
                 $("#studentSelect").show();
                 break;
             }
             case "3": {
-                hideAll(2);
                 $("#studentUpdate").show();
                 break;
             }
             case "4": {
-                hideAll(2);
                 $("#studentDelete").show();
                 break;
             }
+
+
             default: {
-                hideAll(2);
+                break;
+            }
+        }
+    }
+    function showGroupActionForm(action) {
+        hideAll(2);
+        switch(action) {
+            case "1": {
+                $("#groupAdd").show();
+                break;
+            }
+            case "2": {
+                $("#groupSelect").show();
+                break;
+            }
+            case "3": {
+                $("#groupDelete").show();
+                break;
+            }
+
+
+            default: {
                 break;
             }
         }
     }
     function hideAll(blockGroup) {
-        if(blockGroup == 1) {
+        if(blockGroup === 1) {
             $("#teacherAction").hide();
             $("#studentAction").hide();
             $("#groupAction").hide();
         }
-        if(blockGroup == 2) {
+        if(blockGroup === 2) {
             $("#studentAdd").hide();
             $("#studentSelect").hide();
             $("#studentUpdate").hide();
             $("#studentDelete").hide();
+
+            $("#groupAdd").hide();
+            $("#groupSelect").hide();
+            $("#groupDelete").hide();
         }
 
     }

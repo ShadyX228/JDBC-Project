@@ -1,5 +1,7 @@
 #studentAction, #teacherAction, #groupAction,
-#studentAdd, #studentSelect, #studentUpdate, #studentDelete {
+#studentAdd, #studentSelect, #studentUpdate, #studentDelete,
+
+#groupAdd, #groupSelect{
     display: none;
 }
 #wrapper {

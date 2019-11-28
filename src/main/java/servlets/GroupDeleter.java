@@ -13,7 +13,7 @@ import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.*;
 
-public class GroupAdder extends HttpServlet {
+public class GroupDeleter extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -26,8 +26,7 @@ public class GroupAdder extends HttpServlet {
         if(numberString.isEmpty()) {
             message += "Статус" + printMessage(2,"Передано пустое значение.");
         } else {
-            message += "Значение не пусто " + printMessage(1, "OK.") +
-                    "Проверяю корректность введенных параметров...<br>";
+            message += "Значение не пусто " + printMessage(1, "OK.");
             message += "Номер группы: " + numberString;
 
             numberString = parseCriteria(Criteria.ID, numberString);
@@ -35,13 +34,14 @@ public class GroupAdder extends HttpServlet {
                 message += printMessage(1, "OK.");
                 int number = Integer.parseInt(numberString);
                 GroupDAO groupDAO = new GroupDAO();
-                Group checkGroup = checkGroup(number, groupDAO);
-                if(Objects.isNull(checkGroup)) {
-                    groupDAO.add(new Group(number));
-                    message += "Запись добавлена.";
+                Group group = checkGroup(number,groupDAO);
+                if(!Objects.isNull(group)) {
+                    groupDAO.delete(group);
+                    message += "Запись удалена.";
                 } else {
-                    message += "Группа с таким номером уже существует в базе.";
+                    message += printMessage(2,"Нет группы с таким номером.");
                 }
+
             } else {
                 message += printMessage(2,"Ошибка. Некорректный номер");
             }

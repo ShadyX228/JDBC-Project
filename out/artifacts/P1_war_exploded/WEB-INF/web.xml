@@ -23,6 +23,26 @@
     <!--/Сервлеты студентов-->
 
     <!--Сервлеты преподов-->
+    <servlet>
+        <servlet-name>TeacherAdder</servlet-name>
+        <servlet-class>servlets.TeacherAdder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherSelector</servlet-name>
+        <servlet-class>servlets.TeacherSelector</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherUpdater</servlet-name>
+        <servlet-class>servlets.TeacherUpdater</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherDeleter</servlet-name>
+        <servlet-class>servlets.TeacherDeleter</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherPutInGroup</servlet-name>
+        <servlet-class>servlets.TeacherPutInGroup</servlet-class>
+    </servlet>
     <!--/Сервлеты преподов-->
 
     <!--Сервлеты групп-->
@@ -33,6 +53,10 @@
     <servlet>
         <servlet-name>GroupSelector</servlet-name>
         <servlet-class>servlets.GroupSelector</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GroupDeleter</servlet-name>
+        <servlet-class>servlets.GroupDeleter</servlet-class>
     </servlet>
     <!--/Сервлеты групп-->
 
@@ -56,6 +80,26 @@
     <!--/Маппинг студентов-->
 
     <!--Маппинг преподов-->
+    <servlet-mapping>
+        <servlet-name>TeacherAdder</servlet-name>
+        <url-pattern>/teacherAdd</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherSelector</servlet-name>
+        <url-pattern>/teacherSelect</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherUpdater</servlet-name>
+        <url-pattern>/teacherUpdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherDeleter</servlet-name>
+        <url-pattern>/teacherDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherPutInGroup</servlet-name>
+        <url-pattern>/teacherPutInGroup</url-pattern>
+    </servlet-mapping>
     <!--/Маппинг преподов-->
 
     <!--Маппинг групп-->
@@ -66,6 +110,10 @@
     <servlet-mapping>
         <servlet-name>GroupSelector</servlet-name>
         <url-pattern>/groupSelect</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GroupDeleter</servlet-name>
+        <url-pattern>/groupDelete</url-pattern>
     </servlet-mapping>
     <!--/Маппинг групп-->
 </web-app>

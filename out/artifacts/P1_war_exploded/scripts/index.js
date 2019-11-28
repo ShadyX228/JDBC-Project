@@ -20,6 +20,7 @@ $(document).ready(function(){
                     );
                 }
             );
+
             $("#groupAction select").change(
                 function() {
                     var action = $(this).val();
@@ -37,12 +38,28 @@ $(document).ready(function(){
                 }
             );
 
+            $("#teacherAction select").change(
+                function() {
+                    var action = $(this).val();
+                    showTeacherActionForm(action);
+                    $("#teacherSelect select").change(
+                        function () {
+                            var criteria = $(this).val();
+                            $("#teacherSelect .criteriaValue").show();
+                            if(criteria == "ALL") {
+                                $("#teacherSelect .criteriaValue").hide();
+                            }
+                        }
+                    );
+                }
+            );
         }
     )
     /** /Выбор формы **/
 
     /** /Ajax-запросы **/
-    $("#studentAdd .submit").click(function () {
+    $("#studentAdd").submit(function (event) {
+        event.preventDefault();
         $(".status").html("Загружаю...");
         var name = $("#studentAdd .name").val();
         var birth = $("#studentAdd .birth").val();
@@ -57,7 +74,8 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
-    $("#studentSelect .submit").click(function () {
+    $("#studentSelect").submit(function (event) {
+        event.preventDefault();
         $(".status").html("Загружаю...");
         var criteria = $("#studentSelect select").val();
         var criteriaValue = $("#studentSelect input").val();
@@ -66,7 +84,8 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
-    $("#studentUpdate .submit").click(function () {
+    $("#studentUpdate").submit(function (event) {
+        event.preventDefault();
         $(".status").html("Загружаю...");
         var id = $("#studentUpdate .id").val();
         var criteria = $("#studentUpdate select").val();
@@ -76,7 +95,8 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
-    $("#studentDelete .submit").click(function () {
+    $("#studentDelete").submit(function (event) {
+        event.preventDefault();
         $(".status").html("Загружаю...");
         var criteria = $("#studentDelete select").val();
         var criteriaValue = $("#studentDelete input").val();
@@ -86,7 +106,78 @@ $(document).ready(function(){
         });
     });
 
-    $("#groupAdd .submit").click(function () {
+    $("#teacherAdd").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var name = $("#teacherAdd .name").val();
+        var birth = $("#teacherAdd .birth").val();
+        var gender = $("#teacherAdd .gender input[type=radio]:checked").val();
+        var group = $("#teacherAdd .group").val();
+        $.post("teacherAdd", {
+            "name" : name,
+            "birth" : birth,
+            "gender" : gender,
+            "group" : group}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+    $("#teacherSelect").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var criteria = $("#teacherSelect select").val();
+        var criteriaValue = $("#teacherSelect input").val();
+        $.get("teacherSelect", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+    $("#teacherUpdate").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var id = $("#teacherUpdate .id").val();
+        var criteria = $("#teacherUpdate select").val();
+        var criteriaValue = $("#teacherUpdate .criteriaValue").val();
+        $.post("teacherUpdate", {"id" : id, "criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+    $("#teacherDelete").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var id = $("#teacherDelete .id").val();
+        var criteria = $("#teacherDelete select").val();
+        var criteriaValue = $("#teacherDelete .criteriaValue").val();
+        $.post("teacherDelete", {"id" : id, "criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+    $("#teacherPutInGroup").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var id = $("#teacherPutInGroup .id").val();
+        var number = $("#teacherPutInGroup .number").val();
+        $.post("teacherPutInGroup", {"id" : id, "number" : number}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+    $("#teacherDeleteGroup").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var id = $("#teacherDeleteGroup .id").val();
+        var number = $("#teacherDeleteGroup .number").val();
+        $.post("teacherDeleteGroup", {"id" : id, "number" : number}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+
+
+    $("#groupAdd").submit(function (event) {
+        event.preventDefault();
         $(".status").html("Загружаю...");
         var number = $("#groupAdd .number").val();
         $.post("groupAdd", {"number" : number}, function(data) {
@@ -94,11 +185,21 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
-    $("#groupSelect .submit").click(function () {
+    $("#groupSelect").submit(function (event) {
+        event.preventDefault();
         $(".status").html("Загружаю...");
         var number = $("#groupSelect .number").val();
         var checkAll = $("#groupSelect input[type=checkbox]").is(":not(:checked)");
         $.get("groupSelect", {"number" : number, "checkAll" : checkAll}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
+    $("#groupDelete").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var number = $("#groupDelete .number").val();
+        $.post("groupDelete", {"number" : number}, function(data) {
             $(".message").html(data);
             $(".status").html("");
         });
@@ -161,6 +262,40 @@ $(document).ready(function(){
             }
         }
     }
+    function showTeacherActionForm(action) {
+        hideAll(2);
+        switch(action) {
+            case "1": {
+                $("#teacherAdd").show();
+                break;
+            }
+            case "2": {
+                $("#teacherSelect").show();
+                break;
+            }
+            case "3": {
+                $("#teacherUpdate").show();
+                break;
+            }
+            case "4": {
+                $("#teacherDelete").show();
+                break;
+            }
+            case "5": {
+                $("#teacherPutInGroup").show();
+                break;
+            }
+            case "6": {
+                $("#teacherDeleteGroup").show();
+                break;
+            }
+
+
+            default: {
+                break;
+            }
+        }
+    }
     function showGroupActionForm(action) {
         hideAll(2);
         switch(action) {
@@ -194,6 +329,14 @@ $(document).ready(function(){
             $("#studentSelect").hide();
             $("#studentUpdate").hide();
             $("#studentDelete").hide();
+
+            $("#teacherAdd").hide();
+            $("#teacherSelect").hide();
+            $("#teacherUpdate").hide();
+            $("#teacherDelete").hide();
+            $("#teacherPutInGroup").hide();
+            $("#teacherSelectGroups").hide();
+            $("#teacherDeleteGroup").hide();
 
             $("#groupAdd").hide();
             $("#groupSelect").hide();

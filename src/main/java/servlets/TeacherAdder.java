@@ -1,9 +1,7 @@
 package servlets;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.tables.Teacher;
 import dbmodules.types.Gender;
 
 import javax.servlet.ServletException;
@@ -18,8 +16,7 @@ import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.*;
 
-
-public class StudentAdder extends HttpServlet {
+public class TeacherAdder extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
@@ -28,13 +25,11 @@ public class StudentAdder extends HttpServlet {
         String name = request.getParameter("name");
         String birth = request.getParameter("birth");
         String gender = request.getParameter("gender");
-        String group = request.getParameter("group");
 
         String message = "Проверяю переданные параметры...<br>";
         if (name.isEmpty()
                 || birth.isEmpty()
-                || gender.isEmpty()
-                || group.isEmpty()) {
+                || gender.isEmpty()) {
             message += printMessage(2,"Переданы пустые значения.");
         } else {
             boolean check = true;
@@ -61,36 +56,17 @@ public class StudentAdder extends HttpServlet {
                 message += printMessage(1, "OK.");
             }
 
-            message += "Группа: " + group;
-            int number;
-            Group groupObject = new Group(0);
-            try {
-                number = Integer.parseInt(group);
-                groupObject = checkGroup(number, new GroupDAO());
-                if(Objects.isNull(groupObject)) {
-                    message += printMessage(2, "Ошибка: такой группы нет.");
-
-                    check = false;
-                } else {
-                    message += printMessage(1, "OK.");
-                }
-            } catch (NumberFormatException e) {
-                message += printMessage(2, "Ошибка ввода.");
-                check = false;
-            }
-
             message += "Пытаюсь добавить... ";
             if(!check) {
                 message += printMessage(2,"Ошибка. Одно или несколько полей не прошли проверку.");
             } else {
-                StudentDAO studentDAO = new StudentDAO();
-                studentDAO.add(new Student(
+                TeacherDAO teacherDAO = new TeacherDAO();
+                teacherDAO.add(new Teacher(
                         name,
                         birthday.getYear(),
                         birthday.getMonthValue(),
                         birthday.getDayOfMonth(),
-                        genderParsed,
-                        groupObject
+                        genderParsed
                 ));
                 message += printMessage(1,"Запись добавлена.");
             }

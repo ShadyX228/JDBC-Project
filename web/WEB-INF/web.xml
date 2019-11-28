@@ -27,6 +27,10 @@
 
     <!--Сервлеты групп-->
     <servlet>
+        <servlet-name>GroupAdder</servlet-name>
+        <servlet-class>servlets.GroupAdder</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>GroupSelector</servlet-name>
         <servlet-class>servlets.GroupSelector</servlet-class>
     </servlet>
@@ -55,6 +59,10 @@
     <!--/Маппинг преподов-->
 
     <!--Маппинг групп-->
+    <servlet-mapping>
+        <servlet-name>GroupAdder</servlet-name>
+        <url-pattern>/groupAdd</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GroupSelector</servlet-name>
         <url-pattern>/groupSelect</url-pattern>

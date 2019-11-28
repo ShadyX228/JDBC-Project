@@ -35,10 +35,10 @@ public class StudentAdder extends HttpServlet {
                 || birth.isEmpty()
                 || gender.isEmpty()
                 || group.isEmpty()) {
-            message += "<span class=\"error\">Переданы пустные значения.</span>";
+            message += printMessage(2,"Переданы пустые значения.");
         } else {
             boolean check = true;
-            message += "Значение не пустые " + printMessage(1, "OK.") +
+            message += "Значения не пустые " + printMessage(1, "OK.") +
                     "Проверяю корректность введенных параметров...<br>";
             message += "Имя: " + name +  printMessage(1, "OK.");
 

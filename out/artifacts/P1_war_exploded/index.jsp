@@ -124,7 +124,7 @@
 
           <button class="submit" type="button">Go</button>
         </form>
-        <form id="studentDelete" name="studentDelete" method="GET">
+        <form id="studentDelete" name="studentDelete" method="POST">
           <select name="criteria">
             <option value="default">Критерий удаления</option>
             <%

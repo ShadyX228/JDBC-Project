@@ -1,6 +1,5 @@
 package servlets;
 
-import dbmodules.dao.GroupDAO;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;

@@ -80,12 +80,20 @@ $(document).ready(function(){
         $(".status").html("Загружаю...");
         var criteria = $("#studentDelete select").val();
         var criteriaValue = $("#studentDelete input").val();
-        $.get("studentDelete", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
+        $.post("studentDelete", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
             $(".message").html(data);
             $(".status").html("");
         });
     });
 
+    $("#groupAdd .submit").click(function () {
+        $(".status").html("Загружаю...");
+        var number = $("#groupAdd .number").val();
+        $.post("groupAdd", {"number" : number}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
     $("#groupSelect .submit").click(function () {
         $(".status").html("Загружаю...");
         var number = $("#groupSelect .number").val();

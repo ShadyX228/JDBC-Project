@@ -58,7 +58,7 @@
             <option value="3">Обновить</option>
             <option value="4">Удалить</option>
             <option value="5">Назначить группу</option>
-            <option value="6">Удалить группу</option>
+            <option value="6">Убрать из группы</option>
           </select>
         </form>
         <form id="groupAction">

@@ -6,57 +6,61 @@
     <!--Сервлеты студентов-->
     <servlet>
         <servlet-name>StudentAdder</servlet-name>
-        <servlet-class>servlets.StudentAdder</servlet-class>
+        <servlet-class>servlets.Student.StudentAdder</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StudentSelector</servlet-name>
-        <servlet-class>servlets.StudentSelector</servlet-class>
+        <servlet-class>servlets.Student.StudentSelector</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StudentUpdater</servlet-name>
-        <servlet-class>servlets.StudentUpdater</servlet-class>
+        <servlet-class>servlets.Student.StudentUpdater</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StudentDeleter</servlet-name>
-        <servlet-class>servlets.StudentDeleter</servlet-class>
+        <servlet-class>servlets.Student.StudentDeleter</servlet-class>
     </servlet>
     <!--/Сервлеты студентов-->
 
     <!--Сервлеты преподов-->
     <servlet>
         <servlet-name>TeacherAdder</servlet-name>
-        <servlet-class>servlets.TeacherAdder</servlet-class>
+        <servlet-class>servlets.Teacher.TeacherAdder</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TeacherSelector</servlet-name>
-        <servlet-class>servlets.TeacherSelector</servlet-class>
+        <servlet-class>servlets.Teacher.TeacherSelector</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TeacherUpdater</servlet-name>
-        <servlet-class>servlets.TeacherUpdater</servlet-class>
+        <servlet-class>servlets.Teacher.TeacherUpdater</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TeacherDeleter</servlet-name>
-        <servlet-class>servlets.TeacherDeleter</servlet-class>
+        <servlet-class>servlets.Teacher.TeacherDeleter</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TeacherPutInGroup</servlet-name>
-        <servlet-class>servlets.TeacherPutInGroup</servlet-class>
+        <servlet-class>servlets.Teacher.TeacherPutInGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherDeleteGroup</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherDeleteGroup</servlet-class>
     </servlet>
     <!--/Сервлеты преподов-->
 
     <!--Сервлеты групп-->
     <servlet>
         <servlet-name>GroupAdder</servlet-name>
-        <servlet-class>servlets.GroupAdder</servlet-class>
+        <servlet-class>servlets.Group.GroupAdder</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GroupSelector</servlet-name>
-        <servlet-class>servlets.GroupSelector</servlet-class>
+        <servlet-class>servlets.Group.GroupSelector</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GroupDeleter</servlet-name>
-        <servlet-class>servlets.GroupDeleter</servlet-class>
+        <servlet-class>servlets.Group.GroupDeleter</servlet-class>
     </servlet>
     <!--/Сервлеты групп-->
 
@@ -99,6 +103,10 @@
     <servlet-mapping>
         <servlet-name>TeacherPutInGroup</servlet-name>
         <url-pattern>/teacherPutInGroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherDeleteGroup</servlet-name>
+        <url-pattern>/teacherDeleteGroup</url-pattern>
     </servlet-mapping>
     <!--/Маппинг преподов-->
 

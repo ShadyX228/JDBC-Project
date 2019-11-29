@@ -3,6 +3,7 @@ $(document).ready(function(){
     $("#table select").change(
         function() {
             var table = $(this).val();
+
             showForm(table);
 
             $("#studentAction select").change(
@@ -174,7 +175,6 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
-
 
     $("#groupAdd").submit(function (event) {
         event.preventDefault();

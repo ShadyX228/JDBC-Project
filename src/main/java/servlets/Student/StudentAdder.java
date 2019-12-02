@@ -1,4 +1,4 @@
-package servlets;
+package servlets.Student;
 
 import dbmodules.dao.GroupDAO;
 import dbmodules.dao.StudentDAO;
@@ -35,10 +35,10 @@ public class StudentAdder extends HttpServlet {
                 || birth.isEmpty()
                 || gender.isEmpty()
                 || group.isEmpty()) {
-            message += "<span class=\"error\">Переданы пустные значения.</span>";
+            message += printMessage(2,"Переданы пустые значения.");
         } else {
             boolean check = true;
-            message += "Значение не пустые " + printMessage(1, "OK.") +
+            message += "Значения не пустые " + printMessage(1, "OK.") +
                     "Проверяю корректность введенных параметров...<br>";
             message += "Имя: " + name +  printMessage(1, "OK.");
 
@@ -47,9 +47,7 @@ public class StudentAdder extends HttpServlet {
             try {
                 birthday = LocalDate.parse(birth);
                 message +=  printMessage(1, "OK.");;
-            } catch (DateTimeParseException e) {
-                message +=  printMessage(2, "Ошибка: некорректный ввод.");;
-            } catch (InputMismatchException e) {
+            } catch (DateTimeParseException | InputMismatchException e) {
                 message +=  printMessage(2, "Ошибка: некорректный ввод.");;
                 check = false;
             }
@@ -99,8 +97,6 @@ public class StudentAdder extends HttpServlet {
 
 
         }
-
         response.getWriter().write(message);
-
     }
 }

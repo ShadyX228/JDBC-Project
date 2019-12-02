@@ -1,6 +1,5 @@
-package servlets;
+package servlets.Student;
 
-import dbmodules.dao.GroupDAO;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
@@ -35,9 +34,9 @@ public class StudentSelector extends HttpServlet {
         String message = "Проверяю переданные параметры... <br>Критерий: ";
 
         Criteria criteria = checkCriteria(criteriaString);
-        if(Objects.isNull(criteria)) {
+        if((Objects.isNull(criteria) || criteriaValue.isEmpty()) && !criteria.equals(ALL)) {
             message += criteriaString
-                    + printMessage(2, "Ошибка. Нет такого критерия.");
+                    + printMessage(2, "Ошибка. Нет такого критерия или его значение пусто.");
         } else {
             message += criteria + printMessage(1,"OK.");
             String criteriaValueParsed;
@@ -46,7 +45,8 @@ public class StudentSelector extends HttpServlet {
             } else {
                 criteriaValueParsed = "";
             }
-            if(Objects.isNull(criteriaValueParsed) ) {
+            message += "Статус ";
+            if(Objects.isNull(criteriaValueParsed)) {
                 message += printMessage(2,
                         "Ошибка. Неверное значение для введенного критерия.");
 

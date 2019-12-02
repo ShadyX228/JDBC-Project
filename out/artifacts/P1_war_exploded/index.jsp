@@ -58,8 +58,7 @@
             <option value="3">Обновить</option>
             <option value="4">Удалить</option>
             <option value="5">Назначить группу</option>
-            <option value="6">Выбрать все группы</option>
-            <option value="7">Удалить группу</option>
+            <option value="6">Убрать из группы</option>
           </select>
         </form>
         <form id="groupAction">
@@ -80,7 +79,7 @@
           <fieldset class="gender" form="studentAdd">
             <legend>Пол</legend>
             <label for="studentM">
-              <input type="radio" id="studentM" name="gender" value="MALE">М
+              <input type="radio" checked id="studentM" name="gender" value="MALE">М
             </label>
             <label for="studentF">
               <input type="radio" id="studentF" name="gender" value="FEMALE">Ж<br>
@@ -89,7 +88,7 @@
 
 
           <input class="group" type="text" name="group" placeholder="Группа"><br>
-          <button class="submit" type="button">Go</button>
+          <input type="submit" class="submit" type="button" value="Go">
         </form>
         <form id="studentSelect" name="studentSelect" method="GET">
           <select name="criteria">
@@ -103,7 +102,7 @@
             %>
           </select>
           <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
-          <button class="submit" type="button">Go</button>
+          <input type="submit" class="submit" type="button" value="Go">
         </form>
         <form id="studentUpdate" name="studentUpdate" method="POST">
           <input type="text" class="id" name="id" placeholder="ID"><br>
@@ -122,9 +121,9 @@
           </select>
           <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение поля"><br>
 
-          <button class="submit" type="button">Go</button>
+          <input type="submit" class="submit" type="button" value="Go">
         </form>
-        <form id="studentDelete" name="studentDelete" method="GET">
+        <form id="studentDelete" name="studentDelete" method="POST">
           <select name="criteria">
             <option value="default">Критерий удаления</option>
             <%
@@ -138,14 +137,108 @@
             %>
           </select>
           <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
-          <button class="submit" type="button">Go</button>
+          <input type="submit" class="submit" type="button" value="Go">
         </form>
       <!--/Действия со студентами-->
 
       <!--Действия с преподавателями-->
-      <!--/Действия с преподавателями-->
+        <form id="teacherAdd" name="teacherAdd" method="POST">
+          <input type="text" class="name" name="name" placeholder="ФИО"><br>
+          <input type="text" class="birth" name="birth" placeholder="День рождения"><br>
+
+          <fieldset class="gender" form="teacherAdd">
+            <legend>Пол</legend>
+            <label for="teacherM">
+              <input type="radio" checked id="teacherM" name="gender" value="MALE">М
+            </label>
+            <label for="teacherF">
+              <input type="radio" id="teacherF" name="gender" value="FEMALE">Ж<br>
+            </label>
+          </fieldset>
+
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="teacherSelect" name="teacherSelect" method="GET">
+          <select name="criteria">
+            <option value="default">Критерий выборки</option>
+            <%
+              for(Criteria criteria : criterias) {
+                if(!criteria.equals(Criteria.GROUP)) {
+            %>
+            <option value="<%=criteria.toString() %>"><%=criteria.toString() %></option>
+            <%
+                }
+              }
+            %>
+          </select>
+          <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="teacherUpdate" name="teacherUpdate" method="POST">
+          <input type="text" class="id" name="id" placeholder="ID"><br>
+          <select name="criteria">
+            <option value="default">Поле, которое надо обновить</option>
+            <%
+              for(Criteria criteria : criterias) {
+                if(!criteria.equals(Criteria.ID)
+                        && !criteria.equals(Criteria.ALL)
+                        && !criteria.equals(Criteria.GROUP)) {
+            %>
+            <option value="<%=criteria.toString() %>"><%=criteria.toString() %></option>
+            <%
+                }
+              }
+            %>
+          </select>
+          <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение поля"><br>
+
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="teacherDelete" name="teacherDelete" method="POST">
+          <select name="criteria">
+            <option value="default">Критерий удаления</option>
+            <%
+              for(Criteria criteria : criterias) {
+                if(!criteria.equals(Criteria.ALL)
+                        && !criteria.equals(Criteria.GROUP)) {
+            %>
+            <option value="<%=criteria.toString() %>"><%=criteria.toString() %></option>
+            <%
+                }
+              }
+            %>
+          </select>
+          <input type="text" class="criteriaValue" name="criteriaValue" placeholder="Значение критерия"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="teacherPutInGroup" name="teacherPutInGroup" method="POST">
+          <input class="id" type="text" name="id" placeholder="ID преподавателя"><br>
+          <input class="number" type="text" name="number" placeholder="Номер группы"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="teacherDeleteGroup" name="teacherDeleteGroup" method="POST">
+          <input class="id" type="text" name="id" placeholder="ID преподавателя"><br>
+          <input class="number" type="text" name="number" placeholder="Номер группы"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <!--/Действия с преподавателями-->
 
       <!--Действия с группами-->
+        <form id="groupAdd" name="groupAdd" method="POST">
+          <input class="number" type="text" name="number" placeholder="Номер"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="groupSelect" name="groupSelect" method="GET">
+          <input type="checkbox" value="ALL" id="groupAll">
+          <label for="groupAll">Все</label>
+
+          <input type="text" class="number" name="number" placeholder="Номер"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="groupDelete" name="groupDelete" method="POST">
+          <input class="number" type="text" name="number" placeholder="Номер"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
       <!--/Действия с группами-->
       </div>
       <aside>
@@ -162,8 +255,9 @@
         <p class="status"></p>
         <p class="message"></p>
       </div>
-
-      <footer>Подвал</footer>
+      <footer>
+        Подвал.
+      </footer>
     </div>
   </body>
 </html>

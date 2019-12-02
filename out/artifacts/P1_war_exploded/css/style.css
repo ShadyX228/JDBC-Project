@@ -1,5 +1,11 @@
 #studentAction, #teacherAction, #groupAction,
-#studentAdd, #studentSelect, #studentUpdate, #studentDelete {
+
+#studentAdd, #studentSelect, #studentUpdate, #studentDelete,
+
+#teacherAdd, #teacherSelect, #teacherUpdate, #teacherDelete,
+#teacherPutInGroup, #teacherSelectGroups, #teacherDeleteGroup,
+
+#groupAdd, #groupSelect, #groupDelete {
     display: none;
 }
 #wrapper {

@@ -63,7 +63,6 @@ public class Group extends Table {
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
         return id == group.id &&
-                number == group.number &&
-                Objects.equals(teachers, group.teachers);
+                number == group.number;
     }
 }

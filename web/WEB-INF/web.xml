@@ -6,26 +6,62 @@
     <!--Сервлеты студентов-->
     <servlet>
         <servlet-name>StudentAdder</servlet-name>
-        <servlet-class>servlets.StudentAdder</servlet-class>
+        <servlet-class>servlets.Student.StudentAdder</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StudentSelector</servlet-name>
-        <servlet-class>servlets.StudentSelector</servlet-class>
+        <servlet-class>servlets.Student.StudentSelector</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StudentUpdater</servlet-name>
-        <servlet-class>servlets.StudentUpdater</servlet-class>
+        <servlet-class>servlets.Student.StudentUpdater</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>StudentDeleter</servlet-name>
-        <servlet-class>servlets.StudentDeleter</servlet-class>
+        <servlet-class>servlets.Student.StudentDeleter</servlet-class>
     </servlet>
     <!--/Сервлеты студентов-->
 
     <!--Сервлеты преподов-->
+    <servlet>
+        <servlet-name>TeacherAdder</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherAdder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherSelector</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherSelector</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherUpdater</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherUpdater</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherDeleter</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherDeleter</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherPutInGroup</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherPutInGroup</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TeacherDeleteGroup</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherDeleteGroup</servlet-class>
+    </servlet>
     <!--/Сервлеты преподов-->
 
     <!--Сервлеты групп-->
+    <servlet>
+        <servlet-name>GroupAdder</servlet-name>
+        <servlet-class>servlets.Group.GroupAdder</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GroupSelector</servlet-name>
+        <servlet-class>servlets.Group.GroupSelector</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GroupDeleter</servlet-name>
+        <servlet-class>servlets.Group.GroupDeleter</servlet-class>
+    </servlet>
     <!--/Сервлеты групп-->
 
     <!--Маппинг студентов-->
@@ -48,8 +84,44 @@
     <!--/Маппинг студентов-->
 
     <!--Маппинг преподов-->
+    <servlet-mapping>
+        <servlet-name>TeacherAdder</servlet-name>
+        <url-pattern>/teacherAdd</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherSelector</servlet-name>
+        <url-pattern>/teacherSelect</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherUpdater</servlet-name>
+        <url-pattern>/teacherUpdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherDeleter</servlet-name>
+        <url-pattern>/teacherDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherPutInGroup</servlet-name>
+        <url-pattern>/teacherPutInGroup</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherDeleteGroup</servlet-name>
+        <url-pattern>/teacherDeleteGroup</url-pattern>
+    </servlet-mapping>
     <!--/Маппинг преподов-->
 
-    <!--Маппинг преподов-->
-    <!--/Маппинг преподов-->
+    <!--Маппинг групп-->
+    <servlet-mapping>
+        <servlet-name>GroupAdder</servlet-name>
+        <url-pattern>/groupAdd</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GroupSelector</servlet-name>
+        <url-pattern>/groupSelect</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GroupDeleter</servlet-name>
+        <url-pattern>/groupDelete</url-pattern>
+    </servlet-mapping>
+    <!--/Маппинг групп-->
 </web-app>

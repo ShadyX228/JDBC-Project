@@ -16,32 +16,6 @@ import java.util.Scanner;
 import static dbmodules.types.Criteria.*;
 
 public class WebInputDebugger {
-    static LocalDate checkBirth
-            (Scanner input) {
-        try {
-            System.out.print("Enter year: ");
-            int year = input.nextInt();
-
-            System.out.print("Enter month: ");
-            int month = input.nextInt();
-
-            System.out.print("Enter day: ");
-            int day = input.nextInt();
-
-            input.nextLine();
-
-            return LocalDate.of(year, month, day);
-        } catch (DateTimeParseException e) {
-            input.nextLine();
-            System.out.print("Invalid birthday. Try again: ");
-            return checkBirth(input);
-        } catch (InputMismatchException e) {
-            input.nextLine();
-            System.out.print("Int required in date. Try again: ");
-            return checkBirth(input);
-        }
-
-    }
     public static Criteria checkCriteria(String crit) {
         switch (crit.toUpperCase()) {
             case "ID": {
@@ -78,9 +52,7 @@ public class WebInputDebugger {
             (int number, GroupDAO groupDAO) {
         try {
             return groupDAO.select(number);
-        } catch (InputMismatchException e) {
-            return null;
-        } catch (IndexOutOfBoundsException e) {
+        } catch (InputMismatchException | IndexOutOfBoundsException e) {
             return null;
         }
     }
@@ -91,7 +63,7 @@ public class WebInputDebugger {
                 try {
                     Integer.parseInt(critVal);
                     return critVal;
-                } catch (NumberFormatException e) {
+                } catch (InputMismatchException | NumberFormatException e) {
                     return null;
                 }
 

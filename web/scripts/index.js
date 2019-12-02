@@ -59,6 +59,7 @@ $(document).ready(function(){
     /** /Выбор формы **/
 
     /** /Ajax-запросы **/
+
     $("#studentAdd").submit(function (event) {
         event.preventDefault();
         $(".status").html("Загружаю...");
@@ -204,6 +205,16 @@ $(document).ready(function(){
             $(".status").html("");
         });
     });
+    $("#groupUpdate").submit(function (event) {
+        event.preventDefault();
+        $(".status").html("Загружаю...");
+        var number = $("#groupUpdate .number").val();
+        var newNumber = $("#groupUpdate .newNumber").val();
+        $.post("groupUpdate", {"number" : number, "newNumber" : newNumber}, function(data) {
+            $(".message").html(data);
+            $(".status").html("");
+        });
+    });
     /** /Ajax-запросы **/
 
 
@@ -311,6 +322,10 @@ $(document).ready(function(){
                 $("#groupDelete").show();
                 break;
             }
+            case "4": {
+                $("#groupUpdate").show();
+                break;
+            }
 
 
             default: {
@@ -341,6 +356,7 @@ $(document).ready(function(){
             $("#groupAdd").hide();
             $("#groupSelect").hide();
             $("#groupDelete").hide();
+            $("#groupUpdate").hide();
         }
 
     }

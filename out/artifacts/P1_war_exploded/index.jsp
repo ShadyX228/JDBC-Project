@@ -67,6 +67,7 @@
             <option value="1">Добавить</option>
             <option value="2">Выбрать</option>
             <option value="3">Удалить</option>
+            <option value="4">Обновить</option>
           </select>
         </form>
       <!--/Выбор таблицы-->
@@ -233,6 +234,11 @@
           <label for="groupAll">Все</label>
 
           <input type="text" class="number" name="number" placeholder="Номер"><br>
+          <input type="submit" class="submit" type="button" value="Go">
+        </form>
+        <form id="groupUpdate" name="groupUpdate" method="POST">
+          <input class="number" type="text" name="number" placeholder="Номер исходной группы"><br>
+          <input class="newNumber" type="text" name="newNumber" placeholder="Новый номер"><br>
           <input type="submit" class="submit" type="button" value="Go">
         </form>
         <form id="groupDelete" name="groupDelete" method="POST">

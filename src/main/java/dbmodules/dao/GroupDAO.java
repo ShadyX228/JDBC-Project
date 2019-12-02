@@ -19,4 +19,10 @@ public class GroupDAO extends JPAUtil<Group> implements GroupTable {
     public List<Group> selectAll() {
         return  entityManager.createQuery("FROM Group").getResultList();
     }
+    public void update(Group group, int number) {
+        entityManager.getTransaction().begin();
+        group.setNumber(number);
+        entityManager.persist(group);
+        entityManager.getTransaction().commit();
+    }
 }

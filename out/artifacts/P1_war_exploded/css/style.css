@@ -1,3 +1,7 @@
+* {
+    margin: 0;
+    padding: 0;
+}
 #studentAction, #teacherAction, #groupAction,
 
 #studentAdd, #studentSelect, #studentUpdate, #studentDelete,
@@ -5,12 +9,13 @@
 #teacherAdd, #teacherSelect, #teacherUpdate, #teacherDelete,
 #teacherPutInGroup, #teacherSelectGroups, #teacherDeleteGroup,
 
-#groupAdd, #groupSelect, #groupDelete {
+#groupAdd, #groupSelect, #groupDelete, #groupUpdate {
     display: none;
 }
 #wrapper {
     width: 500px;
     margin: auto;
+    height: 100%;
 }
 #forms {
     width: 150px;
@@ -39,4 +44,23 @@ aside {
     width: 200px;
     margin-left: 30px;
     float: left;
+}
+#wrapper {
+    -webkit-box-shadow: 1px 1px 10px 2px #000000;
+    box-shadow: 1px 1px 10px 2px #000000;
+}
+header {
+    border-bottom: 1px solid black;
+    padding: 10px;
+}
+footer {
+    border-top: 1px solid black;
+    padding: 10px;
+    position: relative;
+}
+#output, aside, #forms {
+    padding: 10px;
+}
+#output {
+    border-top: 1px solid black;
 }

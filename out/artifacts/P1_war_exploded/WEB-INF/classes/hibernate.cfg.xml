@@ -12,8 +12,8 @@
         <property name="connection.password">12345</property>
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
 
-        <mapping class="main.java.dbmodules.tables.Group"/>
-        <mapping class="main.java.dbmodules.tables.Student"/>
-        <mapping class="main.java.dbmodules.tables.Teacher"/>
+        <mapping class="dbmodules.tables.Group"/>
+        <mapping class="dbmodules.tables.Student"/>
+        <mapping class="dbmodules.tables.Teacher"/>
     </session-factory>
 </hibernate-configuration>

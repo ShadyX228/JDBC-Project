@@ -1,364 +1,148 @@
 $(document).ready(function(){
-    /** Выбор формы **/
-    $("#table select").change(
-        function() {
-            var table = $(this).val();
+    /** Выбор таблицы **/
+    /** Студент **/
+    $("#studentAction").click(function () {
+        $("#studentsTable").show();
+        $("#groupsTable").hide();
+        $("#teachersTable").hide();
 
-            showForm(table);
+        $("#status").html("Загрузка...");
 
-            $("#studentAction select").change(
-                function() {
-                    var action = $(this).val();
-                    showStudentActionForm(action);
-                    $("#studentSelect select").change(
-                        function () {
-                            var criteria = $(this).val();
-                            $("#studentSelect .criteriaValue").show();
-                            if(criteria == "ALL") {
-                                $("#studentSelect .criteriaValue").hide();
-                            }
-                        }
-                    );
-                }
-            );
-
-            $("#groupAction select").change(
-                function() {
-                    var action = $(this).val();
-                    showGroupActionForm(action);
-                    var check = $(this).is(":not(:checked)");
-                    var number = $("#groupSelect .number");
-                    $("#groupSelect input[type=checkbox]").click(function () {
-                        check = $(this).is(":not(:checked)");
-                        if(check) {
-                            number.show();
-                        } else {
-                            number.hide();
-                        }
-                    })
-                }
-            );
-
-            $("#teacherAction select").change(
-                function() {
-                    var action = $(this).val();
-                    showTeacherActionForm(action);
-                    $("#teacherSelect select").change(
-                        function () {
-                            var criteria = $(this).val();
-                            $("#teacherSelect .criteriaValue").show();
-                            if(criteria == "ALL") {
-                                $("#teacherSelect .criteriaValue").hide();
-                            }
-                        }
-                    );
-                }
-            );
-        }
-    )
-    /** /Выбор формы **/
-
-    /** /Ajax-запросы **/
-
-    $("#studentAdd").submit(function (event) {
+        $.post("studentSelectAll", function(data) {
+            $("#studentOutput .outputTable").show();
+            $("#studentOutput .outputTable").html(data);
+            $("#status").html("");
+            /** Запрос на удаление **/
+            addDeleteEventHandler("#studentOutput .outputTable tr","student");
+            addUpdateEventHandler("#studentOutput .outputTable tr","student");
+            /** /Запрос на удаление **/
+        });
+    });
+    $("#studentAdd").click(function () {
+        $("#studentAddForm").show();
+    })
+    $("#studentAddForm").submit(function (event) {
         event.preventDefault();
-        $(".status").html("Загружаю...");
-        var name = $("#studentAdd .name").val();
-        var birth = $("#studentAdd .birth").val();
-        var gender = $("#studentAdd .gender input[type=radio]:checked").val();
-        var group = $("#studentAdd .group").val();
+        $("#status").html("Загрузка...");
+        var name = $("#studentAddForm .name").val();
+        var birth = $("#studentAddForm .birth").val();
+        var gender = $("#studentAddForm .gender").val();
+        var group = $("#studentAddForm .group").val();
         $.post("studentAdd", {
             "name" : name,
             "birth" : birth,
             "gender" : gender,
             "group" : group}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#studentSelect").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var criteria = $("#studentSelect select").val();
-        var criteriaValue = $("#studentSelect input").val();
-        $.get("studentSelect", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#studentUpdate").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var id = $("#studentUpdate .id").val();
-        var criteria = $("#studentUpdate select").val();
-        var criteriaValue = $("#studentUpdate .criteriaValue").val();
-        $.post("studentUpdate", {"id" : id, "criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#studentDelete").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var criteria = $("#studentDelete select").val();
-        var criteriaValue = $("#studentDelete input").val();
-        $.post("studentDelete", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-
-    $("#teacherAdd").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var name = $("#teacherAdd .name").val();
-        var birth = $("#teacherAdd .birth").val();
-        var gender = $("#teacherAdd .gender input[type=radio]:checked").val();
-        var group = $("#teacherAdd .group").val();
-        $.post("teacherAdd", {
-            "name" : name,
-            "birth" : birth,
-            "gender" : gender,
-            "group" : group}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#teacherSelect").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var criteria = $("#teacherSelect select").val();
-        var criteriaValue = $("#teacherSelect input").val();
-        $.get("teacherSelect", {"criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#teacherUpdate").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var id = $("#teacherUpdate .id").val();
-        var criteria = $("#teacherUpdate select").val();
-        var criteriaValue = $("#teacherUpdate .criteriaValue").val();
-        $.post("teacherUpdate", {"id" : id, "criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#teacherDelete").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var id = $("#teacherDelete .id").val();
-        var criteria = $("#teacherDelete select").val();
-        var criteriaValue = $("#teacherDelete .criteriaValue").val();
-        $.post("teacherDelete", {"id" : id, "criteria" : criteria, "criteriaValue" : criteriaValue}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#teacherPutInGroup").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var id = $("#teacherPutInGroup .id").val();
-        var number = $("#teacherPutInGroup .number").val();
-        $.post("teacherPutInGroup", {"id" : id, "number" : number}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#teacherDeleteGroup").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var id = $("#teacherDeleteGroup .id").val();
-        var number = $("#teacherDeleteGroup .number").val();
-        $.post("teacherDeleteGroup", {"id" : id, "number" : number}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-
-    $("#groupAdd").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var number = $("#groupAdd .number").val();
-        $.post("groupAdd", {"number" : number}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#groupSelect").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var number = $("#groupSelect .number").val();
-        var checkAll = $("#groupSelect input[type=checkbox]").is(":not(:checked)");
-        $.get("groupSelect", {"number" : number, "checkAll" : checkAll}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#groupDelete").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var number = $("#groupDelete .number").val();
-        $.post("groupDelete", {"number" : number}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    $("#groupUpdate").submit(function (event) {
-        event.preventDefault();
-        $(".status").html("Загружаю...");
-        var number = $("#groupUpdate .number").val();
-        var newNumber = $("#groupUpdate .newNumber").val();
-        $.post("groupUpdate", {"number" : number, "newNumber" : newNumber}, function(data) {
-            $(".message").html(data);
-            $(".status").html("");
-        });
-    });
-    /** /Ajax-запросы **/
-
-
-
-    /** Отображение форм **/
-    function showForm(table) {
-        switch(table) {
-            case "1": {
-                hideAll(1);
-                hideAll(2);
-                $("#studentAction").show();
-                break;
+            //var id = parseInt($("#studentOutput .outputTable tr:last-child td:first-child").html())+1;
+            $("#status").html(data);
+            var id = parseInt($("#status .lastId").html());
+            if(!isNaN(id)) {
+                $("#studentOutput .outputTable").append("<tr id=\"student" + id + "\">" +
+                    "<td class=\"id\">" + id + "</td>" +
+                    "<td class=\"name\">" + name + "</td>" +
+                    "<td class=\"birth\">" + birth + "</td>" +
+                    "<td class=\"gender\">" + gender + "</td>" +
+                    "<td class=\"group\">" + group + "</td>" +
+                    "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteStudent" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateStudent" + id + "\">Изменить</a></td>" +
+                    "</tr>");
+                addDeleteEventHandler("#student"+id, "student");
+                addUpdateEventHandler("#student"+id, "student");
             }
-            case "2": {
-                hideAll(1);
-                hideAll(2);
-                $("#teacherAction").show();
-                break;
+        });
+    })
+    $("#studentUpdateForm").submit(function (event) {
+        event.preventDefault();
+        $("#status").html("Загружаю...");
+        var id =  $("#studentUpdateForm .id").val();
+        var name =  $("#studentUpdateForm .name").val();
+        var birth =  $("#studentUpdateForm .birth").val();
+        var gender =$("#studentUpdateForm .gender").val();
+        var group = $("#studentUpdateForm .group").val();
+        $.post("studentUpdate", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
+            $("#status").html(data);
+            var error = parseInt($("#status .error").html());
+            if(isNaN(error)) {
+                $("#student" + id + ".name").html(name);
             }
-            case "3": {
-                hideAll(1);
-                hideAll(2);
-                $("#groupAction").show();
-                break;
+        });
+    });
+    /** /Студент **/
+
+    $("#groupAction").click(function () {
+        $("#studentsTable").hide();
+        $("#groupsTable").show();
+        $("#teachersTable").hide();
+
+        $("#status").html("Загрузка...");
+    });
+    $("#teacherAction").click(function () {
+        $("#studentsTable").hide();
+        $("#groupsTable").hide();
+        $("#teachersTable").show();
+
+        $("#status").html("Загрузка...");
+    });
+    /** /Выбор таблицы **/
+
+
+    /** Прочие обработчики **/
+    $("#studentUpdateFormClose").click(function (event) {
+        event.preventDefault();
+        $("#studentUpdateForm").hide();
+    })
+    $("#studentAddFormClose").click(function (event) {
+        event.preventDefault();
+        $("#studentAddForm").hide();
+    })
+    /** /Прочие обработчики **/
+
+    /** Функции **/
+    function addDeleteEventHandler(selector, table) {
+        $(selector).on("click", ".delete", function() {
+            var a = $(this);
+            var href = a.attr("href");
+            var id = parseInt(href.match(/\d+/));
+            $("#status").html("Загружаю...");
+            var page = "";
+            switch (table) {
+                case "student" : {
+                    page = "studentDelete";
+                    break;
+                }
+                case "teacher" : {
+                    page = "teacherDelete";
+                    break;
+                }
+                case "group" : {
+                    page = "groupDelete";
+                    break;
+                }
             }
-            default: {
-                hideAll(1);
-                hideAll(2);
-                break;
-            }
-        }
+            $("#status").html("Загрузка...");
+            $.post(page, {"criteria" : "ID", "criteriaValue" : id}, function(data) {
+                $("#status").html(data);
+                $("#" + table + id).hide();
+            });
+        })
     }
-    function showStudentActionForm(action) {
-        hideAll(2);
-        switch(action) {
-            case "1": {
-                $("#studentAdd").show();
-                break;
-            }
-            case "2": {
-                $("#studentSelect").show();
-                break;
-            }
-            case "3": {
-                $("#studentUpdate").show();
-                break;
-            }
-            case "4": {
-                $("#studentDelete").show();
-                break;
-            }
+    function addUpdateEventHandler(selector, table) {
+        $(selector).on("click", ".update", function() {
+            var a = $(this);
+            var href = a.attr("href");var id = parseInt(href.match(/\d+/));
 
-
-            default: {
-                break;
-            }
-        }
+            $("#studentUpdateForm").show();
+            var name = $("#" + table + id + " .name").html();
+            var birth = $("#" + table + id + " .birth").html();;
+            var gender = $("#" + table + id + " .gender").html();;
+            var group = $("#" + table + id + " .group").html();
+            $("#studentUpdateForm .id").val(id);
+            $("#studentUpdateForm .name").val(name);
+            $("#studentUpdateForm .birth").val(birth);
+            $("#studentUpdateForm .gender").val(gender);
+            $("#studentUpdateForm .group").val(group);
+        })
     }
-    function showTeacherActionForm(action) {
-        hideAll(2);
-        switch(action) {
-            case "1": {
-                $("#teacherAdd").show();
-                break;
-            }
-            case "2": {
-                $("#teacherSelect").show();
-                break;
-            }
-            case "3": {
-                $("#teacherUpdate").show();
-                break;
-            }
-            case "4": {
-                $("#teacherDelete").show();
-                break;
-            }
-            case "5": {
-                $("#teacherPutInGroup").show();
-                break;
-            }
-            case "6": {
-                $("#teacherDeleteGroup").show();
-                break;
-            }
 
+    /** /Функции **/
 
-            default: {
-                break;
-            }
-        }
-    }
-    function showGroupActionForm(action) {
-        hideAll(2);
-        switch(action) {
-            case "1": {
-                $("#groupAdd").show();
-                break;
-            }
-            case "2": {
-                $("#groupSelect").show();
-                break;
-            }
-            case "3": {
-                $("#groupDelete").show();
-                break;
-            }
-            case "4": {
-                $("#groupUpdate").show();
-                break;
-            }
-
-
-            default: {
-                break;
-            }
-        }
-    }
-    function hideAll(blockGroup) {
-        if(blockGroup === 1) {
-            $("#teacherAction").hide();
-            $("#studentAction").hide();
-            $("#groupAction").hide();
-        }
-        if(blockGroup === 2) {
-            $("#studentAdd").hide();
-            $("#studentSelect").hide();
-            $("#studentUpdate").hide();
-            $("#studentDelete").hide();
-
-            $("#teacherAdd").hide();
-            $("#teacherSelect").hide();
-            $("#teacherUpdate").hide();
-            $("#teacherDelete").hide();
-            $("#teacherPutInGroup").hide();
-            $("#teacherSelectGroups").hide();
-            $("#teacherDeleteGroup").hide();
-
-            $("#groupAdd").hide();
-            $("#groupSelect").hide();
-            $("#groupDelete").hide();
-            $("#groupUpdate").hide();
-        }
-
-    }
-    /** /Отображение форм **/
 });

@@ -4,6 +4,7 @@ import dbmodules.dao.GroupDAO;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
+import servlets.Main.MainServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,8 +25,6 @@ public class StudentDeleter extends HttpServlet {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
-
-        StudentDAO studentDAO = new StudentDAO();
 
         String criteriaString = request.getParameter("criteria");
         String criteriaValue = request.getParameter("criteriaValue");
@@ -53,6 +52,7 @@ public class StudentDeleter extends HttpServlet {
             } else {
                 message += printMessage(1,"OK.");
                 List<Student> list = new ArrayList<>();
+                StudentDAO studentDAO = new StudentDAO();
                 if(criteria.equals(ID)) {
                     Student student = studentDAO.selectById(Integer.parseInt(criteriaValueParsed));
                     if(!Objects.isNull(student)) {
@@ -69,6 +69,7 @@ public class StudentDeleter extends HttpServlet {
                     studentDAO.delete(student);
                 }
                 message += "<br>Удалено " + list.size() + " записей";
+                studentDAO.closeEM();
             }
         }
         response.getWriter().write(message);

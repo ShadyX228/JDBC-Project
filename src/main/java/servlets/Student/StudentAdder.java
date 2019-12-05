@@ -4,7 +4,9 @@ import dbmodules.dao.GroupDAO;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
+import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
+import servlets.Main.MainServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +22,9 @@ import static webdebugger.WebInputDebugger.*;
 
 
 public class StudentAdder extends HttpServlet {
+    private MainServlet mainServlet = new MainServlet();
+    private GroupDAO groupDAO = mainServlet.getGroupDAO();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
@@ -66,7 +71,7 @@ public class StudentAdder extends HttpServlet {
             Group groupObject = new Group(0);
             try {
                 number = Integer.parseInt(group);
-                groupObject = checkGroup(number, new GroupDAO());
+                groupObject = checkGroup(number, groupDAO);
                 if(Objects.isNull(groupObject)) {
                     message += printMessage(2, "Ошибка: такой группы нет.");
 
@@ -83,16 +88,19 @@ public class StudentAdder extends HttpServlet {
             if(!check) {
                 message += printMessage(2,"Ошибка. Одно или несколько полей не прошли проверку.");
             } else {
-                StudentDAO studentDAO = new StudentDAO();
-                studentDAO.add(new Student(
+                Student student = new Student(
                         name,
                         birthday.getYear(),
                         birthday.getMonthValue(),
                         birthday.getDayOfMonth(),
                         genderParsed,
                         groupObject
-                ));
-                message += printMessage(1,"Запись добавлена.");
+                );
+                StudentDAO studentDAO = new StudentDAO();
+                studentDAO.add(student);
+                studentDAO.closeEM();
+
+                message += printMessage(1,"Запись <span class=\"lastId\">" + student.getId()  + "</span> добавлена.");
             }
 
 

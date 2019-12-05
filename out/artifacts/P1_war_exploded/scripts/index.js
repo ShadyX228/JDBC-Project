@@ -33,10 +33,10 @@ $(document).ready(function(){
             "birth" : birth,
             "gender" : gender,
             "group" : group}, function(data) {
-            //var id = parseInt($("#studentOutput .outputTable tr:last-child td:first-child").html())+1;
             $("#status").html(data);
             var id = parseInt($("#status .lastId").html());
             if(!isNaN(id)) {
+                lightOn("#student" + id,"#AEB5FF");
                 $("#studentOutput .outputTable").append("<tr id=\"student" + id + "\">" +
                     "<td class=\"id\">" + id + "</td>" +
                     "<td class=\"name\">" + name + "</td>" +
@@ -62,7 +62,11 @@ $(document).ready(function(){
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
-                $("#student" + id + ".name").html(name);
+                lightOn("#student" + id,"#AEB5FF");
+                $("#student" + id + " .name").html(name);
+                $("#student" + id + " .birth").html(birth);
+                $("#student" + id + " .gender").html(gender);
+                $("#student" + id + " .group").html(group);
             }
         });
     });
@@ -142,7 +146,13 @@ $(document).ready(function(){
             $("#studentUpdateForm .group").val(group);
         })
     }
+    function lightOn(selector, color) {
+        $(selector).css("background-color", color);
+        setTimeout(function() {
+            $(selector).css("background-color", "white");
+        }, 1000)
 
+    }
     /** /Функции **/
 
 });

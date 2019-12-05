@@ -2,38 +2,14 @@
     margin: 0;
     padding: 0;
 }
-a {
-    text-decoration: none;
-    -webkit-transition: all 150ms ease-in-out;
-    -moz-transition: all 150ms ease-in-out;
-    -ms-transition: all 150ms ease-in-out;
-    -o-transition: all 150ms ease-in-out;
-    transition: all 150ms ease-in-out;
-    color: #737373;
-}
-a:hover {
-    color: red;
-}
 nav {
     margin: auto;
     text-align: center;
-    background: #D9D9D9;
-    padding: 5px;
-    border-bottom: 1px solid black;
 }
 nav ul li {
     list-style: none;
     display: inline;
     margin: 10px;
-    padding: 5px;
-}
-nav a {
-    padding: 5px;
-    color: black;
-}
-nav a:hover {
-    background: #ACACAC;
-    color: white;
 }
 input {
     width: 100px;
@@ -57,31 +33,23 @@ form {
     height: 100%;
     -webkit-box-shadow: 1px 1px 10px 2px #000000;
     box-shadow: 1px 1px 10px 2px #000000;
+    padding: 10px;
 }
-#status, #studentsTable, #teachersTable, #groupsTable,
-.outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm,
-#groupAddForm, #groupUpdateForm, #groupInfo, #groupSearchForm,
-.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm, #teacherInfo {
+#studentsTable, #teachersTable, #groupsTable,
+.studentOutputTable, #studentUpdateForm {
+    display: none;
+}
+#studentAddForm {
     display: none;
 }
 .outputTable {
     width: 100%;
     border: 1px solid black;
     border-spacing: 0;
-    border-right: 0;
-    border-left: 0;
 }
 td {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
-    padding: 3px;
-}
-tr {
-    -webkit-transition: background 300ms ease-in-out;
-    -moz-transition: background 300ms ease-in-out;
-    -ms-transition: background 300ms ease-in-out;
-    -o-transition: background 300ms ease-in-out;
-    transition: background 300ms ease-in-out;
 }
 tr:last-child td {
     border-bottom: 0;
@@ -94,41 +62,4 @@ td:last-child {
 }
 tr:hover {
     background: #CACACA
-}
-.submit, #studentSearchForm .id,
-#studentSearchForm .group {
-    width: 45px;
-}
-form .birth {
-    width: 150px;
-}
-
-form {
-    margin: 5px;
-}
-#status {
-    text-align: center;
-    padding-top: 10px;
-}
-#groupInfo, #teacherInfo {
-    background: white;
-    padding: 10px;
-    position: fixed;
-    top: 150px;
-    right: 50px;
-    left: 50px;
-    width: 300px;
-    margin: auto;
-    border: 1px solid black;
-}
-#closeGroupInfo, #closeTeacherInfo {
-    float: right;
-}
-footer {
-    padding: 10px;
-}
-input[disabled] {
-    background: #AD2B2B;
-    color: white;
-    border-color: #AD4E4E;
 }

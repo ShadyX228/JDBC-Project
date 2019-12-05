@@ -63,15 +63,15 @@ public class StudentDeleter extends HttpServlet {
                         list = studentDAO.select(criteria, criteriaValueParsed);
                     } else {
                         message += "Статус" + printMessage(2,"Ошибка. Пустое значение критерия.");
-                        response.getWriter().write(message);
                     }
                 }
                 for (Student student : list) {
                     studentDAO.delete(student);
                 }
-                response.getWriter().write("<br>Удалено " + list.size() + " записей");
+                message += "<br>Удалено " + list.size() + " записей";
                 studentDAO.closeEM();
             }
         }
+        response.getWriter().write(message);
     }
 }

@@ -7,12 +7,10 @@ import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
 
-import static webdebugger.WebInputDebugger.*;
-import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
-import java.util.*;
-
-import static dbmodules.types.Criteria.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
     public Student selectById(int id) {
@@ -69,86 +67,6 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
                         .createQuery("FROM Student")
                         .getResultList();
                 break;
-            }
-        }
-        return list;
-    }
-    public List<Student> select(HashMap<Criteria, String> criteriasMap) {
-        List<Student> list = new ArrayList<>();
-        String query = "FROM Student";
-        if(criteriasMap.containsKey(ID)) {
-            Student student = selectById(Integer.parseInt(criteriasMap.get(ID)));
-            if(!Objects.isNull(student)) {
-                list.add(student);
-            }
-        } else {
-            query += " WHERE ";
-            Group group = null;
-            for (HashMap.Entry<Criteria, String> element : criteriasMap.entrySet()) {
-                switch (element.getKey()) {
-                    case NAME: {
-                        query += "Name LIKE :name AND ";
-                        break;
-                    }
-                    case BIRTH: {
-                        query += "birthday = :birthday AND ";
-                        break;
-                    }
-                    case GENDER: {
-                        query += "gender = :gender AND ";
-                        break;
-                    }
-                    case GROUP: {
-                        GroupDAO groupDAO = new GroupDAO();
-                        int groupNumber = Integer.parseInt(criteriasMap.get(GROUP));
-                        group = checkGroup(groupNumber, groupDAO);
-
-                        if(!Objects.isNull(group)) {
-                            query += "group_id = :group_id AND ";
-                            System.out.println(criteriasMap.get(GROUP));
-                        }
-                        groupDAO.closeEM();
-                        break;
-                    }
-                }
-            }
-            if(!criteriasMap.containsKey(ALL)) {
-                if(!criteriasMap.isEmpty()) {
-                    query = query.substring(0, query.length() - 4);
-                    Query execute = entityManager
-                            .createQuery(query);
-                    if (criteriasMap.containsKey(NAME)) {
-                        execute.setParameter("name", "%" + criteriasMap.get(NAME) + "%");
-                    }
-                    if (criteriasMap.containsKey(BIRTH)) {
-                        LocalDate birth = LocalDate.of(
-                                LocalDate.parse(criteriasMap.get(BIRTH)).getYear(),
-                                LocalDate.parse(criteriasMap.get(BIRTH)).getMonth(),
-                                LocalDate.parse(criteriasMap.get(BIRTH)).getDayOfMonth()
-                        );
-                        execute.setParameter("birthday", birth);
-                    }
-                    if (criteriasMap.containsKey(GENDER)) {
-                        Gender gender = Gender.valueOf(criteriasMap.get(GENDER));
-                        execute.setParameter("gender", gender);
-                    }
-
-                    if (criteriasMap.containsKey(GROUP)) {
-                        if(!Objects.isNull(group)) {
-                            execute.setParameter("group_id", group.getId());
-                        }
-                    }
-
-                    System.out.println(query);
-
-                    list = execute.getResultList();
-                }
-
-            } else {
-                query = "FROM Student";
-                list = entityManager
-                        .createQuery(query)
-                        .getResultList();
             }
         }
         return list;

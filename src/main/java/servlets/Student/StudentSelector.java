@@ -3,69 +3,93 @@ package servlets.Student;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
+import servlets.Main.MainServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
-import static dbmodules.types.Criteria.*;
+import static dbmodules.types.Criteria.ALL;
+import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
 
 
 public class StudentSelector extends HttpServlet {
+    MainServlet mainServlet = new MainServlet();
+    StudentDAO studentDAO = mainServlet.getStudentDAO();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        String idString = request.getParameter("id");
-        String name = request.getParameter("name");
-        String birthString = request.getParameter("birth");
-        String genderString = request.getParameter("gender");
-        String groupString = request.getParameter("group");
+        List<Student> list = new ArrayList<>();
 
-        idString = parseCriteria(ID, idString);
-        birthString = parseCriteria(BIRTH, birthString);
-        genderString = parseCriteria(GENDER, genderString);
-        groupString = parseCriteria(ID, groupString);
+        String criteriaString = request.getParameter("criteria");
+        String criteriaValue = request.getParameter("criteriaValue");
+        String message = "Проверяю переданные параметры... <br>Критерий: ";
 
-        HashMap<Criteria, String> map = new HashMap<>();
-
-        List<Student> students;
-        if (!Objects.isNull(idString)) {
-            map.put(ID, idString);
+        Criteria criteria = checkCriteria(criteriaString);
+        if((Objects.isNull(criteria) || criteriaValue.isEmpty()) && !criteria.equals(ALL)) {
+            message += criteriaString
+                    + printMessage(2, "Ошибка. Нет такого критерия или его значение пусто.");
         } else {
-            if (!name.isEmpty()) {
-                map.put(NAME, name);
+            message += criteria + printMessage(1,"OK.");
+            String criteriaValueParsed;
+            if(!criteria.equals(ALL)) {
+                criteriaValueParsed = parseCriteria(criteria, criteriaValue);
+            } else {
+                criteriaValueParsed = "";
             }
+            message += "Статус ";
+            if(Objects.isNull(criteriaValueParsed)) {
+                message += printMessage(2,
+                        "Ошибка. Неверное значение для введенного критерия.");
 
-            if (!Objects.isNull(birthString)) {
-                if(!birthString.isEmpty()) {
-                    map.put(BIRTH, birthString);
+            } else {
+                if(!criteria.equals(ALL)) {
+                    message += printMessage(1, "OK.");
                 }
-            }
-
-            if (!Objects.isNull(genderString)) {
-                if(!genderString.isEmpty()) {
-                    map.put(GENDER, genderString);
+                if(criteria.equals(ID)) {
+                    Student student = studentDAO
+                            .selectById(Integer
+                                    .parseInt(criteriaValueParsed));
+                    if(!Objects.isNull(student)) {
+                        list.add(student);
+                    }
+                } else {
+                    list = studentDAO.select(criteria, criteriaValueParsed);
                 }
-            }
-
-            if (!Objects.isNull(groupString)) {
-                map.put(GROUP, groupString);
             }
         }
 
-        StudentDAO studentDAO = new StudentDAO();
-        if(map.isEmpty()) {
-            map.put(ALL, " ");
+        response.getWriter().write(message);
+        if(!list.isEmpty()) {
+            response.getWriter().write("<table border=1>\n" +
+                    "\t<tr>\n" +
+                    "\t\t<td>ID</td>\n" +
+                    "\t\t<td>ФИО</td>\n" +
+                    "\t\t<td>День рождения</td>\n" +
+                    "\t\t<td>Пол</td>\n" +
+                    "\t\t<td>Группа</td>\n" +
+                    "\t</tr>");
+            for (Student student : list) {
+                response.getWriter().write("<tr>");
+                response.getWriter().write("<td>" + student.getId() + "</td>");
+                response.getWriter().write("<td>" + student.getName() + "</td>");
+                response.getWriter().write("<td>" + student.getBirth() + "</td>");
+                response.getWriter().write("<td>" + student.getGender() + "</td>");
+                response.getWriter().write("<td>" + student.getGroup().getNumber() + "</td>");
+                response.getWriter().write("</tr>");
+            }
+            response.getWriter().write("</table>");
+        } else {
+            response.getWriter().write("Нет записей.");
         }
-        students = studentDAO.select(map);
-        response.getWriter().write(generateStudentsTable(students));
-        studentDAO.closeEM();
     }
 }

@@ -13,8 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static webdebugger.WebInputDebugger.generateStudentsTable;
-
 public class StudentAllSelector extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -23,7 +21,31 @@ public class StudentAllSelector extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         StudentDAO studentDAO = new StudentDAO();
         List<Student> list = studentDAO.select(Criteria.ALL,"");
-        response.getWriter().write(generateStudentsTable(list));
+        if(!list.isEmpty()) {
+            response.getWriter().write("\t<tr>\n" +
+                    "\t\t<td>ID</td>\n" +
+                    "\t\t<td>ФИО</td>\n" +
+                    "\t\t<td>День рождения</td>\n" +
+                    "\t\t<td>Пол</td>\n" +
+                    "\t\t<td>Группа</td>\n" +
+                    "\t\t<td>Операции</td>\n" +
+                    "\t</tr>");
+            for (Student student : list) {
+                response.getWriter().write("<tr id=\"student" + student.getId() + "\">\n");
+                response.getWriter().write("<td class=\"id\">" + student.getId() + "</td>");
+                response.getWriter().write("<td class=\"name\">" + student.getName() + "</td>");
+                response.getWriter().write("<td class=\"birth\">" + student.getBirth() + "</td>");
+                response.getWriter().write("<td class=\"gender\">" + student.getGender() + "</td>");
+                response.getWriter().write("<td class=\"group\">" + student.getGroup().getNumber() + "</td>");
+                response.getWriter().write("<td class=\"operations\">" +
+                        "<a class=\"delete\" href=\"#deleteStudent" + student.getId() + "\">Удалить</a><br>" +
+                        "<a class=\"update\" href=\"#updateStudent" + student.getId() + "\">Изменить</a>" +
+                        "</td>");
+                response.getWriter().write("</tr>");
+            }
+        } else {
+            response.getWriter().write("Нет записей.");
+        }
         studentDAO.closeEM();
     }
 }

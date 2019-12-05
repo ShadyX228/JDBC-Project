@@ -2,65 +2,64 @@
     margin: 0;
     padding: 0;
 }
-#studentAction, #teacherAction, #groupAction,
-
-#studentAdd, #studentSelect, #studentUpdate, #studentDelete,
-
-#teacherAdd, #teacherSelect, #teacherUpdate, #teacherDelete,
-#teacherPutInGroup, #teacherSelectGroups, #teacherDeleteGroup,
-
-#groupAdd, #groupSelect, #groupDelete, #groupUpdate {
-    display: none;
+nav {
+    margin: auto;
+    text-align: center;
+}
+nav ul li {
+    list-style: none;
+    display: inline;
+    margin: 10px;
+}
+input {
+    width: 100px;
+}
+form {
+    margin-bottom: 10px;
+}
+.actions {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.actions li {
+    list-style: none;
+    display: inline;
+    margin: 10px;
 }
 #wrapper {
     width: 500px;
     margin: auto;
     height: 100%;
-}
-#forms {
-    width: 150px;
-    float: left;
-}
-.error {
-    color: red;
-    font-weight: bold;
-}
-.ok {
-    color: green;
-    font-weight: bold;
-}
-.cl {
-    clear: both;
-}
-
-input, select, button {
-    margin-top: 10px;
-}
-input[type='text'], select {
-    margin-top: 10px;
-    width: 150px;
-}
-aside {
-    width: 200px;
-    margin-left: 30px;
-    float: left;
-}
-#wrapper {
     -webkit-box-shadow: 1px 1px 10px 2px #000000;
     box-shadow: 1px 1px 10px 2px #000000;
+    padding: 10px;
 }
-header {
+#studentsTable, #teachersTable, #groupsTable,
+.studentOutputTable, #studentUpdateForm {
+    display: none;
+}
+#studentAddForm {
+    display: none;
+}
+.outputTable {
+    width: 100%;
+    border: 1px solid black;
+    border-spacing: 0;
+}
+td {
     border-bottom: 1px solid black;
-    padding: 10px;
+    border-right: 1px solid black;
 }
-footer {
-    border-top: 1px solid black;
-    padding: 10px;
-    position: relative;
+tr:last-child td {
+    border-bottom: 0;
 }
-#output, aside, #forms {
-    padding: 10px;
+tr:first-child {
+    font-weight: bold;
 }
-#output {
-    border-top: 1px solid black;
+td:last-child {
+    border-right: 0;
+}
+tr:hover {
+    background: #CACACA
 }

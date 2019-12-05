@@ -3,6 +3,7 @@ package servlets.Student;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
+import servlets.Main.MainServlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +20,8 @@ import static webdebugger.WebInputDebugger.*;
 
 
 public class StudentSelector extends HttpServlet {
+    MainServlet mainServlet = new MainServlet();
+    StudentDAO studentDAO = mainServlet.getStudentDAO();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -26,8 +29,6 @@ public class StudentSelector extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         List<Student> list = new ArrayList<>();
-
-        StudentDAO studentDAO = new StudentDAO();
 
         String criteriaString = request.getParameter("criteria");
         String criteriaValue = request.getParameter("criteriaValue");

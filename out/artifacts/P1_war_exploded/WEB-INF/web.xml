@@ -20,6 +20,10 @@
         <servlet-name>StudentDeleter</servlet-name>
         <servlet-class>servlets.Student.StudentDeleter</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>StudentAllSelector</servlet-name>
+        <servlet-class>servlets.Student.StudentAllSelector</servlet-class>
+    </servlet>
     <!--/Сервлеты студентов-->
 
     <!--Сервлеты преподов-->
@@ -84,6 +88,10 @@
     <servlet-mapping>
         <servlet-name>StudentDeleter</servlet-name>
         <url-pattern>/studentDelete</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StudentAllSelector</servlet-name>
+        <url-pattern>/studentSelectAll</url-pattern>
     </servlet-mapping>
     <!--/Маппинг студентов-->
 

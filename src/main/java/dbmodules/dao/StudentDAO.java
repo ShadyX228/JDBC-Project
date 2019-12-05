@@ -6,12 +6,13 @@ import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
+
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
-
     public Student selectById(int id) {
         return entityManager.find(Student.class, id);
     }
@@ -100,6 +101,15 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
                 break;
             }
         }
+        entityManager.persist(person);
+        entityManager.getTransaction().commit();
+    }
+    public void update(Student person, String name, LocalDate birth, Gender gender, Group group) {
+        entityManager.getTransaction().begin();
+        person.setName(name);
+        person.setBirthday(birth);
+        person.setGender(gender);
+        person.setGroup(group);
         entityManager.persist(person);
         entityManager.getTransaction().commit();
     }

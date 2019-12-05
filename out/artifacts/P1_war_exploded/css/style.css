@@ -36,10 +36,7 @@ form {
     padding: 10px;
 }
 #studentsTable, #teachersTable, #groupsTable,
-.studentOutputTable, #studentUpdateForm {
-    display: none;
-}
-#studentAddForm {
+.outputTable, #studentAddForm, #studentUpdateForm {
     display: none;
 }
 .outputTable {
@@ -50,6 +47,13 @@ form {
 td {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
+}
+tr {
+    -webkit-transition: background 300ms ease-in-out;
+    -moz-transition: background 300ms ease-in-out;
+    -ms-transition: background 300ms ease-in-out;
+    -o-transition: background 300ms ease-in-out;
+    transition: background 300ms ease-in-out;
 }
 tr:last-child td {
     border-bottom: 0;

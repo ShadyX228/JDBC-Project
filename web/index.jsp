@@ -32,12 +32,12 @@
                 <div id="studentsTable">
                     <ul class="actions" id="studentNav">
                         <li><a id="studentAdd" href="#studentAddForm">Добавить</a></li>
-                        <li><a id="studentSearch" href="#studentSearchForm">Выбрать</a></li>
+                        <li><a id="studentSearch" href="#studentSearchForm">Поиск</a></li>
                     </ul>
                     <form id="studentAddForm" name="studentAddForm" method="POST">
                         <p>Добавление студента</p>
                         <input type="text" class="name" name="name" placeholder="ФИО">
-                        <input type="text" class="birth" name="birth" placeholder="День рождения">
+                        <input type="date" class="birth" name="birth" placeholder="День рождения">
                         <select name="gender" class="gender">
                             <option value="MALE">М</option>
                             <option value="FEMALE">Ж</option>
@@ -50,7 +50,7 @@
                         <p>Обновление студента</p>
                         <input disabled type="hidden" class="id" name="id" placeholder="id">
                         <input type="text" class="name" name="name" placeholder="ФИО">
-                        <input type="text" class="birth" name="birth" placeholder="День рождения">
+                        <input type="date" class="birth" name="birth" placeholder="День рождения">
                         <select name="gender" class="gender">
                             <option value="MALE">М</option>
                             <option value="FEMALE">Ж</option>
@@ -59,6 +59,20 @@
                         <input type="submit" class="submit" type="button" value="Go">
                         <button id="studentUpdateFormClose">X</button>
                     </form>
+                    <form id="studentSearchForm" name="studentSearchForm" method="POST">
+                        <p>Поиск студентов</p>
+                        <input type="text" class="id" name="id" placeholder="id">
+                        <input type="text" class="name" name="name" placeholder="ФИО">
+                        <input type="date" class="birth" name="birth" placeholder="День рождения">
+                        <select name="gender" class="gender">
+                            <option value="MALE">М</option>
+                            <option value="FEMALE">Ж</option>
+                        </select>
+                        <input class="group" type="text" name="group" placeholder="Группа">
+                        <input type="submit" class="submit" type="button" value="Go">
+                        <button id="studentSearchFormClose">X</button>
+                    </form>
+
                     <div id="studentOutput">
                         <table class="outputTable"></table>
                     </div>

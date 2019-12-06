@@ -36,7 +36,7 @@ form {
     padding: 10px;
 }
 #studentsTable, #teachersTable, #groupsTable,
-.outputTable, #studentAddForm, #studentUpdateForm {
+.outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm {
     display: none;
 }
 .outputTable {
@@ -66,4 +66,10 @@ td:last-child {
 }
 tr:hover {
     background: #CACACA
+}
+#studentAddForm .submit, #studentUpdateForm .submit, #studentSearchForm .submit, #studentSearchForm .id, #studentSearchForm .group {
+    width: 50px;
+}
+form .birth {
+    width: 150px;
 }

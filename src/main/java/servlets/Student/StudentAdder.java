@@ -87,6 +87,7 @@ public class StudentAdder extends HttpServlet {
             message += "Пытаюсь добавить... ";
             if(!check) {
                 message += printMessage(2,"Ошибка. Одно или несколько полей не прошли проверку.");
+                response.getWriter().write(message);
             } else {
                 Student student = new Student(
                         name,
@@ -99,12 +100,8 @@ public class StudentAdder extends HttpServlet {
                 StudentDAO studentDAO = new StudentDAO();
                 studentDAO.add(student);
                 studentDAO.closeEM();
-
-                message += printMessage(1,"Запись <span class=\"lastId\">" + student.getId()  + "</span> добавлена.");
+                response.getWriter().write("Запись <span class=\"lastId\">" + student.getId()  + "</span> добавлена.");
             }
-
-
         }
-        response.getWriter().write(message);
     }
 }

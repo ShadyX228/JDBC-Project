@@ -65,4 +65,11 @@ public class Group extends Table {
         return id == group.id &&
                 number == group.number;
     }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + number;
+        return result;
+    }
 }

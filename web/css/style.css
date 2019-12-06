@@ -2,14 +2,33 @@
     margin: 0;
     padding: 0;
 }
+a {
+    text-decoration: none;
+    -webkit-transition: all 150ms ease-in-out;
+    -moz-transition: all 150ms ease-in-out;
+    -ms-transition: all 150ms ease-in-out;
+    -o-transition: all 150ms ease-in-out;
+    transition: all 150ms ease-in-out;
+}
 nav {
     margin: auto;
     text-align: center;
+    background: #BFBFBF;
+    padding: 5px;
 }
 nav ul li {
     list-style: none;
     display: inline;
     margin: 10px;
+    padding: 5px;
+}
+nav a {
+    padding: 5px;
+    color: black;
+}
+nav a:hover {
+    background: #ACACAC;
+    color: white;
 }
 input {
     width: 100px;
@@ -33,16 +52,17 @@ form {
     height: 100%;
     -webkit-box-shadow: 1px 1px 10px 2px #000000;
     box-shadow: 1px 1px 10px 2px #000000;
-    padding: 10px;
 }
 #studentsTable, #teachersTable, #groupsTable,
-.outputTable, #studentAddForm, #studentUpdateForm {
+.outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm {
     display: none;
 }
 .outputTable {
     width: 100%;
     border: 1px solid black;
     border-spacing: 0;
+    border-right: 0;
+    border-left: 0;
 }
 td {
     border-bottom: 1px solid black;
@@ -66,4 +86,14 @@ td:last-child {
 }
 tr:hover {
     background: #CACACA
+}
+#studentAddForm .submit, #studentUpdateForm .submit, #studentSearchForm .submit, #studentSearchForm .id, #studentSearchForm .group {
+    width: 50px;
+}
+form .birth {
+    width: 150px;
+}
+
+form {
+    margin: 5px;
 }

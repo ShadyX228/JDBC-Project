@@ -22,8 +22,6 @@ import static webdebugger.WebInputDebugger.*;
 import static webdebugger.WebInputDebugger.printMessage;
 
 public class StudentUpdater extends HttpServlet {
-    MainServlet mainServlet = new MainServlet();
-    GroupDAO groupDAO = mainServlet.getGroupDAO();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -53,17 +51,23 @@ public class StudentUpdater extends HttpServlet {
             int id = Integer.parseInt(idString);
             Gender gender = checkGender(genderString);
             LocalDate birth = LocalDate.parse(birthString);
+            GroupDAO groupDAO = new GroupDAO();
             Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
+
             if(Objects.isNull(group)) {
                 message += "Группа не существует: <span class=\"error\">-1</span>";
+                response.getWriter().write(message);
             } else {
                 StudentDAO studentDAO = new StudentDAO();
                 Student student = studentDAO.selectById(id);
                 studentDAO.update(student, name, birth, gender, group);
                 studentDAO.closeEM();
+                groupDAO.closeEM();
+                response.getWriter().write("Запись <span class=\"lastId\">" + student.getId()  + "</span> обновлена.");
             }
         } else {
             message += "Переданы пустые параметры либо они некорректны: <span class=\"error\">-1</span>";
+            response.getWriter().write(message);
         }
         /*if(!Objects.isNull(idParsed)) {
             Student student = studentDAO.selectById(Integer.parseInt(idParsed));
@@ -94,6 +98,5 @@ public class StudentUpdater extends HttpServlet {
         } else {
             message += printMessage(2,"Некорректно введенный id.");
         }*/
-        response.getWriter().write(message);
     }
 }

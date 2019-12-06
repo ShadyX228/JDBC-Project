@@ -71,4 +71,28 @@ public class Student extends Table {
                 "birthday: " + birthday + "; gender: " + gender +
                 "; group_id: " + group.getId();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Student student = (Student) o;
+
+        if (id != student.id) return false;
+        if (name != null ? !name.equals(student.name) : student.name != null) return false;
+        if (birthday != null ? !birthday.equals(student.birthday) : student.birthday != null) return false;
+        if (gender != student.gender) return false;
+        return group != null ? group.equals(student.group) : student.group == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
+        result = 31 * result + (gender != null ? gender.hashCode() : 0);
+        result = 31 * result + (group != null ? group.hashCode() : 0);
+        return result;
+    }
 }

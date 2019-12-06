@@ -1,4 +1,6 @@
 $(document).ready(function(){
+    var successColor = "#CACACA";
+    var failColor = "red";
     /** Выбор таблицы **/
     /** Студент **/
     $("#studentAction").click(function () {
@@ -20,6 +22,8 @@ $(document).ready(function(){
     });
     $("#studentAdd").click(function () {
         $("#studentAddForm").show();
+        $("#studentUpdateForm").hide();
+        $("#studentSearchForm").hide();
     })
     $("#studentAddForm").submit(function (event) {
         event.preventDefault();
@@ -36,7 +40,6 @@ $(document).ready(function(){
             $("#status").html(data);
             var id = parseInt($("#status .lastId").html());
             if(!isNaN(id)) {
-                lightOn("#student" + id,"#AEB5FF");
                 $("#studentOutput .outputTable").append("<tr id=\"student" + id + "\">" +
                     "<td class=\"id\">" + id + "</td>" +
                     "<td class=\"name\">" + name + "</td>" +
@@ -45,6 +48,7 @@ $(document).ready(function(){
                     "<td class=\"group\">" + group + "</td>" +
                     "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteStudent" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateStudent" + id + "\">Изменить</a></td>" +
                     "</tr>");
+                lightOn("#student" + id,successColor);
                 addDeleteEventHandler("#student"+id, "student");
                 addUpdateEventHandler("#student"+id, "student");
             }
@@ -62,14 +66,35 @@ $(document).ready(function(){
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
-                lightOn("#student" + id,"#AEB5FF");
+                lightOn("#student" + id,successColor);
                 $("#student" + id + " .name").html(name);
                 $("#student" + id + " .birth").html(birth);
                 $("#student" + id + " .gender").html(gender);
                 $("#student" + id + " .group").html(group);
+                $("#status").html("");
+            } else {
+                lightOn("#student" + id,failColor);
             }
         });
     });
+    $("#studentSearchForm").submit(function (event) {
+        event.preventDefault();
+        var id =  $("#studentSearchForm .id").val();
+        var name =  $("#studentSearchForm .name").val();
+        var birth =  $("#studentSearchForm .birth").val();
+        var gender =$("#studentSearchForm .gender").val();
+        var group = $("#studentSearchForm .group").val();
+        $.get("studentSelect", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
+            var error = parseInt($("#status .error").html());
+            $("#status").html(data);
+            if(isNaN(error)) {
+                $("#studentOutput .outputTable").html(data);
+                $("#status").html("");
+            }
+            addDeleteEventHandler("tr", "student");
+            addUpdateEventHandler("tr", "student");
+        });
+    })
     /** /Студент **/
 
     $("#groupAction").click(function () {
@@ -96,6 +121,15 @@ $(document).ready(function(){
     })
     $("#studentAddFormClose").click(function (event) {
         event.preventDefault();
+        $("#studentAddForm").hide();
+    })
+    $("#studentSearchFormClose").click(function (event) {
+        event.preventDefault();
+        $("#studentSearchForm").hide();
+    })
+    $("#studentSearch").click(function () {
+        $("#studentSearchForm").show();
+        $("#studentUpdateForm").hide();
         $("#studentAddForm").hide();
     })
     /** /Прочие обработчики **/
@@ -131,6 +165,8 @@ $(document).ready(function(){
     }
     function addUpdateEventHandler(selector, table) {
         $(selector).on("click", ".update", function() {
+            $("#studentAddForm").hide();
+            $("#studentSearchForm").hide();
             var a = $(this);
             var href = a.attr("href");var id = parseInt(href.match(/\d+/));
 

@@ -1,14 +1,20 @@
 package servlets.Group;
 
 import dbmodules.dao.GroupDAO;
+import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Group;
+import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
+import dbmodules.types.Gender;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.InputMismatchException;
 import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.*;
@@ -20,32 +26,46 @@ public class GroupAdder extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        String numberString = request.getParameter("number");
+        String group = request.getParameter("group");
 
         String message = "Проверяю переданные параметры...<br>";
-        if(numberString.isEmpty()) {
-            message += "Статус" + printMessage(2,"Передано пустое значение.");
+        if (group.isEmpty()) {
+            message += printMessage(2, "Переданы пустые значения.");
+            response.getWriter().write(message);
         } else {
-            message += "Значение не пусто " + printMessage(1, "OK.") +
+            boolean check = true;
+            message += "Значения не пустые " + printMessage(1, "OK.") +
                     "Проверяю корректность введенных параметров...<br>";
-            message += "Номер группы: " + numberString;
 
-            numberString = parseCriteria(Criteria.ID, numberString);
-            if(!Objects.isNull(numberString)) {
-                message += printMessage(1, "OK.");
-                int number = Integer.parseInt(numberString);
-                GroupDAO groupDAO = new GroupDAO();
-                Group checkGroup = checkGroup(number, groupDAO);
-                if(Objects.isNull(checkGroup)) {
-                    groupDAO.add(new Group(number));
-                    message += "Запись добавлена.";
+            message += "Группа: " + group;
+            int number = 0;
+            GroupDAO groupDAO = new GroupDAO();
+            try {
+                number = Integer.parseInt(group);
+                Group groupObject = checkGroup(number, groupDAO);
+                if (!Objects.isNull(groupObject)) {
+                    message += printMessage(2, "Ошибка: такая группа уже сущесвует.");
+                    check = false;
                 } else {
-                    message += "Группа с таким номером уже существует в базе.";
+                    message += printMessage(1, "OK.");
                 }
+            } catch (NumberFormatException e) {
+                message += printMessage(2, "Ошибка ввода.");
+                check = false;
+            }
+
+            message += "Пытаюсь добавить... ";
+            if (!check) {
+                message += printMessage(2, "Ошибка. Одно или несколько полей не прошли проверку.");
+                response.getWriter().write(message);
             } else {
-                message += printMessage(2,"Ошибка. Некорректный номер");
+                Group newGroup = new Group(
+                        number
+                );
+                groupDAO.add(newGroup);
+                response.getWriter().write("Запись <span class=\"lastId\">" + newGroup.getId() + "</span> добавлена.");
+                groupDAO.closeEM();
             }
         }
-        response.getWriter().write(message);
     }
 }

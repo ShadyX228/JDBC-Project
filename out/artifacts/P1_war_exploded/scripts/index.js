@@ -2,8 +2,10 @@ $(document).ready(function(){
     var successColor = "#CACACA";
     var failColor = "red";
     /** Выбор таблицы **/
+
     /** Студент **/
     $("#studentAction").click(function () {
+        $("#status").show();
         $("#studentsTable").show();
         $("#groupsTable").hide();
         $("#teachersTable").hide();
@@ -14,10 +16,9 @@ $(document).ready(function(){
             $("#studentOutput .outputTable").show();
             $("#studentOutput .outputTable").html(data);
             $("#status").html("");
-            /** Запрос на удаление **/
+
             addDeleteEventHandler("#studentOutput .outputTable tr","student");
             addUpdateEventHandler("#studentOutput .outputTable tr","student");
-            /** /Запрос на удаление **/
         });
     });
     $("#studentAdd").click(function () {
@@ -97,13 +98,91 @@ $(document).ready(function(){
     })
     /** /Студент **/
 
+    /** Группа **/
     $("#groupAction").click(function () {
+        $("#status").show();
         $("#studentsTable").hide();
         $("#groupsTable").show();
         $("#teachersTable").hide();
 
         $("#status").html("Загрузка...");
+
+        $.post("groupSelectAll", function(data) {
+            $("#groupOutput .outputTable").show();
+            $("#groupOutput .outputTable").html(data);
+            $("#status").html("");
+
+            addDeleteEventHandler("#groupOutput .outputTable tr","group");
+            addUpdateEventHandler("#groupOutput .outputTable tr","group");
+            addGroupInfoEventHandler("tr");
+        });
     });
+    $("#groupAdd").click(function () {
+        $("#groupAddForm").show();
+        $("#groupUpdateForm").hide();
+        $("#groupSearchForm").hide();
+    })
+    $("#groupAddForm").submit(function (event) {
+        event.preventDefault();
+        $("#status").html("Загрузка...");
+        var group = $("#groupAddForm .group").val();
+        $.post("groupAdd", {
+            "group" : group}, function(data) {
+            $("#status").html(data);
+            var id = parseInt($("#status .lastId").html());
+            if(!isNaN(id)) {
+                $("#groupOutput .outputTable").append("<tr id=\"group" + id + "\">" +
+                    "<td class=\"id\">" + id + "</td>" +
+                    "<td class=\"group\">" + group + "</td>" +
+                    "<td class=\"opeations\">" +
+                    "<a class=\"delete\" href=\"#deleteGroup" + id + "\">Удалить</a><br>" +
+                    "<a class=\"update\" href=\"#updateGroup" + id + "\">Изменить</a><br>" +
+                    "<a class=\"getInfo\" href=\"#getInfoGroup" + id + "\">Информация</a></td>" +
+                    "</tr>");
+                lightOn("#group" + id,successColor);
+                addDeleteEventHandler("#group"+id, "group");
+                addUpdateEventHandler("#group"+id, "group");
+                addGroupInfoEventHandler("#group"+id);
+            }
+        });
+    })
+    $("#groupUpdateForm").submit(function (event) {
+        event.preventDefault();
+        $("#status").html("Загружаю...");
+        var id =  $("#groupUpdateForm .id").val();
+        var group = $("#groupUpdateForm .group").val();
+        console.log(id + " " + group);
+        $.post("groupUpdate", {"id" : id, "group" : group}, function(data) {
+            $("#status").html(data);
+            var error = parseInt($("#status .error").html());
+            if(isNaN(error)) {
+                lightOn("#group" + id,successColor);
+                $("#group" + id + " .group").html(group);
+                $("#status").html("");
+            } else {
+                lightOn("#group" + id,failColor);
+            }
+        });
+    });
+    $("#groupSearchForm").submit(function (event) {
+        event.preventDefault();
+        var id =  $("#groupSearchForm .id").val();
+        var group = $("#groupSearchForm .group").val();
+        $.get("groupSelect", {"id" : id, "group" : group}, function(data) {
+            var error = parseInt($("#status .error").html());
+            $("#status").html(data);
+            if(isNaN(error)) {
+                $("#groupOutput .outputTable").html(data);
+                $("#status").html("");
+            }
+            addDeleteEventHandler("tr", "group");
+            addUpdateEventHandler("tr", "group");
+            addGroupInfoEventHandler("tr");
+        });
+    })
+    /** /Группа **/
+
+    /** Преподаватель **/
     $("#teacherAction").click(function () {
         $("#studentsTable").hide();
         $("#groupsTable").hide();
@@ -111,6 +190,8 @@ $(document).ready(function(){
 
         $("#status").html("Загрузка...");
     });
+    /** /Преподаватель **/
+
     /** /Выбор таблицы **/
 
 
@@ -131,6 +212,28 @@ $(document).ready(function(){
         $("#studentSearchForm").show();
         $("#studentUpdateForm").hide();
         $("#studentAddForm").hide();
+    })
+
+    $("#groupAddFormClose").click(function (event) {
+        event.preventDefault();
+        $("#groupAddForm").hide();
+    })
+    $("#groupUpdateFormClose").click(function (event) {
+        event.preventDefault();
+        $("#groupUpdateForm").hide();
+    })
+    $("#closeGroupInfo").click(function (event) {
+        event.preventDefault();
+        $("#groupInfo").hide();
+    })
+    $("#groupSearchFormClose").click(function (event) {
+        event.preventDefault();
+        $("#groupSearchForm").hide();
+    })
+    $("#groupSearch").click(function () {
+        $("#groupSearchForm").show();
+        $("#groupUpdateForm").hide();
+        $("#groupAddForm").hide();
     })
     /** /Прочие обработчики **/
 
@@ -159,33 +262,54 @@ $(document).ready(function(){
             $("#status").html("Загрузка...");
             $.post(page, {"criteria" : "ID", "criteriaValue" : id}, function(data) {
                 $("#status").html(data);
-                $("#" + table + id).hide();
+                var error = parseInt($("#status .error").html());
+                if(isNaN(error)) {
+                    $("#" + table + id).hide();
+                }
             });
         })
     }
     function addUpdateEventHandler(selector, table) {
         $(selector).on("click", ".update", function() {
-            $("#studentAddForm").hide();
-            $("#studentSearchForm").hide();
+            $("#" + table + "AddForm").hide();
+            $("#" + table + "SearchForm").hide();
             var a = $(this);
             var href = a.attr("href");var id = parseInt(href.match(/\d+/));
 
-            $("#studentUpdateForm").show();
+            $("#" + table + "UpdateForm").show();
             var name = $("#" + table + id + " .name").html();
             var birth = $("#" + table + id + " .birth").html();;
             var gender = $("#" + table + id + " .gender").html();;
             var group = $("#" + table + id + " .group").html();
-            $("#studentUpdateForm .id").val(id);
-            $("#studentUpdateForm .name").val(name);
-            $("#studentUpdateForm .birth").val(birth);
-            $("#studentUpdateForm .gender").val(gender);
-            $("#studentUpdateForm .group").val(group);
+            $("#" + table + "UpdateForm .id").val(id);
+            $("#" + table + "UpdateForm .name").val(name);
+            $("#" + table + "UpdateForm .birth").val(birth);
+            $("#" + table + "UpdateForm .gender").val(gender);
+            $("#" + table + "UpdateForm .group").val(group);
+        })
+    }
+    function addGroupInfoEventHandler(selector) {
+        $("#groupOutput .outputTable " + selector).on("click", ".getInfo", function() {
+            var a = $(this);
+            var href = a.attr("href");
+            var id = parseInt(href.match(/\d+/));
+            $("#groupNumber").html($(selector).find(".group").html())
+            $("#status").html("Загружаю...");
+
+            $.get("groupGetInfo", {"id" : id}, function(data) {
+                $("#groupInfo").show();
+                $("#info").html(data);
+
+                $("#status").html("");
+            });
+
         })
     }
     function lightOn(selector, color) {
         $(selector).css("background-color", color);
         setTimeout(function() {
             $(selector).css("background-color", "white");
+            $(selector).removeAttr("style");
         }, 1000)
 
     }

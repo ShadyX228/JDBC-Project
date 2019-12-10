@@ -11,33 +11,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
-import static dbmodules.types.Criteria.*;
-import static dbmodules.types.Criteria.GROUP;
-import static webdebugger.WebInputDebugger.*;
-
-public class GroupSelector extends HttpServlet {
+public class GroupAllSelector extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
+        GroupDAO groupDAO = new GroupDAO();
+        List<Group> list = groupDAO.selectAll();
 
-
-        String groupString = request.getParameter("group");
-
-        groupString = parseCriteria(ID, groupString);
-
-        if(!Objects.isNull(groupString)) {
-            response.getWriter().write("\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>");
-            GroupDAO groupDAO = new GroupDAO();
-            Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
-            if(!Objects.isNull(group)) {
+        response.getWriter().write("\t<tr>\n" +
+                "\t\t<td>ID</td>\n" +
+                "\t\t<td>Группа</td>\n" +
+                "\t\t<td>Операции</td>\n" +
+                "\t</tr>");
+        if(!list.isEmpty()) {
+            for (Group group : list) {
                 response.getWriter().write("<tr id=\"group" + group.getId() + "\">\n");
                 response.getWriter().write("<td class=\"id\">" + group.getId() + "</td>");
                 response.getWriter().write("<td class=\"group\">" + group.getNumber() + "</td>");
@@ -47,20 +38,10 @@ public class GroupSelector extends HttpServlet {
                         "<a class=\"getInfo\" href=\"#getInfoGroup" + group.getId() + "\">Информация</a>" +
                         "</td>");
                 response.getWriter().write("</tr>");
-            } else {
-                response.getWriter().write("<tr><td colspan=\"3\">Нет записей.</tr></td>");
             }
-
-            groupDAO.closeEM();
         } else {
-            response.getWriter().write("\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>");
             response.getWriter().write("<tr><td colspan=\"3\">Нет записей.</tr></td>");
-
         }
-
+        groupDAO.closeEM();
     }
 }

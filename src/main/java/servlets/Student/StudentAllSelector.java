@@ -21,15 +21,15 @@ public class StudentAllSelector extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         StudentDAO studentDAO = new StudentDAO();
         List<Student> list = studentDAO.select(Criteria.ALL,"");
+        response.getWriter().write("\t<tr>\n" +
+                "\t\t<td>ID</td>\n" +
+                "\t\t<td>ФИО</td>\n" +
+                "\t\t<td>День рождения</td>\n" +
+                "\t\t<td>Пол</td>\n" +
+                "\t\t<td>Группа</td>\n" +
+                "\t\t<td>Операции</td>\n" +
+                "\t</tr>");
         if(!list.isEmpty()) {
-            response.getWriter().write("\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>");
             for (Student student : list) {
                 response.getWriter().write("<tr id=\"student" + student.getId() + "\">\n");
                 response.getWriter().write("<td class=\"id\">" + student.getId() + "</td>");
@@ -44,7 +44,7 @@ public class StudentAllSelector extends HttpServlet {
                 response.getWriter().write("</tr>");
             }
         } else {
-            response.getWriter().write("Нет записей.");
+            response.getWriter().write("<tr><td colspan=\"6\">Нет записей.</tr></td>");
         }
         studentDAO.closeEM();
     }

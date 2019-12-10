@@ -35,8 +35,7 @@ public class GroupAllSelector extends HttpServlet {
                 response.getWriter().write("<td class=\"operations\">" +
                         "<a class=\"delete\" href=\"#deleteGroup" + group.getId() + "\">Удалить</a><br>" +
                         "<a class=\"update\" href=\"#updateGroup" + group.getId() + "\">Изменить</a><br>" +
-                        "<a class=\"getInfo\" href=\"#getInfoGroup" + group.getId() + "\">Информация</a><br>" +
-                        "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + group.getId() + "\">Назначить преподавателя</a>" +
+                        "<a class=\"getInfo\" href=\"#getInfoGroup" + group.getId() + "\">Информация</a>" +
                         "</td>");
                 response.getWriter().write("</tr>");
             }

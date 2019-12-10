@@ -42,15 +42,13 @@ public class GroupGetInfo extends HttpServlet {
                 response.getWriter().write("Преподаватели:");
                 if(!group.getTeachers().isEmpty()) {
                     response.getWriter().write("\t<table><tr>\n" +
-                            "\t\t<td style=\"display: none;\">ID группы</td>\n" +
                             "\t\t<td>ФИО</td>\n" +
                             "\t\t<td>Операции</td>\n" +
                             "\t</tr>");
                     for (Teacher teacher : group.getTeachers()) {
-                        response.getWriter().write("\t<tr id=\"groupTeacher" + teacher.getId() + "\">\n" +
-                                "\t\t<td class=\"groupId\" style=\"display: none;\">" + group.getId() + "</td>\n" +
+                        response.getWriter().write("\t<tr>\n" +
                                 "\t\t<td>" + teacher.getName() + "</td>\n" +
-                                "\t\t<td><a class=\"removeTeacherFromGroup\" href=\"#removeTeacher" + teacher.getId() + "FromGroup\">Убрать из группы</a></td>\n" +
+                                "\t\t<td><a href=\"#removeTeacher" + teacher.getId() + "FromGroup" + group.getId() + "\">Убрать из группы</a></td>\n" +
                                 "\t</tr>");
                     }
                 } else {
@@ -70,8 +68,9 @@ public class GroupGetInfo extends HttpServlet {
                 } else {
                     response.getWriter().write(" нет.");
                 }
-                groupDAO.closeEM();
             }
         }
+
+
     }
 }

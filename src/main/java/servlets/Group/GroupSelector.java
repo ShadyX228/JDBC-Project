@@ -44,12 +44,11 @@ public class GroupSelector extends HttpServlet {
                 response.getWriter().write("<td class=\"operations\">" +
                         "<a class=\"delete\" href=\"#deleteGroup" + group.getId() + "\">Удалить</a><br>" +
                         "<a class=\"update\" href=\"#updateGroup" + group.getId() + "\">Изменить</a><br>" +
-                        "<a class=\"getInfo\" href=\"#getInfoGroup" + group.getId() + "\">Информация</a><br>" +
-                        "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + group.getId() + "\">Назначить преподавателя</a>" +
+                        "<a class=\"getInfo\" href=\"#getInfoGroup" + group.getId() + "\">Информация</a>" +
                         "</td>");
                 response.getWriter().write("</tr>");
             } else {
-                response.getWriter().write("<tr><td colspan=\"3\">Нет записей: <span class=\"error\">-1</span></tr></td>");
+                response.getWriter().write("<tr><td colspan=\"3\">Нет записей.</tr></td>");
             }
 
             groupDAO.closeEM();
@@ -59,7 +58,7 @@ public class GroupSelector extends HttpServlet {
                     "\t\t<td>Группа</td>\n" +
                     "\t\t<td>Операции</td>\n" +
                     "\t</tr>");
-            response.getWriter().write("<tr><td colspan=\"3\">Нет записей: <span class=\"error\">-1</span></tr></td>");
+            response.getWriter().write("<tr><td colspan=\"3\">Нет записей.</tr></td>");
 
         }
 

@@ -62,41 +62,12 @@ public class StudentUpdater extends HttpServlet {
                 Student student = studentDAO.selectById(id);
                 studentDAO.update(student, name, birth, gender, group);
                 studentDAO.closeEM();
-                groupDAO.closeEM();
                 response.getWriter().write("Запись <span class=\"lastId\">" + student.getId()  + "</span> обновлена.");
             }
+            groupDAO.closeEM();
         } else {
             message += "Переданы пустые параметры либо они некорректны: <span class=\"error\">-1</span>";
             response.getWriter().write(message);
         }
-        /*if(!Objects.isNull(idParsed)) {
-            Student student = studentDAO.selectById(Integer.parseInt(idParsed));
-            if (Objects.isNull(student) || criteriaValue.isEmpty()) {
-                message += printMessage(2, "Ошибка. Нет студента с таким ID, ID введен не верно или значение критерия пусто.");
-            } else {
-                message += printMessage(1, "OK.");
-                message += "Поле, которое надо обновить: " + criteriaString;
-                Criteria criteria = checkCriteria(criteriaString);
-                if (Objects.isNull(criteria)
-                        || criteria.equals(ALL)
-                        || criteria.equals(ID)) {
-                    message += printMessage(2, "Ошибка. Нет такого поля.");
-                } else {
-                    message += printMessage(1, "OK.");
-                    message += "Новое значение: " + criteriaValue;
-                    String criteriaValueParsed = parseCriteria(criteria, criteriaValue);
-
-                    if (Objects.isNull(criteriaValueParsed)) {
-                        message += printMessage(2, "Ошибка. Неверное значение для введенного поля.");
-                    } else {
-                        message += printMessage(1, "OK.");
-                        studentDAO.update(student, criteria, criteriaValueParsed);
-                        message += "Запись обновлена.";
-                    }
-                }
-            }
-        } else {
-            message += printMessage(2,"Некорректно введенный id.");
-        }*/
     }
 }

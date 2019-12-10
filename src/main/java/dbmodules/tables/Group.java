@@ -41,6 +41,9 @@ public class Group extends Table {
     public List<Teacher> getTeachers() {
         return teachers;
     }
+    public List<Student> getStudents() {
+        return students;
+    }
 
     public void setNumber(int number) {
         this.number = number;

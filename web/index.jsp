@@ -65,6 +65,7 @@
                         <input type="text" class="name" name="name" placeholder="ФИО">
                         <input type="date" class="birth" name="birth" placeholder="День рождения">
                         <select name="gender" class="gender">
+                            <option>Пол</option>
                             <option value="MALE">М</option>
                             <option value="FEMALE">Ж</option>
                         </select>
@@ -79,15 +80,43 @@
                 </div>
                 <div id="groupsTable">
                     <ul class="actions" id="groupNav">
-                        <li><a href="#groupAdd">Добавить</a></li>
-                        <li><a href="#groupSearch">Выбрать</a></li>
+                        <li><a id="groupAdd" href="#groupAdd">Добавить</a></li>
+                        <li><a id="groupSearch" href="#groupSearch">Выбрать</a></li>
                     </ul>
-                    Группы
+                    <form id="groupAddForm" name="groupAddForm" method="POST">
+                        <p>Добавление группы</p>
+                        <input type="text" class="group" name="group" placeholder="Номер группы">
+                        <input type="submit" class="submit" type="button" value="Go">
+                        <button id="groupAddFormClose">X</button>
+                    </form>
+                    <form id="groupUpdateForm" name="studentUpdateForm" method="POST">
+                        <p>Обновление группы</p>
+                        <input disabled type="hidden" class="id" name="id" placeholder="id">
+                        <input class="group" type="text" name="group" placeholder="Группа">
+                        <input type="submit" class="submit" type="button" value="Go">
+                        <button id="groupUpdateFormClose">X</button>
+                    </form>
+                    <form id="groupSearchForm" name="studentSearchForm" method="GET">
+                        <p>Обновление группы</p>
+                        <input class="group" type="text" name="group" placeholder="Группа">
+                        <input type="submit" class="submit" type="button" value="Go">
+                        <button id="groupSearchFormClose">X</button>
+                    </form>
+
+                    <div id="groupOutput">
+                        <table class="outputTable">
+                        </table>
+                    </div>
                 </div>
                 <div id="teachersTable">
                   Преподы
                 </div>
               </div>
+        </div>
+        <div id="groupInfo">
+            Группа: <span id="groupNumber"></span>
+            <a id="closeGroupInfo" href="#closeGroupInfo">X</a>
+            <div id="info"></div>
         </div>
     </body>
 </html>

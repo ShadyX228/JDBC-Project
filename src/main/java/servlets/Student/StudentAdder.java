@@ -22,8 +22,6 @@ import static webdebugger.WebInputDebugger.*;
 
 
 public class StudentAdder extends HttpServlet {
-    private MainServlet mainServlet = new MainServlet();
-    private GroupDAO groupDAO = mainServlet.getGroupDAO();
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");
@@ -41,6 +39,7 @@ public class StudentAdder extends HttpServlet {
                 || gender.isEmpty()
                 || group.isEmpty()) {
             message += printMessage(2,"Переданы пустые значения.");
+            response.getWriter().write(message);
         } else {
             boolean check = true;
             message += "Значения не пустые " + printMessage(1, "OK.") +
@@ -69,6 +68,7 @@ public class StudentAdder extends HttpServlet {
             message += "Группа: " + group;
             int number;
             Group groupObject = new Group(0);
+            GroupDAO groupDAO = new GroupDAO();
             try {
                 number = Integer.parseInt(group);
                 groupObject = checkGroup(number, groupDAO);
@@ -101,6 +101,7 @@ public class StudentAdder extends HttpServlet {
                 studentDAO.add(student);
                 studentDAO.closeEM();
                 response.getWriter().write("Запись <span class=\"lastId\">" + student.getId()  + "</span> добавлена.");
+                groupDAO.closeEM();
             }
         }
     }

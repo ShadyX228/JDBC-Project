@@ -13,9 +13,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static dbmodules.types.Criteria.ALL;
+import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
 
 public class GroupDeleter extends HttpServlet {
@@ -25,41 +28,58 @@ public class GroupDeleter extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        String numberString = request.getParameter("number");
+        String criteriaString = request.getParameter("criteria");
+        String criteriaValue = request.getParameter("criteriaValue");
+        String message = "Проверяю переданные параметры... <br>Критерий: ";
 
-        String message = "Проверяю переданные параметры...<br>";
-        if(numberString.isEmpty()) {
-            message += "Статус" + printMessage(2,"Передано пустое значение.");
+        Criteria criteria = checkCriteria(criteriaString);
+        if(Objects.isNull(criteria) || criteria.equals(ALL)) {
+            message += criteriaString;
+            if(!Objects.isNull(criteria) && criteria.equals(ALL)) {
+                message += printMessage(2,"Ошибка. Нельзя удалить всех сразу.");;
+            } else {
+                message += printMessage(2,"Ошибка. Нет такого критерия.");
+            }
         } else {
-            message += "Значение не пусто " + printMessage(1, "OK.");
-            message += "Номер группы: " + numberString;
-
-            numberString = parseCriteria(Criteria.ID, numberString);
-            if(!Objects.isNull(numberString)) {
-                message += printMessage(1, "OK.");
-                int number = Integer.parseInt(numberString);
+            message += criteria + printMessage(1,"OK.");
+            String criteriaValueParsed;
+            if(!criteria.equals(ALL)) {
+                message += "Значение критерия: " + criteriaValue;
+                criteriaValueParsed = parseCriteria(criteria, criteriaValue);
+            } else {
+                criteriaValueParsed = "";
+            }
+            if(Objects.isNull(criteriaValueParsed)) {
+                message += printMessage(2,"Ошибка. Неверное значение для введенного критерия.");;
+            } else {
+                message += printMessage(1,"OK.");
+                List<Group> list = new ArrayList<>();
                 GroupDAO groupDAO = new GroupDAO();
-                StudentDAO studentDAO = new StudentDAO();
-                TeacherDAO teacherDAO = new TeacherDAO();
-                Group group = checkGroup(number,groupDAO);
-                if(!Objects.isNull(group)) {
-                    List<Student> students = studentDAO.select(Criteria.GROUP,
-                            numberString);
-                    List<Teacher> teachers = group.getTeachers();
-                    if(students.isEmpty() && teachers.isEmpty()) {
-                        groupDAO.delete(group);
-                        message += "Запись удалена.";
-                    } else {
-                        message += printMessage(2,"В группе есть студенты или преподаватели.");
+                if(criteria.equals(ID)) {
+                    Group group = groupDAO.selectById(Integer.parseInt(criteriaValueParsed));
+                    if(!Objects.isNull(group)) {
+                        list.add(group);
                     }
                 } else {
-                    message += "Статус" + printMessage(2,"Нет группы с таким номером.");
+                    if(!criteriaValueParsed.isEmpty()) {
+                        int number = Integer.parseInt(criteriaValueParsed);
+                        list.add(groupDAO.select(number));
+                    } else {
+                        message += "Статус" + printMessage(2,"Ошибка. Пустое значение критерия.");
+                        response.getWriter().write(message);
+                    }
                 }
 
-            } else {
-                message += printMessage(2,"Ошибка. Некорректный номер");
+
+                for (Group group : list) {
+                    if(group.getTeachers().isEmpty() && group.getStudents().isEmpty()) {
+                        groupDAO.delete(group);
+                        response.getWriter().write("<br>Удалено " + list.size() + " записей");
+                    } else {
+                        response.getWriter().write("В группе есть преподаватели или студенты: <span class=\"error\">-1</span><br>");
+                    }
+                }groupDAO.closeEM();
             }
         }
-        response.getWriter().write(message);
     }
 }

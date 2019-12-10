@@ -32,7 +32,6 @@ public class StudentSelector extends HttpServlet {
         String birthString = request.getParameter("birth");
         String genderString = request.getParameter("gender");
         String groupString = request.getParameter("group");
-        String message = "Проверяю переданные параметры...<br> ";
 
         idString = parseCriteria(ID, idString);
         birthString = parseCriteria(BIRTH, birthString);
@@ -55,16 +54,19 @@ public class StudentSelector extends HttpServlet {
                 checkList.add(null);
             }
             checkList.add(birthString); // 2 - birth
-            checkList.add(genderString); // 3 - gender
+            if(!Objects.isNull(genderString)) {
+                checkList.add(genderString); // 3 - gender
+            } else {
+                checkList.add(null);
+            }
             checkList.add(groupString); // 4 - group
         }
 
         int index = 0;
         StudentDAO studentDAO = new StudentDAO();
         for(Iterator<Object> iterator = checkList.iterator();iterator.hasNext();) {
-            Object object = iterator.next();
-            //response.getWriter().write(object + " ");
-            if(!Objects.isNull(object)) {
+            Object criteria = iterator.next();
+            if(!Objects.isNull(criteria)) {
                 switch (index) {
                     case 0: { // - id
                         students.add(studentDAO.selectById(Integer.parseInt(idString)));
@@ -90,15 +92,15 @@ public class StudentSelector extends HttpServlet {
             }
             index++;
         }
+        response.getWriter().write("\t<tr>\n" +
+                "\t\t<td>ID</td>\n" +
+                "\t\t<td>ФИО</td>\n" +
+                "\t\t<td>День рождения</td>\n" +
+                "\t\t<td>Пол</td>\n" +
+                "\t\t<td>Группа</td>\n" +
+                "\t\t<td>Операции</td>\n" +
+                "\t</tr>");
         if(!students.isEmpty()) {
-            response.getWriter().write("\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>");
             for (Student student : students) {
                 response.getWriter().write("<tr id=\"student" + student.getId() + "\">\n");
                 response.getWriter().write("<td class=\"id\">" + student.getId() + "</td>");
@@ -113,49 +115,7 @@ public class StudentSelector extends HttpServlet {
                 response.getWriter().write("</tr>");
             }
         } else {
-            response.getWriter().write("Нет записей.");
+            response.getWriter().write("<tr><td colspan=\"6\">Нет записей.</tr></td>");
         }
-       /* if((!Objects.isNull(idString)
-                || !Objects.isNull(genderString)
-                || !Objects.isNull(birthString)
-                || !Objects.isNull(groupString))
-                && (!idString.isEmpty()
-                || !genderString.isEmpty()
-                || !birthString.isEmpty()
-                || !groupString.isEmpty())) {
-
-            //StudentDAO studentDAO = new StudentDAO();
-            //Student student = studentDAO.selectById(id);
-            //studentDAO.update(student, name, birth, gender, group);
-            //studentDAO.closeEM();
-            //groupDAO.closeEM();
-            //response.getWriter().write("Запись <span class=\"lastId\">" + student.getId()  + "</span> обновлена.");
-        }  else {
-            message += "Переданы пустые параметры либо они некорректны: <span class=\"error\">-1</span>";
-            response.getWriter().write(message);
-        }
-        response.getWriter().write(message);
-        if(!list.isEmpty()) {
-            response.getWriter().write("<table border=1>\n" +
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t</tr>");
-            for (Student student : list) {
-                response.getWriter().write("<tr>");
-                response.getWriter().write("<td>" + student.getId() + "</td>");
-                response.getWriter().write("<td>" + student.getName() + "</td>");
-                response.getWriter().write("<td>" + student.getBirth() + "</td>");
-                response.getWriter().write("<td>" + student.getGender() + "</td>");
-                response.getWriter().write("<td>" + student.getGroup().getNumber() + "</td>");
-                response.getWriter().write("</tr>");
-            }
-            response.getWriter().write("</table>");
-        } else {
-            response.getWriter().write("Нет записей.");
-        }*/
     }
 }

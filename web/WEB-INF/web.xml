@@ -70,6 +70,14 @@
         <servlet-name>GroupUpdater</servlet-name>
         <servlet-class>servlets.Group.GroupUpdater</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>GroupAllSelector</servlet-name>
+        <servlet-class>servlets.Group.GroupAllSelector</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>GroupGetInfo</servlet-name>
+        <servlet-class>servlets.Group.GroupGetInfo</servlet-class>
+    </servlet>
     <!--/Сервлеты групп-->
 
     <!--Маппинг студентов-->
@@ -138,6 +146,14 @@
     <servlet-mapping>
         <servlet-name>GroupUpdater</servlet-name>
         <url-pattern>/groupUpdate</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GroupAllSelector</servlet-name>
+        <url-pattern>/groupSelectAll</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GroupGetInfo</servlet-name>
+        <url-pattern>/groupGetInfo</url-pattern>
     </servlet-mapping>
     <!--/Маппинг групп-->
 </web-app>

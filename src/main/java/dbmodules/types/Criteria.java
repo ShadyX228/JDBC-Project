@@ -17,4 +17,5 @@ public enum Criteria {
     public int getValue() {
         return critId;
     }
+
 }

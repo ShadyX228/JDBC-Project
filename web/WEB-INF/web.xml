@@ -51,6 +51,10 @@
         <servlet-name>TeacherDeleteGroup</servlet-name>
         <servlet-class>servlets.Teacher.TeacherDeleteGroup</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TeacherGetFree</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherGetFree</servlet-class>
+    </servlet>
     <!--/Сервлеты преподов-->
 
     <!--Сервлеты групп-->
@@ -128,6 +132,10 @@
         <servlet-name>TeacherDeleteGroup</servlet-name>
         <url-pattern>/teacherDeleteGroup</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherGetFree</servlet-name>
+        <url-pattern>/getTeachers</url-pattern>
+    </servlet-mapping>
     <!--/Маппинг преподов-->
 
     <!--Маппинг групп-->
@@ -156,4 +164,13 @@
         <url-pattern>/groupGetInfo</url-pattern>
     </servlet-mapping>
     <!--/Маппинг групп-->
+
+    <servlet>
+        <servlet-name>TestServlet</servlet-name>
+        <servlet-class>servlets.TestServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TestServlet</servlet-name>
+        <url-pattern>/test</url-pattern>
+    </servlet-mapping>
 </web-app>

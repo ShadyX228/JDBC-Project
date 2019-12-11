@@ -10,7 +10,12 @@ import utilfactories.JPAUtil;
 import javax.persistence.EntityManager;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Queue;
+
+import static dbmodules.types.Criteria.ALL;
+import static dbmodules.types.Criteria.ID;
 
 public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
     public Student selectById(int id) {
@@ -70,6 +75,87 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
             }
         }
         return list;
+    }
+    public String select(List<Criteria> criterias, List<String> values) {
+        List<Student> list = new ArrayList<>();
+        String query = "FROM Student WHERE";
+        for(Criteria criteria : criterias) {
+            switch (criteria) {
+                case ID : {
+                    list.add(selectById(Integer.parseInt(values.get(0))));
+                    break;
+                }
+                case ALL : {
+                    query = "FROM Student";
+                    break;
+                }
+                case NAME : {
+                    query += "Name LIKE :name AND";
+                }
+                case BIRTH:  {
+                    query += "birthday = :birthday AND";
+                }
+                case GENDER: {
+                    query += "gender = :gender AND";
+                }
+                case GROUP: {
+                    query += "group_id = :group_id AND";
+                }
+            }
+            query = query.substring(0, query.length()-2);
+            System.out.println(query);
+        }
+        /*switch (criteria) {
+            case ID : {
+                list.add(selectById(Integer.parseInt(value)));
+                break;
+            }
+            case NAME : {
+                list = entityManager
+                        .createQuery("FROM Student WHERE Name LIKE :name")
+                        .setParameter("name", "%" + value + "%")
+                        .getResultList();
+                break;
+            }
+            case BIRTH : {
+                LocalDate birth = LocalDate.of(
+                        LocalDate.parse(value).getYear(),
+                        LocalDate.parse(value).getMonth(),
+                        LocalDate.parse(value).getDayOfMonth()
+                );
+
+                list = entityManager
+                        .createQuery("FROM Student WHERE birthday = :birthday")
+                        .setParameter("birthday", birth)
+                        .getResultList()
+                ;
+                break;
+            }
+            case GENDER : {
+                Gender gender = Gender.valueOf(value);
+                list = entityManager
+                        .createQuery("FROM Student WHERE gender = :gender")
+                        .setParameter("gender", gender)
+                        .getResultList();
+                break;
+            }
+            case GROUP  : {
+                int groupNumber = Integer.parseInt(value);
+                Group group = new GroupDAO().select(groupNumber);
+                list = entityManager
+                        .createQuery("FROM Student WHERE group_id = :group_id")
+                        .setParameter("group_id", group.getId())
+                        .getResultList();
+                break;
+            }
+            case ALL : {
+                list = entityManager
+                        .createQuery("FROM Student")
+                        .getResultList();
+                break;
+            }
+        }*/
+        return query;
     }
     public void update(Student person, Criteria criteria, String value) {
         entityManager.getTransaction().begin();

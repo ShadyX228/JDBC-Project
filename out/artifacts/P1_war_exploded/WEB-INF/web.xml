@@ -36,10 +36,6 @@
         <servlet-class>servlets.Teacher.TeacherSelector</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>TeacherAllSelector</servlet-name>
-        <servlet-class>servlets.Teacher.TeacherAllSelector</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>TeacherUpdater</servlet-name>
         <servlet-class>servlets.Teacher.TeacherUpdater</servlet-class>
     </servlet>
@@ -58,14 +54,6 @@
     <servlet>
         <servlet-name>TeacherGetFree</servlet-name>
         <servlet-class>servlets.Teacher.TeacherGetFree</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>TeacherGetInfo</servlet-name>
-        <servlet-class>servlets.Teacher.TeacherGetInfo</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>TeacherPutInGroupByNumber</servlet-name>
-        <servlet-class>servlets.Teacher.TeacherPutInGroupByNumber</servlet-class>
     </servlet>
     <!--/Сервлеты преподов-->
 
@@ -125,10 +113,6 @@
         <url-pattern>/teacherAdd</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TeacherAllSelector</servlet-name>
-        <url-pattern>/teacherSelectAll</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>TeacherSelector</servlet-name>
         <url-pattern>/teacherSelect</url-pattern>
     </servlet-mapping>
@@ -151,14 +135,6 @@
     <servlet-mapping>
         <servlet-name>TeacherGetFree</servlet-name>
         <url-pattern>/getTeachers</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TeacherGetInfo</servlet-name>
-        <url-pattern>/teacherGetInfo</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TeacherPutInGroupByNumber</servlet-name>
-        <url-pattern>/teacherPutInGroupByNumber</url-pattern>
     </servlet-mapping>
     <!--/Маппинг преподов-->
 

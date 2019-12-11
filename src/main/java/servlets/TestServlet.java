@@ -1,6 +1,5 @@
 package servlets;
 
-import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 
@@ -33,69 +32,50 @@ public class TestServlet extends HttpServlet {
         genderString = parseCriteria(GENDER, genderString);
         groupString = parseCriteria(GROUP, groupString);
 
-
+        List<Object> valuesList = new ArrayList<>();
+        List<Criteria> criteriaList = new ArrayList<>();
         HashMap<Criteria, String> map = new HashMap<>();
 
-        List<Student> students = new ArrayList<>();
+        Set<Student> students = new HashSet<>();
         if (!Objects.isNull(idString)) {
+            valuesList.add(idString); // 0 - id
+            criteriaList.add(ID);
             map.put(ID, idString);
         } else {
             if (!name.isEmpty()) {
+                valuesList.add(name); // 1 - name
+                criteriaList.add(NAME);
                 map.put(NAME, name);
             }
 
             if (!Objects.isNull(birthString)) {
                 if(!birthString.isEmpty()) {
+                    valuesList.add(birthString); // 2 - birth
+                    criteriaList.add(BIRTH);
                     map.put(BIRTH, birthString);
                 }
             }
 
             if (!Objects.isNull(genderString)) {
                 if(!genderString.isEmpty()) {
+                    valuesList.add(genderString); // 3 - gender
+                    criteriaList.add(GENDER);
                     map.put(GENDER, genderString);
                 }
             }
 
             if (!Objects.isNull(groupString)) {
+                valuesList.add(groupString); // 4 - group
+                criteriaList.add(GROUP);
                 map.put(GROUP, groupString);
             }
         }
-        /*for(HashMap.Entry<Criteria, String> element : map.entrySet()) {
+        for(HashMap.Entry<Criteria, String> element : map.entrySet()) {
             Criteria criteria = element.getKey();
             String value = element.getValue();
             response.getWriter().write(criteria + " " + value);
-        }*/
-        StudentDAO studentDAO = new StudentDAO();
-        if(map.isEmpty()) {
-            map.put(ALL, " ");
         }
-        //response.getWriter().write(map + "<br>");
-        students = studentDAO.select(map);
-
-        response.getWriter().write("\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>ФИО</td>\n" +
-                "\t\t<td>День рождения</td>\n" +
-                "\t\t<td>Пол</td>\n" +
-                "\t\t<td>Группа</td>\n" +
-                "\t\t<td>Операции</td>\n" +
-                "\t</tr>");
-        if(!students.isEmpty()) {
-            for (Student student : students) {
-                response.getWriter().write("<tr id=\"student" + student.getId() + "\">\n");
-                response.getWriter().write("<td class=\"id\">" + student.getId() + "</td>");
-                response.getWriter().write("<td class=\"name\">" + student.getName() + "</td>");
-                response.getWriter().write("<td class=\"birth\">" + student.getBirth() + "</td>");
-                response.getWriter().write("<td class=\"gender\">" + student.getGender() + "</td>");
-                response.getWriter().write("<td class=\"group\">" + student.getGroup().getNumber() + "</td>");
-                response.getWriter().write("<td class=\"operations\">" +
-                        "<a class=\"delete\" href=\"#deleteStudent" + student.getId() + "\">Удалить</a><br>" +
-                        "<a class=\"update\" href=\"#updateStudent" + student.getId() + "\">Изменить</a>" +
-                        "</td>");
-                response.getWriter().write("</tr>");
-            }
-        } else {
-            response.getWriter().write("<tr><td colspan=\"6\">Нет записей.</tr></td>");
-        }
+        //response.getWriter().write(criteriaList + "<br>");
+        //response.getWriter().write(valuesList + "<br>");
     }
 }

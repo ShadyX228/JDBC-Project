@@ -36,24 +36,17 @@ public class TeacherGetFree extends HttpServlet {
             List<Teacher> freeTeachers = new ArrayList<>();
             boolean check = true;
             for(Teacher teacher : teachers) {
-                System.out.println(teacher);
-                if(!teacher.getGroups().isEmpty()) {
-                    for (Group group : teacher.getGroups()) {
-                        if (group.getId() == groupId) {
-                            check = false;
-                            System.out.println(group);
-                            break;
-                        }
+                for(Group group : teacher.getGroups()) {
+                    if(group.getId() == groupId) {
+                        check = false;
+                        break;
                     }
                 }
                 if(check) {
-                    System.out.println("Added " + teacher.getId());
                     freeTeachers.add(teacher);
                 }
-                check = true;
             }
             if(freeTeachers.isEmpty()) {
-                System.out.println(3);
                 response.getWriter().write("Некого назначить.");
             } else {
                 response.getWriter().write("\t<table><tr>\n" +
@@ -62,7 +55,7 @@ public class TeacherGetFree extends HttpServlet {
                         "\t\t<td>Операции</td>\n" +
                         "\t</tr>");
                 for (Teacher teacher : freeTeachers) {
-                    response.getWriter().write("\t<tr id=\"freeTeacher" + teacher.getId() + "\">\n" +
+                    response.getWriter().write("\t<tr id=\"teacher" + teacher.getId() + "\">\n" +
                             "\t\t<td class=\"groupId\" style=\"display: none;\">" + groupId + "</td>\n" +
                             "\t\t<td>" + teacher.getName() + "</td>\n" +
                             "\t\t<td><a class=\"putInGroup\" href=\"#putTeacher" + teacher.getId() + "\">Назначить</a></td>\n" +

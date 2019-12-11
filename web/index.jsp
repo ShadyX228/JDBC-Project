@@ -10,11 +10,11 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html>
+<html lang="ru">
     <head>
-      <title>$Title$</title>
-      <script type="text/javascript" src ="scripts/jquery-3.4.1.min.js"></script>
-      <script type="text/javascript" src ="scripts/index.js"></script>
+      <title>Информационная система для работы с базой студентов, групп и преподавателей</title>
+      <script src ="scripts/jquery-3.4.1.min.js"></script>
+      <script src ="scripts/index.js"></script>
       <link rel="stylesheet" type="text/css" href="css/style.css">
       <meta charset="UTF-8">
     </head>
@@ -37,40 +37,40 @@
                     <form id="studentAddForm" name="studentAddForm" method="POST">
                         <p>Добавление студента</p>
                         <input type="text" class="name" name="name" placeholder="ФИО">
-                        <input type="date" class="birth" name="birth" placeholder="День рождения">
+                        <input type="date" class="birth" name="birth">
                         <select name="gender" class="gender">
                             <option value="MALE">М</option>
                             <option value="FEMALE">Ж</option>
                         </select>
                         <input class="group" type="text" name="group" placeholder="Группа">
-                        <input type="submit" class="submit" type="button" value="Go">
+                        <input type="submit" class="submit" value="Go">
                         <button id="studentAddFormClose">X</button>
                     </form>
                     <form id="studentUpdateForm" name="studentUpdateForm" method="POST">
                         <p>Обновление студента</p>
-                        <input disabled type="hidden" class="id" name="id" placeholder="id">
+                        <input disabled type="hidden" class="id" name="id">
                         <input type="text" class="name" name="name" placeholder="ФИО">
-                        <input type="date" class="birth" name="birth" placeholder="День рождения">
+                        <input type="date" class="birth" name="birth">
                         <select name="gender" class="gender">
                             <option value="MALE">М</option>
                             <option value="FEMALE">Ж</option>
                         </select>
                         <input class="group" type="text" name="group" placeholder="Группа">
-                        <input type="submit" class="submit" type="button" value="Go">
+                        <input type="submit" class="submit" value="Go">
                         <button id="studentUpdateFormClose">X</button>
                     </form>
                     <form id="studentSearchForm" name="studentSearchForm" method="POST">
                         <p>Поиск студентов</p>
                         <input type="text" class="id" name="id" placeholder="id">
                         <input type="text" class="name" name="name" placeholder="ФИО">
-                        <input type="date" class="birth" name="birth" placeholder="День рождения">
+                        <input type="date" class="birth" name="birth">
                         <select name="gender" class="gender">
                             <option>Пол</option>
                             <option value="MALE">М</option>
                             <option value="FEMALE">Ж</option>
                         </select>
                         <input class="group" type="text" name="group" placeholder="Группа">
-                        <input type="submit" class="submit" type="button" value="Go">
+                        <input type="submit" class="submit" value="Go">
                         <button id="studentSearchFormClose">X</button>
                     </form>
 
@@ -81,25 +81,25 @@
                 <div id="groupsTable">
                     <ul class="actions" id="groupNav">
                         <li><a id="groupAdd" href="#groupAdd">Добавить</a></li>
-                        <li><a id="groupSearch" href="#groupSearch">Выбрать</a></li>
+                        <li><a id="groupSearch" href="#groupSearch">Поиск</a></li>
                     </ul>
                     <form id="groupAddForm" name="groupAddForm" method="POST">
                         <p>Добавление группы</p>
                         <input type="text" class="group" name="group" placeholder="Номер группы">
-                        <input type="submit" class="submit" type="button" value="Go">
+                        <input type="submit" class="submit" value="Go">
                         <button id="groupAddFormClose">X</button>
                     </form>
                     <form id="groupUpdateForm" name="studentUpdateForm" method="POST">
                         <p>Обновление группы</p>
-                        <input disabled type="hidden" class="id" name="id" placeholder="id">
+                        <input disabled type="hidden" class="id" name="id">
                         <input class="group" type="text" name="group" placeholder="Группа">
-                        <input type="submit" class="submit" type="button" value="Go">
+                        <input type="submit" class="submit" value="Go">
                         <button id="groupUpdateFormClose">X</button>
                     </form>
                     <form id="groupSearchForm" name="studentSearchForm" method="GET">
-                        <p>Обновление группы</p>
+                        <p>Поиск групп</p>
                         <input class="group" type="text" name="group" placeholder="Группа">
-                        <input type="submit" class="submit" type="button" value="Go">
+                        <input type="submit" class="submit" value="Go">
                         <button id="groupSearchFormClose">X</button>
                     </form>
 
@@ -111,7 +111,10 @@
                 <div id="teachersTable">
                   Преподы
                 </div>
-              </div>
+            </div>
+            <footer>
+                Подвальчик
+            </footer>
         </div>
         <div id="groupInfo">
             Группа: <span id="groupNumber"></span>

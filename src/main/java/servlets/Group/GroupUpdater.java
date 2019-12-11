@@ -41,12 +41,19 @@ public class GroupUpdater extends HttpServlet {
             int id = Integer.parseInt(idString);
             GroupDAO groupDAO = new GroupDAO();
             Group group = groupDAO.selectById(id);
-
-            if(Objects.isNull(group)) {
-                message += "Группа не существует: <span class=\"error\">-1</span>";
+            int number = Integer.parseInt(groupString);
+            List<Group> groupCheck = groupDAO.selectAll();
+            boolean check = true;
+            for(Group groupObject : groupCheck) {
+                if(groupObject.getNumber() == number) {
+                    check = false;
+                    break;
+                }
+            }
+            if(!check) {
+                message += "Группа уже существует: <span class=\"error\">-1</span>";
                 response.getWriter().write(message);
             } else {
-                int number = Integer.parseInt(groupString);
                 groupDAO.update(group, number);
                 groupDAO.closeEM();
                 response.getWriter().write("Запись <span class=\"lastId\">" + group.getId()  + "</span> обновлена.");

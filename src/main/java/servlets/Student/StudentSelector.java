@@ -38,33 +38,35 @@ public class StudentSelector extends HttpServlet {
         genderString = parseCriteria(GENDER, genderString);
         groupString = parseCriteria(GROUP, groupString);
 
-        List<Object> checkList = new ArrayList<>();
+        List<Object> valuesList = new ArrayList<>();
+        List<Criteria> criteriaList = new ArrayList<>();
+
         Set<Student> students = new HashSet<>();
         if(!Objects.isNull(idString)) {
-            checkList.add(idString); // 0 - id
-            checkList.add(null); // 1 - name
-            checkList.add(null); // 2 - birth
-            checkList.add(null); // 3 - gender
-            checkList.add(null); // 4 - group
+            valuesList.add(idString); // 0 - id
+            valuesList.add(null); // 1 - name
+            valuesList.add(null); // 2 - birth
+            valuesList.add(null); // 3 - gender
+            valuesList.add(null); // 4 - group
         } else {
-            checkList.add(null); // 0 - id
+            valuesList.add(null); // 0 - id
             if (!name.isEmpty()) {
-                checkList.add(name); // 1 - name
+                valuesList.add(name); // 1 - name
             } else {
-                checkList.add(null);
+                valuesList.add(null);
             }
-            checkList.add(birthString); // 2 - birth
+            valuesList.add(birthString); // 2 - birth
             if(!Objects.isNull(genderString)) {
-                checkList.add(genderString); // 3 - gender
+                valuesList.add(genderString); // 3 - gender
             } else {
-                checkList.add(null);
+                valuesList.add(null);
             }
-            checkList.add(groupString); // 4 - group
+            valuesList.add(groupString); // 4 - group
         }
 
         int index = 0;
         StudentDAO studentDAO = new StudentDAO();
-        for(Iterator<Object> iterator = checkList.iterator();iterator.hasNext();) {
+        for(Iterator<Object> iterator = valuesList.iterator();iterator.hasNext();) {
             Object criteria = iterator.next();
             if(!Objects.isNull(criteria)) {
                 switch (index) {

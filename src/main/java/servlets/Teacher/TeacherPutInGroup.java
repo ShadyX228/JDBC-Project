@@ -24,42 +24,26 @@ public class TeacherPutInGroup extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        String idString = request.getParameter("id");
-        String numberString = request.getParameter("number");
+        String teacherIdString = request.getParameter("teacherId");
+        String groupIdString = request.getParameter("groupId");
 
         String message = "Проверяю переданные параметры...<br>";
-        if(idString.isEmpty() || numberString.isEmpty()) {
-            message += "Статус" + printMessage(2,"Переданы пустые значения.");
+        if(teacherIdString.isEmpty() || groupIdString.isEmpty()) {
+            message += printMessage(2,"Переданы пустые значения.");
         } else {
-            idString = parseCriteria(Criteria.ID, idString);
-            numberString = parseCriteria(Criteria.ID, numberString);
-            if(!Objects.isNull(idString) && !Objects.isNull(numberString)) {
-                message += "Значения не пусты" + printMessage(1, "OK.");
-                message += "Проверяю корректность введенных параметров...<br>";
-                int id = Integer.parseInt(idString);
-                int number = Integer.parseInt(numberString);
-                TeacherDAO teacherDAO = new TeacherDAO();
-                GroupDAO groupDAO = new GroupDAO();
+            TeacherDAO teacherDAO = new TeacherDAO();
+            GroupDAO groupDAO = new GroupDAO();
 
-                Teacher teacher = teacherDAO.selectById(id);
-                Group group = checkGroup(number, groupDAO);
-                if(Objects.isNull(teacher) || Objects.isNull(group)) {
-                    message += "Статус" + printMessage(2,"нет такой группы или преподавателя.");
-                } else {
-                    List<Group> groups = teacher.getGroups();
-
-                    if(groups.contains(group)) {
-                        message += "Cтатус" + printMessage(2,"Преподаватель уже преподает в этой группе.");
-                    } else {
-                        message += "Статус" + printMessage(1,"OK.");
-                        message += "Добаляю...";
-                        teacherDAO.putTeacherInGroup(teacher, group);
-                        message += printMessage(1,"OK.");
-                    }
-                }
+            Teacher teacher = teacherDAO.selectById(Integer.parseInt(teacherIdString));
+            Group group = groupDAO.selectById(Integer.parseInt(groupIdString));
+            if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
+                teacherDAO.putTeacherInGroup(teacher,group);
             } else {
-                message += printMessage(2,"Переданы некорректные значения.");
+                printMessage(2,"Ошибка: нет такой группы или преподавателя.");
             }
+
+            teacherDAO.closeEM();
+            groupDAO.closeEM();
         }
         response.getWriter().write(message);
     }

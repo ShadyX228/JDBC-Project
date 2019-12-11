@@ -85,9 +85,9 @@ $(document).ready(function(){
         var birth =  $("#studentSearchForm .birth").val();
         var gender =$("#studentSearchForm .gender").val();
         var group = $("#studentSearchForm .group").val();
-        $.get("studentSelect", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
-            var error = parseInt($("#status .error").html());
+        $.get("test", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
             $("#status").html(data);
+            var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
                 $("#studentOutput .outputTable").html(data);
                 $("#status").html("");
@@ -115,6 +115,7 @@ $(document).ready(function(){
             addDeleteEventHandler("#groupOutput .outputTable tr","group");
             addUpdateEventHandler("#groupOutput .outputTable tr","group");
             addGroupInfoEventHandler("tr");
+            addGetTeachersHandler("tr");
         });
     });
     $("#groupAdd").click(function () {
@@ -137,12 +138,15 @@ $(document).ready(function(){
                     "<td class=\"opeations\">" +
                     "<a class=\"delete\" href=\"#deleteGroup" + id + "\">Удалить</a><br>" +
                     "<a class=\"update\" href=\"#updateGroup" + id + "\">Изменить</a><br>" +
-                    "<a class=\"getInfo\" href=\"#getInfoGroup" + id + "\">Информация</a></td>" +
+                    "<a class=\"getInfo\" href=\"#getInfoGroup" + id + "\">Информация</a><br>" +
+                    "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + id + "\">Назначить преподавателя</a></td>" +
                     "</tr>");
                 lightOn("#group" + id,successColor);
+
                 addDeleteEventHandler("#group"+id, "group");
                 addUpdateEventHandler("#group"+id, "group");
                 addGroupInfoEventHandler("#group"+id);
+                addGetTeachersHandler("#group"+id);
             }
         });
     })
@@ -169,8 +173,8 @@ $(document).ready(function(){
         var id =  $("#groupSearchForm .id").val();
         var group = $("#groupSearchForm .group").val();
         $.get("groupSelect", {"id" : id, "group" : group}, function(data) {
-            var error = parseInt($("#status .error").html());
             $("#status").html(data);
+            var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
                 $("#groupOutput .outputTable").html(data);
                 $("#status").html("");
@@ -178,6 +182,7 @@ $(document).ready(function(){
             addDeleteEventHandler("tr", "group");
             addUpdateEventHandler("tr", "group");
             addGroupInfoEventHandler("tr");
+            addGetTeachersHandler("tr");
         });
     })
     /** /Группа **/
@@ -299,8 +304,68 @@ $(document).ready(function(){
             $.get("groupGetInfo", {"id" : id}, function(data) {
                 $("#groupInfo").show();
                 $("#info").html(data);
-
+                addTeacherRemovingFromGroupHandler("#groupInfo table tr");
                 $("#status").html("");
+            });
+
+        })
+    }
+    function addGetTeachersHandler(selector) {
+        $("#groupOutput .outputTable " + selector).on("click", ".putTeacherInGroup", function() {
+            var a = $(this);
+            var href = a.attr("href");
+            var id = parseInt(href.match(/\d+/));
+            $("#groupNumber").html($(selector).find(".group").html())
+            $("#status").html("Загружаю...");
+
+            $.get("getTeachers", {"id" : id}, function(data) {
+                $("#groupInfo").show();
+                $("#info").html(data);
+                addTeacherPuttingInGroupHandler("#groupInfo table tr");
+                $("#status").html("");
+            });
+
+        })
+    }
+    function addTeacherRemovingFromGroupHandler(selector) {
+        $(selector).on("click", ".removeTeacherFromGroup", function() {
+            var a = $(this);
+            var href = a.attr("href");
+            var teacherId = parseInt(href.match(/\d+/));
+
+            var groupId = $("#teacher" + teacherId).find(".groupId").html();
+
+            $.post("teacherDeleteGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
+                $("#status").html(data);
+                var error = parseInt($("#status .error").html());
+                if(isNaN(error)) {
+                    $("#teacher"+ teacherId).hide();
+                    $("#status").html("");
+                } else {
+                    lightOn("#teacher" + teacherId, failColor);
+               }
+            });
+
+        })
+    }
+    function addTeacherPuttingInGroupHandler(selector) {
+        $(selector).on("click", ".putInGroup", function() {
+            var a = $(this);
+            var href = a.attr("href");
+            var teacherId = parseInt(href.match(/\d+/));
+
+            var groupId = $("#teacher" + teacherId).find(".groupId").html();
+
+            alert(teacherId + " " + groupId);
+            $.post("teacherPutInGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
+                $("#status").html(data);
+                var error = parseInt($("#status .error").html());
+                if(isNaN(error)) {
+                    $("#teacher"+ teacherId).hide();
+                    $("#status").html("");
+                } else {
+                    lightOn("#teacher" + teacherId, failColor);
+               }
             });
 
         })

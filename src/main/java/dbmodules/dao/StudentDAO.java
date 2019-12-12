@@ -7,15 +7,12 @@ import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
 
-import javax.persistence.EntityManager;
+import static webdebugger.WebInputDebugger.*;
+import javax.persistence.Query;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
-import static dbmodules.types.Criteria.ALL;
-import static dbmodules.types.Criteria.ID;
+import static dbmodules.types.Criteria.*;
 
 public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
     public Student selectById(int id) {
@@ -76,86 +73,85 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
         }
         return list;
     }
-    public String select(List<Criteria> criterias, List<String> values) {
+    public List<Student> select(HashMap<Criteria, String> criteriasMap) {
         List<Student> list = new ArrayList<>();
-        String query = "FROM Student WHERE";
-        for(Criteria criteria : criterias) {
-            switch (criteria) {
-                case ID : {
-                    list.add(selectById(Integer.parseInt(values.get(0))));
-                    break;
-                }
-                case ALL : {
-                    query = "FROM Student";
-                    break;
-                }
-                case NAME : {
-                    query += "Name LIKE :name AND";
-                }
-                case BIRTH:  {
-                    query += "birthday = :birthday AND";
-                }
-                case GENDER: {
-                    query += "gender = :gender AND";
-                }
-                case GROUP: {
-                    query += "group_id = :group_id AND";
-                }
+        String query = "FROM Student";
+        if(criteriasMap.containsKey(ID)) {
+            Student student = selectById(Integer.parseInt(criteriasMap.get(ID)));
+            if(!Objects.isNull(student)) {
+                list.add(student);
             }
-            query = query.substring(0, query.length()-2);
-            System.out.println(query);
-        }
-        /*switch (criteria) {
-            case ID : {
-                list.add(selectById(Integer.parseInt(value)));
-                break;
-            }
-            case NAME : {
-                list = entityManager
-                        .createQuery("FROM Student WHERE Name LIKE :name")
-                        .setParameter("name", "%" + value + "%")
-                        .getResultList();
-                break;
-            }
-            case BIRTH : {
-                LocalDate birth = LocalDate.of(
-                        LocalDate.parse(value).getYear(),
-                        LocalDate.parse(value).getMonth(),
-                        LocalDate.parse(value).getDayOfMonth()
-                );
+        } else {
+            query += " WHERE ";
+            Group group = null;
+            for (HashMap.Entry<Criteria, String> element : criteriasMap.entrySet()) {
+                switch (element.getKey()) {
+                    case NAME: {
+                        query += "Name LIKE :name AND ";
+                        break;
+                    }
+                    case BIRTH: {
+                        query += "birthday = :birthday AND ";
+                        break;
+                    }
+                    case GENDER: {
+                        query += "gender = :gender AND ";
+                        break;
+                    }
+                    case GROUP: {
+                        GroupDAO groupDAO = new GroupDAO();
+                        int groupNumber = Integer.parseInt(criteriasMap.get(GROUP));
+                        group = checkGroup(groupNumber, groupDAO);
 
-                list = entityManager
-                        .createQuery("FROM Student WHERE birthday = :birthday")
-                        .setParameter("birthday", birth)
-                        .getResultList()
-                ;
-                break;
+                        if(!Objects.isNull(group)) {
+                            query += "group_id = :group_id AND ";
+                            System.out.println(criteriasMap.get(GROUP));
+                        }
+                        groupDAO.closeEM();
+                        break;
+                    }
+                }
             }
-            case GENDER : {
-                Gender gender = Gender.valueOf(value);
+            if(!criteriasMap.containsKey(ALL)) {
+                if(!criteriasMap.isEmpty()) {
+                    query = query.substring(0, query.length() - 4);
+                    Query execute = entityManager
+                            .createQuery(query);
+                    if (criteriasMap.containsKey(NAME)) {
+                        execute.setParameter("name", "%" + criteriasMap.get(NAME) + "%");
+                    }
+                    if (criteriasMap.containsKey(BIRTH)) {
+                        LocalDate birth = LocalDate.of(
+                                LocalDate.parse(criteriasMap.get(BIRTH)).getYear(),
+                                LocalDate.parse(criteriasMap.get(BIRTH)).getMonth(),
+                                LocalDate.parse(criteriasMap.get(BIRTH)).getDayOfMonth()
+                        );
+                        execute.setParameter("birthday", birth);
+                    }
+                    if (criteriasMap.containsKey(GENDER)) {
+                        Gender gender = Gender.valueOf(criteriasMap.get(GENDER));
+                        execute.setParameter("gender", gender);
+                    }
+
+                    if (criteriasMap.containsKey(GROUP)) {
+                        if(!Objects.isNull(group)) {
+                            execute.setParameter("group_id", group.getId());
+                        }
+                    }
+
+                    System.out.println(query);
+
+                    list = execute.getResultList();
+                }
+
+            } else {
+                query = "FROM Student";
                 list = entityManager
-                        .createQuery("FROM Student WHERE gender = :gender")
-                        .setParameter("gender", gender)
+                        .createQuery(query)
                         .getResultList();
-                break;
             }
-            case GROUP  : {
-                int groupNumber = Integer.parseInt(value);
-                Group group = new GroupDAO().select(groupNumber);
-                list = entityManager
-                        .createQuery("FROM Student WHERE group_id = :group_id")
-                        .setParameter("group_id", group.getId())
-                        .getResultList();
-                break;
-            }
-            case ALL : {
-                list = entityManager
-                        .createQuery("FROM Student")
-                        .getResultList();
-                break;
-            }
-        }*/
-        return query;
+        }
+        return list;
     }
     public void update(Student person, Criteria criteria, String value) {
         entityManager.getTransaction().begin();

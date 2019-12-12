@@ -85,7 +85,7 @@ $(document).ready(function(){
         var birth =  $("#studentSearchForm .birth").val();
         var gender =$("#studentSearchForm .gender").val();
         var group = $("#studentSearchForm .group").val();
-        $.get("test", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
+        $.get("studentSelect", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -170,9 +170,8 @@ $(document).ready(function(){
     });
     $("#groupSearchForm").submit(function (event) {
         event.preventDefault();
-        var id =  $("#groupSearchForm .id").val();
         var group = $("#groupSearchForm .group").val();
-        $.get("groupSelect", {"id" : id, "group" : group}, function(data) {
+        $.get("groupSelect", {"group" : group}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -218,6 +217,8 @@ $(document).ready(function(){
         $("#studentUpdateForm").hide();
         $("#studentAddForm").hide();
     })
+
+
 
     $("#groupAddFormClose").click(function (event) {
         event.preventDefault();
@@ -356,7 +357,6 @@ $(document).ready(function(){
 
             var groupId = $("#teacher" + teacherId).find(".groupId").html();
 
-            alert(teacherId + " " + groupId);
             $.post("teacherPutInGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
                 $("#status").html(data);
                 var error = parseInt($("#status .error").html());

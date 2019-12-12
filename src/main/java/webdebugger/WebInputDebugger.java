@@ -81,8 +81,14 @@ public class WebInputDebugger {
             }
             case GROUP :  {
                 try {
-                    Group group = new GroupDAO().select(Integer.parseInt(critVal));
-                    return Integer.toString(group.getNumber());
+                    GroupDAO groupDAO = new GroupDAO();
+                    Group group = groupDAO.select(Integer.parseInt(critVal));
+                    groupDAO.closeEM();
+                    if(!Objects.isNull(group)) {
+                        return Integer.toString(group.getNumber());
+                    } else {
+                        return null;
+                    }
                 } catch (InputMismatchException
                         | IndexOutOfBoundsException
                         | NumberFormatException e) {

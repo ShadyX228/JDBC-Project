@@ -36,6 +36,10 @@
         <servlet-class>servlets.Teacher.TeacherSelector</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>TeacherAllSelector</servlet-name>
+        <servlet-class>servlets.Teacher.TeacherAllSelector</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>TeacherUpdater</servlet-name>
         <servlet-class>servlets.Teacher.TeacherUpdater</servlet-class>
     </servlet>
@@ -111,6 +115,10 @@
     <servlet-mapping>
         <servlet-name>TeacherAdder</servlet-name>
         <url-pattern>/teacherAdd</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TeacherAllSelector</servlet-name>
+        <url-pattern>/teacherSelectAll</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TeacherSelector</servlet-name>

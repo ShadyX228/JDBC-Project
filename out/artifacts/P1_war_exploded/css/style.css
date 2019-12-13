@@ -60,7 +60,8 @@ form {
 }
 #status, #studentsTable, #teachersTable, #groupsTable,
 .outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm,
-#groupAddForm, #groupUpdateForm, #groupInfo, #groupSearchForm {
+#groupAddForm, #groupUpdateForm, #groupInfo, #groupSearchForm,
+.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm {
     display: none;
 }
 .outputTable {
@@ -94,7 +95,8 @@ td:last-child {
 tr:hover {
     background: #CACACA
 }
-#studentAddForm .submit, #studentUpdateForm .submit, #studentSearchForm .submit, #studentSearchForm .id, #studentSearchForm .group {
+.submit, #studentSearchForm .id,
+#studentSearchForm .group {
     width: 45px;
 }
 form .birth {
@@ -124,4 +126,9 @@ form {
 }
 footer {
     padding: 10px;
+}
+input[disabled] {
+    background: #AD2B2B;
+    color: white;
+    border-color: #AD4E4E;
 }

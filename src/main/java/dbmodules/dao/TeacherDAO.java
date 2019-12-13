@@ -2,13 +2,21 @@ package dbmodules.dao;
 
 import dbmodules.interfaces.PersonTable;
 import dbmodules.tables.Group;
+import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
+
+import javax.persistence.Query;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+
+import static dbmodules.types.Criteria.*;
+import static webdebugger.WebInputDebugger.checkGroup;
 
 public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher> {
     public Teacher selectById(int id) {
@@ -56,6 +64,69 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                         .createQuery("FROM Teacher")
                         .getResultList();
                 break;
+            }
+        }
+        return list;
+    }
+    public List<Teacher> select(HashMap<Criteria, String> criteriasMap) {
+        List<Teacher> list = new ArrayList<>();
+        String query = "FROM Teacher";
+        if(criteriasMap.containsKey(ID)) {
+            Teacher teacher = selectById(Integer.parseInt(criteriasMap.get(ID)));
+            if(!Objects.isNull(teacher)) {
+                list.add(teacher);
+            }
+        } else {
+            query += " WHERE ";
+            Group group = null;
+            for (HashMap.Entry<Criteria, String> element : criteriasMap.entrySet()) {
+                switch (element.getKey()) {
+                    case NAME: {
+                        query += "Name LIKE :name AND ";
+                        break;
+                    }
+                    case BIRTH: {
+                        query += "birthday = :birthday AND ";
+                        break;
+                    }
+                    case GENDER: {
+                        query += "gender = :gender AND ";
+                        break;
+                    }
+                }
+            }
+            if(!criteriasMap.containsKey(ALL)) {
+                if(!criteriasMap.isEmpty()) {
+                    query = query.substring(0, query.length() - 4);
+                    Query execute = entityManager
+                            .createQuery(query);
+                    if (criteriasMap.containsKey(NAME)) {
+                        execute.setParameter("name", "%" + criteriasMap.get(NAME) + "%");
+                    }
+                    if (criteriasMap.containsKey(BIRTH)) {
+                        LocalDate birth = LocalDate.of(
+                                LocalDate.parse(criteriasMap.get(BIRTH)).getYear(),
+                                LocalDate.parse(criteriasMap.get(BIRTH)).getMonth(),
+                                LocalDate.parse(criteriasMap.get(BIRTH)).getDayOfMonth()
+                        );
+                        execute.setParameter("birthday", birth);
+                    }
+                    if (criteriasMap.containsKey(GENDER)) {
+                        Gender gender = Gender.valueOf(criteriasMap.get(GENDER));
+                        execute.setParameter("gender", gender);
+                    }
+
+
+                    System.out.println(query);
+
+                    list = execute.getResultList();
+                }
+
+            } else {
+                query = "FROM Teacher";
+                list = entityManager
+                        .createQuery(query)
+                        .getResultList();
             }
         }
         return list;

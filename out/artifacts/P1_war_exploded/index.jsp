@@ -109,7 +109,50 @@
                     </div>
                 </div>
                 <div id="teachersTable">
-                  Преподы
+                    <ul class="actions" id="teacherNav">
+                        <li><a id="teacherAdd" href="#teacherAdd">Добавить</a></li>
+                        <li><a id="teacherSearch" href="#teacherSearch">Поиск</a></li>
+                    </ul>
+                    <form id="teacherAddForm" name="teacherAddForm" method="POST">
+                        <p>Добавление преподавателя</p>
+                        <input type="text" class="name" name="name" placeholder="ФИО">
+                        <input type="date" class="birth" name="birth">
+                        <select name="gender" class="gender">
+                            <option value="MALE">М</option>
+                            <option value="FEMALE">Ж</option>
+                        </select>
+                        <input type="submit" class="submit" value="Go">
+                        <button id="teacherAddFormClose">X</button>
+                    </form>
+                    <form id="teacherUpdateForm" name="teacherUpdateForm" method="POST">
+                        <p>Обновление преподавателя</p>
+                        <input disabled type="hidden" class="id" name="id">
+                        <input type="text" class="name" name="name" placeholder="ФИО">
+                        <input type="date" class="birth" name="birth">
+                        <select name="gender" class="gender">
+                            <option value="MALE">М</option>
+                            <option value="FEMALE">Ж</option>
+                        </select>
+                        <input type="submit" class="submit" value="Go">
+                        <button id="teacherUpdateFormClose">X</button>
+                    </form>
+                    <form id="teacherSearchForm" name="teacherSearchForm" method="POST">
+                        <p>Поиск преподавателей</p>
+                        <input type="text" class="id" name="id" placeholder="id">
+                        <input type="text" class="name" name="name" placeholder="ФИО">
+                        <input type="date" class="birth" name="birth">
+                        <select name="gender" class="gender">
+                            <option>Пол</option>
+                            <option value="MALE">М</option>
+                            <option value="FEMALE">Ж</option>
+                        </select>
+                        <input type="submit" class="submit" value="Go">
+                        <button id="teacherSearchFormClose">X</button>
+                    </form>
+
+                    <div id="teacherOutput">
+                        <table class="outputTable"></table>
+                    </div>
                 </div>
             </div>
             <footer>

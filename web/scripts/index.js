@@ -33,11 +33,7 @@ $(document).ready(function(){
         var birth = $("#studentAddForm .birth").val();
         var gender = $("#studentAddForm .gender").val();
         var group = $("#studentAddForm .group").val();
-        $.post("studentAdd", {
-            "name" : name,
-            "birth" : birth,
-            "gender" : gender,
-            "group" : group}, function(data) {
+        $.post("studentAdd", $(this).serialize(), function(data) {
             $("#status").html(data);
             var id = parseInt($("#status .lastId").html());
             if(!isNaN(id)) {
@@ -80,12 +76,7 @@ $(document).ready(function(){
     });
     $("#studentSearchForm").submit(function (event) {
         event.preventDefault();
-        var id =  $("#studentSearchForm .id").val();
-        var name =  $("#studentSearchForm .name").val();
-        var birth =  $("#studentSearchForm .birth").val();
-        var gender =$("#studentSearchForm .gender").val();
-        var group = $("#studentSearchForm .group").val();
-        $.get("studentSelect", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
+        $.get("studentSelect", $(this).serialize(), function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -168,15 +159,16 @@ $(document).ready(function(){
             }
         });
     });
-    $("#groupSearchForm").submit(function (event) {
-        event.preventDefault();
-        var group = $("#groupSearchForm .group").val();
+    $("#groupSearchForm .group").keyup(function () {
+        var group = $(this).val();
         $.get("groupSelect", {"group" : group}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
                 $("#groupOutput .outputTable").html(data);
                 $("#status").html("");
+            } else {
+                $("#status").html("Группы с введенным номером не существует.");
             }
             addDeleteEventHandler("tr", "group");
             addUpdateEventHandler("tr", "group");
@@ -188,12 +180,85 @@ $(document).ready(function(){
 
     /** Преподаватель **/
     $("#teacherAction").click(function () {
+        $("#status").show();
         $("#studentsTable").hide();
         $("#groupsTable").hide();
         $("#teachersTable").show();
 
         $("#status").html("Загрузка...");
+        $.post("teacherSelectAll", function(data) {
+            $("#teacherOutput .outputTable").show();
+            $("#teacherOutput .outputTable").html(data);
+            $("#status").html("");
+
+            addDeleteEventHandler("#teacherOutput .outputTable tr","teacher");
+            addUpdateEventHandler("#teacherOutput .outputTable tr","teacher");
+            addGroupInfoEventHandler("tr");
+            addGetTeachersHandler("tr");
+        });
     });
+    $("#teacherAdd").click(function () {
+        $("#teacherAddForm").show();
+        $("#teacherUpdateForm").hide();
+        $("#teacherSearchForm").hide();
+    })
+    $("#teacherAddForm").submit(function (event) {
+        event.preventDefault();
+        $("#status").html("Загрузка...");
+        var name = $("#teacherAddForm .name").val();
+        var birth = $("#teacherAddForm .birth").val();
+        var gender = $("#teacherAddForm .gender").val();
+        $.post("teacherAdd", $(this).serialize(), function(data) {
+            $("#status").html(data);
+            var id = parseInt($("#status .lastId").html());
+            if(!isNaN(id)) {
+                $("#teacherOutput .outputTable").append("<tr id=\"teacher" + id + "\">" +
+                    "<td class=\"id\">" + id + "</td>" +
+                    "<td class=\"name\">" + name + "</td>" +
+                    "<td class=\"birth\">" + birth + "</td>" +
+                    "<td class=\"gender\">" + gender + "</td>" +
+                    "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteTeacher" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateTeacher" + id + "\">Изменить</a><br><a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + id + "\">Изменить</a></td>" +
+                    "</tr>");
+                lightOn("#teacher" + id,successColor);
+                addDeleteEventHandler("#teacher"+id, "teacher");
+                addUpdateEventHandler("#teacher"+id, "teacher");
+            }
+        });
+    })
+    $("#teacherUpdateForm").submit(function (event) {
+        event.preventDefault();
+        $("#status").html("Загружаю...");
+        var id =  $("#teacherUpdateForm .id").val();
+        var name =  $("#teacherUpdateForm .name").val();
+        var birth =  $("#teacherUpdateForm .birth").val();
+        var gender =$("#teacherUpdateForm .gender").val();
+        $.post("teacherUpdate", {"id" : id, "name" : name, "birth" : birth, "gender" : gender}, function(data) {
+            $("#status").html(data);
+            var error = parseInt($("#status .error").html());
+            if(isNaN(error)) {
+                lightOn("#teacher" + id,successColor);
+                $("#teacher" + id + " .name").html(name);
+                $("#teacher" + id + " .birth").html(birth);
+                $("#teacher" + id + " .gender").html(gender);
+                $("#status").html("");
+            } else {
+                lightOn("#teacher" + id,failColor);
+            }
+        });
+    });
+    $("#teacherSearchForm").submit(function (event) {
+        event.preventDefault();
+        $.get("teacherSelect", $(this).serialize(), function(data) {
+            $("#status").html(data);
+            var error = parseInt($("#status .error").html());
+            if(isNaN(error)) {
+                $("#teacherOutput .outputTable").html(data);
+                $("#status").html("");
+            }
+            addDeleteEventHandler("tr", "teacher");
+            addUpdateEventHandler("tr", "teacher");
+        });
+    })
     /** /Преподаватель **/
 
     /** /Выбор таблицы **/
@@ -217,8 +282,20 @@ $(document).ready(function(){
         $("#studentUpdateForm").hide();
         $("#studentAddForm").hide();
     })
-
-
+    $("#studentSearchForm .group").keyup(function () {
+        var group = $(this).val();
+        $.get("groupSelect", {"group" : group}, function(data) {
+            $("#status").html(data);
+            var error = parseInt($("#status .error").html());
+            if(isNaN(error)) {
+                $("#status").html("");
+                $("#studentSearchForm .submit").prop("disabled", false);
+            } else {
+                $("#studentSearchForm .submit").prop("disabled", true);
+                $("#status").html("Группы с введенным номером не существует.");
+            }
+        });
+    })
 
     $("#groupAddFormClose").click(function (event) {
         event.preventDefault();
@@ -240,6 +317,24 @@ $(document).ready(function(){
         $("#groupSearchForm").show();
         $("#groupUpdateForm").hide();
         $("#groupAddForm").hide();
+    })
+
+    $("#teacherUpdateFormClose").click(function (event) {
+        event.preventDefault();
+        $("#teacherUpdateForm").hide();
+    })
+    $("#teacherAddFormClose").click(function (event) {
+        event.preventDefault();
+        $("#teacherAddForm").hide();
+    })
+    $("#teacherSearchFormClose").click(function (event) {
+        event.preventDefault();
+        $("#teacherSearchForm").hide();
+    })
+    $("#teacherSearch").click(function () {
+        $("#teacherSearchForm").show();
+        $("#teacherUpdateForm").hide();
+        $("#teacherAddForm").hide();
     })
     /** /Прочие обработчики **/
 
@@ -299,7 +394,7 @@ $(document).ready(function(){
             var a = $(this);
             var href = a.attr("href");
             var id = parseInt(href.match(/\d+/));
-            $("#groupNumber").html($(selector).find(".group").html())
+            $("#groupNumber").html($("#group" + id).find(".group").html())
             $("#status").html("Загружаю...");
 
             $.get("groupGetInfo", {"id" : id}, function(data) {
@@ -316,7 +411,7 @@ $(document).ready(function(){
             var a = $(this);
             var href = a.attr("href");
             var id = parseInt(href.match(/\d+/));
-            $("#groupNumber").html($(selector).find(".group").html())
+            $("#groupNumber").html($("#group" + id).find(".group").html())
             $("#status").html("Загружаю...");
 
             $.get("getTeachers", {"id" : id}, function(data) {
@@ -379,5 +474,4 @@ $(document).ready(function(){
 
     }
     /** /Функции **/
-
 });

@@ -217,7 +217,7 @@ $(document).ready(function(){
                     "<td class=\"name\">" + name + "</td>" +
                     "<td class=\"birth\">" + birth + "</td>" +
                     "<td class=\"gender\">" + gender + "</td>" +
-                    "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteTeacher" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateTeacher" + id + "\">Изменить</a><br><a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + id + "\">Изменить</a></td>" +
+                    "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteTeacher" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateTeacher" + id + "\">Изменить</a><br><a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + id + "\">Информация</a></td>" +
                     "</tr>");
                 lightOn("#teacher" + id,successColor);
                 addDeleteEventHandler("#teacher"+id, "teacher");
@@ -429,16 +429,16 @@ $(document).ready(function(){
             var href = a.attr("href");
             var teacherId = parseInt(href.match(/\d+/));
 
-            var groupId = $("#teacher" + teacherId).find(".groupId").html();
+            var groupId = $("#groupTeacher" + teacherId).find(".groupId").html();
 
             $.post("teacherDeleteGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
                 $("#status").html(data);
                 var error = parseInt($("#status .error").html());
                 if(isNaN(error)) {
-                    $("#teacher"+ teacherId).hide();
+                    $("#groupTeacher"+ teacherId).hide();
                     $("#status").html("");
                 } else {
-                    lightOn("#teacher" + teacherId, failColor);
+                    lightOn("#groupTeacher" + teacherId, failColor);
                }
             });
 
@@ -450,16 +450,17 @@ $(document).ready(function(){
             var href = a.attr("href");
             var teacherId = parseInt(href.match(/\d+/));
 
-            var groupId = $("#teacher" + teacherId).find(".groupId").html();
+            var groupId = $("#freeTeacher" + teacherId).find(".groupId").html();
+            console.log(teacherId + " " + groupId);
 
             $.post("teacherPutInGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
                 $("#status").html(data);
                 var error = parseInt($("#status .error").html());
                 if(isNaN(error)) {
-                    $("#teacher"+ teacherId).hide();
+                    $("#freeTeacher"+ teacherId).hide();
                     $("#status").html("");
                 } else {
-                    lightOn("#teacher" + teacherId, failColor);
+                    lightOn("#freeTeacher" + teacherId, failColor);
                }
             });
 

@@ -47,7 +47,7 @@ public class GroupGetInfo extends HttpServlet {
                             "\t\t<td>Операции</td>\n" +
                             "\t</tr>");
                     for (Teacher teacher : group.getTeachers()) {
-                        response.getWriter().write("\t<tr id=\"teacher" + teacher.getId() + "\">\n" +
+                        response.getWriter().write("\t<tr id=\"groupTeacher" + teacher.getId() + "\">\n" +
                                 "\t\t<td class=\"groupId\" style=\"display: none;\">" + group.getId() + "</td>\n" +
                                 "\t\t<td>" + teacher.getName() + "</td>\n" +
                                 "\t\t<td><a class=\"removeTeacherFromGroup\" href=\"#removeTeacher" + teacher.getId() + "FromGroup\">Убрать из группы</a></td>\n" +

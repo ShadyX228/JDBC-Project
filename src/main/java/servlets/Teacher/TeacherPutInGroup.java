@@ -28,7 +28,7 @@ public class TeacherPutInGroup extends HttpServlet {
         String groupIdString = request.getParameter("groupId");
 
         String message = "Проверяю переданные параметры...<br>";
-        if(teacherIdString.isEmpty() || groupIdString.isEmpty()) {
+        if(Objects.isNull(teacherIdString) || Objects.isNull(groupIdString) ) {
             message += printMessage(2,"Переданы пустые значения.");
         } else {
             TeacherDAO teacherDAO = new TeacherDAO();

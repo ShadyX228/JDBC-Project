@@ -30,14 +30,14 @@ public class TeacherAllSelector extends HttpServlet {
                 "\t</tr>");
         if(!list.isEmpty()) {
             for (Teacher teacher : list) {
-                response.getWriter().write("<tr id=\"student" + teacher.getId() + "\">\n");
+                response.getWriter().write("<tr id=\"teacher" + teacher.getId() + "\">\n");
                 response.getWriter().write("<td class=\"id\">" + teacher.getId() + "</td>");
                 response.getWriter().write("<td class=\"name\">" + teacher.getName() + "</td>");
                 response.getWriter().write("<td class=\"birth\">" + teacher.getBirth() + "</td>");
                 response.getWriter().write("<td class=\"gender\">" + teacher.getGender() + "</td>");
                 response.getWriter().write("<td class=\"operations\">" +
                         "<a class=\"delete\" href=\"#deleteTeacher" + teacher.getId() + "\">Удалить</a><br>" +
-                        "<a class=\"update\" href=\"#updateTeacher" + teacher.getId() + "\">Изменить</a>" +
+                        "<a class=\"update\" href=\"#updateTeacher" + teacher.getId() + "\">Изменить</a><br>" +
                         "<a class=\"getInfo\" href=\"#getInfoTeacher" + teacher.getId() + "\">Информация</a>" +
                         "</td>");
                 response.getWriter().write("</tr>");

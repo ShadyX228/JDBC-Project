@@ -64,36 +64,8 @@ public class StudentSelector extends HttpServlet {
         if(map.isEmpty()) {
             map.put(ALL, " ");
         }
-        //response.getWriter().write(map + "<br>");
         students = studentDAO.select(map);
-
-        response.getWriter().write("\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>ФИО</td>\n" +
-                "\t\t<td>День рождения</td>\n" +
-                "\t\t<td>Пол</td>\n" +
-                "\t\t<td>Группа</td>\n" +
-                "\t\t<td>Операции</td>\n" +
-                "\t</tr>");
-        if(!students.isEmpty()) {
-            for (Student student : students) {
-                if(!Objects.isNull(student)) {
-                    response.getWriter().write("<tr id=\"student" + student.getId() + "\">\n");
-                    response.getWriter().write("<td class=\"id\">" + student.getId() + "</td>");
-                    response.getWriter().write("<td class=\"name\">" + student.getName() + "</td>");
-                    response.getWriter().write("<td class=\"birth\">" + student.getBirth() + "</td>");
-                    response.getWriter().write("<td class=\"gender\">" + student.getGender() + "</td>");
-                    response.getWriter().write("<td class=\"group\">" + student.getGroup().getNumber() + "</td>");
-                    response.getWriter().write("<td class=\"operations\">" +
-                            "<a class=\"delete\" href=\"#deleteStudent" + student.getId() + "\">Удалить</a><br>" +
-                            "<a class=\"update\" href=\"#updateStudent" + student.getId() + "\">Изменить</a>" +
-                            "</td>");
-                    response.getWriter().write("</tr>");
-                }
-            }
-        } else {
-            response.getWriter().write("<tr><td colspan=\"6\">Нет записей.</tr></td>");
-        }
+        response.getWriter().write(generateStudentsTable(students));
         studentDAO.closeEM();
     }
 }

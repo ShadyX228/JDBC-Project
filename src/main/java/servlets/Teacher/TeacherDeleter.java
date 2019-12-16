@@ -77,10 +77,12 @@ public class TeacherDeleter extends HttpServlet {
                         iterator.remove();
                     }
                 }
-                message += "<br>Удалено " + list.size() + " записей";
+                if(!list.isEmpty()) {
+                    response.getWriter().write("<br>Удалено " + list.size() + " записей");
+                } else {
+                    response.getWriter().write("Преподаватель преподает в некоторых группах. Ошибка: <span class=\"error\">-1</span>");
+                }
             }
         }
-
-        response.getWriter().write(message);
     }
 }

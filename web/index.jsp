@@ -164,5 +164,20 @@
             <a id="closeGroupInfo" href="#closeGroupInfo">X</a>
             <div id="info"></div>
         </div>
+        <div id="teacherInfo">
+            Преподаватель: <span id="teacherName"></span>, <span id="teacherId"></span>
+            <a id="closeTeacherInfo" href="#closeTeacherInfo">X</a>
+            <fieldset>
+                <legend>
+                    Назначить преподавателя в группу
+                </legend>
+                <form id="putTeacherInGroup" name="putTeacherInGroup">
+                    <input type="text" class="group" placeholder="Номер группы">
+                    <input type="submit" class="submit" value="Go">
+                </form>
+            </fieldset>
+            Группы:
+            <div id="groups"></div>
+        </div>
     </body>
 </html>

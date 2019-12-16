@@ -70,9 +70,8 @@ public class GroupGetInfo extends HttpServlet {
                 } else {
                     response.getWriter().write(" нет.");
                 }
+                groupDAO.closeEM();
             }
         }
-
-
     }
 }

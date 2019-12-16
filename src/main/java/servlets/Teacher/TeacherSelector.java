@@ -1,9 +1,6 @@
 package servlets.Teacher;
 
-import dbmodules.dao.StudentDAO;
 import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 
@@ -13,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
-import static dbmodules.types.Criteria.ALL;
-import static dbmodules.types.Criteria.ID;
+import static dbmodules.types.Criteria.*;
+import static dbmodules.types.Criteria.GROUP;
 import static webdebugger.WebInputDebugger.*;
 import static webdebugger.WebInputDebugger.printMessage;
 
@@ -28,81 +26,45 @@ public class TeacherSelector extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         request.setCharacterEncoding("UTF-8");
 
-        List<Teacher> list = new ArrayList<>();
+        String idString = request.getParameter("id");
+        String name = request.getParameter("name");
+        String birthString = request.getParameter("birth");
+        String genderString = request.getParameter("gender");
+
+        idString = parseCriteria(ID, idString);
+        birthString = parseCriteria(BIRTH, birthString);
+        genderString = parseCriteria(GENDER, genderString);
+
+        HashMap<Criteria, String> map = new HashMap<>();
+
+        List<Teacher> teachers;
+        if (!Objects.isNull(idString)) {
+            map.put(ID, idString);
+        } else {
+            if (!name.isEmpty()) {
+                map.put(NAME, name);
+            }
+
+            if (!Objects.isNull(birthString)) {
+                if(!birthString.isEmpty()) {
+                    map.put(BIRTH, birthString);
+                }
+            }
+
+            if (!Objects.isNull(genderString)) {
+                if(!genderString.isEmpty()) {
+                    map.put(GENDER, genderString);
+                }
+            }
+        }
 
         TeacherDAO teacherDAO = new TeacherDAO();
-
-        String criteriaString = request.getParameter("criteria");
-        String criteriaValue = request.getParameter("criteriaValue");
-        String message = "Проверяю переданные параметры... <br>Критерий: ";
-
-        Criteria criteria = checkCriteria(criteriaString);
-        if((Objects.isNull(criteria) || criteriaValue.isEmpty()) && !criteria.equals(ALL)) {
-            message += criteriaString
-                    + printMessage(2, "Ошибка. Нет такого критерия.");
-        } else {
-            message += criteria + printMessage(1,"OK.");
-            String criteriaValueParsed;
-            if(!criteria.equals(ALL)) {
-                criteriaValueParsed = parseCriteria(criteria, criteriaValue);
-            } else {
-                criteriaValueParsed = "";
-            }
-            message += "Статус ";
-            if(Objects.isNull(criteriaValueParsed) ) {
-                message += printMessage(2,
-                        "Ошибка. Неверное значение для введенного критерия.");
-
-            } else {
-                if(!criteria.equals(ALL)) {
-                    message += printMessage(1, "OK.");
-                }
-                if(criteria.equals(ID)) {
-                    Teacher teacher = teacherDAO
-                            .selectById(Integer
-                                    .parseInt(criteriaValueParsed));
-                    if(!Objects.isNull(teacher)) {
-                        list.add(teacher);
-                    }
-                } else {
-                    list = teacherDAO.select(criteria, criteriaValueParsed);
-                }
-            }
+        if(map.isEmpty()) {
+            map.put(ALL, " ");
         }
+        teachers = teacherDAO.select(map);
 
-        response.getWriter().write(message);
-        if(!list.isEmpty()) {
-            response.getWriter().write("<table border=1>\n" +
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Группы</td>\n" +
-                    "\t</tr>");
-            for (Teacher teacher : list) {
-                response.getWriter().write("<tr>");
-                response.getWriter().write("<td>" + teacher.getId() + "</td>");
-                response.getWriter().write("<td>" + teacher.getName() + "</td>");
-                response.getWriter().write("<td>" + teacher.getBirth() + "</td>");
-                response.getWriter().write("<td>" + teacher.getGender() + "</td>");
-
-                response.getWriter().write("<td>");
-                List<Group> groups = teacher.getGroups();
-                if(!groups.isEmpty()) {
-                    for(Group group : groups) {
-                        response.getWriter().write(group.getNumber() + " ");
-                    }
-                } else {
-                    response.getWriter().write("Не преподает");
-                }
-                response.getWriter().write("</td>");
-
-                response.getWriter().write("</tr>");
-            }
-            response.getWriter().write("</table>");
-        } else {
-            response.getWriter().write("Нет записей.");
-        }
+        response.getWriter().write(generateTeacherTable(teachers));
+        teacherDAO.closeEM();
     }
 }

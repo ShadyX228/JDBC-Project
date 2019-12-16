@@ -61,7 +61,7 @@ form {
 #status, #studentsTable, #teachersTable, #groupsTable,
 .outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm,
 #groupAddForm, #groupUpdateForm, #groupInfo, #groupSearchForm,
-.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm {
+.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm, #teacherInfo {
     display: none;
 }
 .outputTable {
@@ -110,7 +110,7 @@ form {
     text-align: center;
     padding-top: 10px;
 }
-#groupInfo {
+#groupInfo, #teacherInfo {
     background: white;
     padding: 10px;
     position: fixed;
@@ -121,7 +121,7 @@ form {
     margin: auto;
     border: 1px solid black;
 }
-#closeGroupInfo {
+#closeGroupInfo, #closeTeacherInfo {
     float: right;
 }
 footer {

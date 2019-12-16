@@ -78,7 +78,6 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
             }
         } else {
             query += " WHERE ";
-            Group group = null;
             for (HashMap.Entry<Criteria, String> element : criteriasMap.entrySet()) {
                 switch (element.getKey()) {
                     case NAME: {
@@ -155,6 +154,14 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                 break;
             }
         }
+        entityManager.persist(person);
+        entityManager.getTransaction().commit();
+    }
+    public void update(Teacher person, String name, LocalDate birth, Gender gender) {
+        entityManager.getTransaction().begin();
+        person.setName(name);
+        person.setBirthday(birth);
+        person.setGender(gender);
         entityManager.persist(person);
         entityManager.getTransaction().commit();
     }

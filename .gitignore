@@ -1,4 +1,5 @@
 /target/P1-1.1a.jar
-#/*.iml
-#/.idea/
+/*.iml
+/.idea/
 /*.log
+/out

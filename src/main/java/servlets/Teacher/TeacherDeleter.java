@@ -1,12 +1,9 @@
 package servlets.Teacher;
 
-import dbmodules.dao.StudentDAO;
 import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,14 +16,13 @@ import java.util.Objects;
 import static dbmodules.types.Criteria.ALL;
 import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
-import static webdebugger.WebInputDebugger.printMessage;
 
 public class TeacherDeleter extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws IOException {
+        setQueryParametres(request,response);
 
         TeacherDAO teacherDAO = new TeacherDAO();
 
@@ -38,10 +34,12 @@ public class TeacherDeleter extends HttpServlet {
         if(Objects.isNull(criteria) || criteria.equals(ALL)) {
             message += criteriaString;
             if(!Objects.isNull(criteria) && criteria.equals(ALL)) {
-                message += printMessage(2,"Ошибка. Нельзя удалить всех сразу.");;
+                message += printMessage(2,"Ошибка." +
+                        " Нельзя удалить всех сразу.");
             } else {
                 message += printMessage(2,"Ошибка. Нет такого критерия.");
             }
+            response.getWriter().write(message);
         } else {
             message += criteria + printMessage(1,"OK.");
             String criteriaValueParsed;
@@ -52,12 +50,15 @@ public class TeacherDeleter extends HttpServlet {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed)) {
-                message += printMessage(2,"Ошибка. Неверное значение для введенного критерия.");;
+                message += printMessage(2,"Ошибка. " +
+                        "Неверное значение для введенного критерия.");
+                response.getWriter().write(message);
             } else {
                 message += printMessage(1,"OK.");
                 List<Teacher> list = new ArrayList<>();
                 if(criteria.equals(ID)) {
-                    Teacher teacher = teacherDAO.selectById(Integer.parseInt(criteriaValueParsed));
+                    Teacher teacher = teacherDAO.selectById(Integer
+                            .parseInt(criteriaValueParsed));
                     if(!Objects.isNull(teacher)) {
                         list.add(teacher);
                     }
@@ -65,8 +66,10 @@ public class TeacherDeleter extends HttpServlet {
                     if(!criteriaValueParsed.isEmpty()) {
                         list = teacherDAO.select(criteria, criteriaValueParsed);
                     } else {
-                        message += "Статус" + printMessage(2,"Ошибка. Пустое значение критерия.");
+                        message += "Статус" + printMessage(2,"Ошибка. " +
+                                "Пустое значение критерия.");
                     }
+                    response.getWriter().write(message);
                 }
                 for (Iterator<Teacher> iterator = list.iterator();
                      iterator.hasNext();) {
@@ -78,9 +81,12 @@ public class TeacherDeleter extends HttpServlet {
                     }
                 }
                 if(!list.isEmpty()) {
-                    response.getWriter().write("<br>Удалено " + list.size() + " записей");
+                    response.getWriter().write("<br>Удалено "
+                            + list.size() + " записей");
                 } else {
-                    response.getWriter().write("Преподаватель преподает в некоторых группах. Ошибка: <span class=\"error\">-1</span>");
+                    response.getWriter().write("Преподаватель " +
+                            "преподает в некоторых группах. " +
+                            "<span class=\"error\">-1</span>");
                 }
             }
         }

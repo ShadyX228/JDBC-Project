@@ -4,11 +4,9 @@ import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
-import sun.java2d.windows.GDIRenderer;
 
 import static webdebugger.WebInputDebugger.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,10 +18,9 @@ import java.util.Objects;
 
 public class TeacherGetFree extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response) throws IOException {
+        setQueryParametres(request,response);
 
         String groupIdString = request.getParameter("id");
 
@@ -62,14 +59,18 @@ public class TeacherGetFree extends HttpServlet {
                         "\t\t<td>Операции</td>\n" +
                         "\t</tr>");
                 for (Teacher teacher : freeTeachers) {
-                    response.getWriter().write("\t<tr id=\"freeTeacher" + teacher.getId() + "\">\n" +
-                            "\t\t<td class=\"groupId\" style=\"display: none;\">" + groupId + "</td>\n" +
+                    response.getWriter().write("\t<tr id=\"freeTeacher"
+                            + teacher.getId() + "\">\n" +
+                            "\t\t<td class=\"groupId\" style=\"display: none;\">"
+                            + groupId + "</td>\n" +
                             "\t\t<td>" + teacher.getName() + "</td>\n" +
-                            "\t\t<td><a class=\"putInGroup\" href=\"#putTeacher" + teacher.getId() + "\">Назначить</a></td>\n" +
+                            "\t\t<td><a class=\"putInGroup\" " +
+                            "href=\"#putTeacher"
+                            + teacher.getId() + "\">Назначить</a></td>\n" +
                             "\t</tr>");
                 }
             }
-            teacherDAO.closeEM();
+            teacherDAO.closeEntityManager();
         }
     }
 }

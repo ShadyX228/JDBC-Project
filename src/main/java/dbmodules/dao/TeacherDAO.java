@@ -70,48 +70,56 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
     }
     public List<Teacher> select(HashMap<Criteria, String> criteriasMap) {
         List<Teacher> list = new ArrayList<>();
-        String query = "FROM Teacher";
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("FROM Teacher");
         if(criteriasMap.containsKey(ID)) {
-            Teacher teacher = selectById(Integer.parseInt(criteriasMap.get(ID)));
+            Teacher teacher = selectById(Integer
+                    .parseInt(criteriasMap.get(ID)));
             if(!Objects.isNull(teacher)) {
                 list.add(teacher);
             }
         } else {
-            query += " WHERE ";
-            for (HashMap.Entry<Criteria, String> element : criteriasMap.entrySet()) {
+            queryBuilder.append(" WHERE ");
+            for (HashMap.Entry<Criteria,
+                    String> element : criteriasMap.entrySet()) {
                 switch (element.getKey()) {
                     case NAME: {
-                        query += "Name LIKE :name AND ";
+                        queryBuilder.append("Name LIKE :name AND ");
                         break;
                     }
                     case BIRTH: {
-                        query += "birthday = :birthday AND ";
+                        queryBuilder.append("birthday = :birthday AND ");
                         break;
                     }
                     case GENDER: {
-                        query += "gender = :gender AND ";
+                        queryBuilder.append("gender = :gender AND ");
                         break;
                     }
                 }
             }
             if(!criteriasMap.containsKey(ALL)) {
                 if(!criteriasMap.isEmpty()) {
-                    query = query.substring(0, query.length() - 4);
+                    String query = queryBuilder.toString().substring(0, queryBuilder.toString().length() - 4);
                     Query execute = entityManager
                             .createQuery(query);
                     if (criteriasMap.containsKey(NAME)) {
-                        execute.setParameter("name", "%" + criteriasMap.get(NAME) + "%");
+                        execute.setParameter("name",
+                                "%" + criteriasMap.get(NAME) + "%");
                     }
                     if (criteriasMap.containsKey(BIRTH)) {
                         LocalDate birth = LocalDate.of(
-                                LocalDate.parse(criteriasMap.get(BIRTH)).getYear(),
-                                LocalDate.parse(criteriasMap.get(BIRTH)).getMonth(),
-                                LocalDate.parse(criteriasMap.get(BIRTH)).getDayOfMonth()
+                                LocalDate.parse(criteriasMap.get(BIRTH))
+                                        .getYear(),
+                                LocalDate.parse(criteriasMap.get(BIRTH))
+                                        .getMonth(),
+                                LocalDate.parse(criteriasMap.get(BIRTH))
+                                        .getDayOfMonth()
                         );
                         execute.setParameter("birthday", birth);
                     }
                     if (criteriasMap.containsKey(GENDER)) {
-                        Gender gender = Gender.valueOf(criteriasMap.get(GENDER));
+                        Gender gender = Gender
+                                .valueOf(criteriasMap.get(GENDER));
                         execute.setParameter("gender", gender);
                     }
 
@@ -122,9 +130,9 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                 }
 
             } else {
-                query = "FROM Teacher";
+                String allQuery = "FROM Teacher";
                 list = entityManager
-                        .createQuery(query)
+                        .createQuery(allQuery)
                         .getResultList();
             }
         }

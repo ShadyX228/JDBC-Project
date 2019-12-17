@@ -237,12 +237,14 @@ $(document).ready(function(){
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
+                console.log(111);
                 lightOn("#teacher" + id,successColor);
                 $("#teacher" + id + " .name").html(name);
                 $("#teacher" + id + " .birth").html(birth);
                 $("#teacher" + id + " .gender").html(gender);
                 $("#status").html("");
             } else {
+                console.log(222);
                 lightOn("#teacher" + id,failColor);
             }
         });
@@ -410,14 +412,20 @@ $(document).ready(function(){
             switch (table) {
                 case "student" : {
                     page = "studentDelete";
+                    $("#studentUpdateForm")[0].reset();
+                    $("#studentUpdateForm").hide();
                     break;
                 }
                 case "teacher" : {
                     page = "teacherDelete";
+                    $("#teacherUpdateForm")[0].reset();
+                    $("#teacherUpdateForm").hide();
                     break;
                 }
                 case "group" : {
                     page = "groupDelete";
+                    $("#groupUpdateForm")[0].reset();
+                    $("#groupUpdateForm").hide();
                     break;
                 }
             }

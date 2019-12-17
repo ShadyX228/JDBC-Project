@@ -1,10 +1,6 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
 import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Gender;
 
@@ -21,10 +17,10 @@ import java.util.Objects;
 import static webdebugger.WebInputDebugger.*;
 
 public class TeacherAdder extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws IOException {
+        setQueryParametres(request,response);
 
         String name = request.getParameter("name");
         String birth = request.getParameter("birth");
@@ -38,7 +34,7 @@ public class TeacherAdder extends HttpServlet {
             response.getWriter().write(message);
         } else {
             boolean check = true;
-            message += "Значения не пустые " + printMessage(1, "OK.") +
+            message += "Значения не пустые " + printMessage(1, " - OK.") +
                     "Проверяю корректность введенных параметров...<br>";
             message += "Имя: " + name + printMessage(1, "OK.");
 
@@ -55,15 +51,16 @@ public class TeacherAdder extends HttpServlet {
             message += "Пол: " + gender;
             Gender genderParsed = checkGender(gender);
             if (Objects.isNull(genderParsed)) {
-                message += printMessage(2, "Ошибка: некорректный ввод.");
+                message += printMessage(2, " - Ошибка: некорректный ввод.");
                 check = false;
             } else {
-                message += printMessage(1, "OK.");
+                message += printMessage(1, " - OK.");
             }
 
             message += "Пытаюсь добавить... ";
             if (!check) {
-                message += printMessage(2, "Ошибка. Одно или несколько полей не прошли проверку.");
+                message += printMessage(2, "Ошибка. " +
+                        "Одно или несколько полей не прошли проверку.");
                 response.getWriter().write(message);
             } else {
                 Teacher teacher = new Teacher(
@@ -75,8 +72,9 @@ public class TeacherAdder extends HttpServlet {
                 );
                 TeacherDAO teacherDAO = new TeacherDAO();
                 teacherDAO.add(teacher);
-                teacherDAO.closeEM();
-                response.getWriter().write("Запись <span class=\"lastId\">" + teacher.getId() + "</span> добавлена.");
+                teacherDAO.closeEntityManager();
+                response.getWriter().write("Запись <span class=\"lastId\">"
+                        + teacher.getId() + "</span> добавлена.");
             }
         }
     }

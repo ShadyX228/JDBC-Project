@@ -13,35 +13,40 @@ import java.io.IOException;
 import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.printMessage;
+import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class TeacherPutInGroupByNumber extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws IOException {
+        setQueryParametres(request,response);
 
         String teacherIdString = request.getParameter("teacherId");
         String groupNumberString = request.getParameter("groupNumber");
 
         String message = "Проверяю переданные параметры...<br>";
-        if(Objects.isNull(teacherIdString) || Objects.isNull(groupNumberString) ) {
+        if(Objects.isNull(teacherIdString)
+                || Objects.isNull(groupNumberString) ) {
             message += printMessage(2,"Переданы пустые значения.");
         } else {
             TeacherDAO teacherDAO = new TeacherDAO();
             GroupDAO groupDAO = new GroupDAO();
 
-            Teacher teacher = teacherDAO.selectById(Integer.parseInt(teacherIdString));
+            Teacher teacher = teacherDAO.selectById(Integer
+                    .parseInt(teacherIdString));
             Group group = groupDAO.select(Integer.parseInt(groupNumberString));
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
                 teacherDAO.putTeacherInGroup(teacher,group);
-                response.getWriter().write("<span class=\"lastId\">" + group.getId() + "</span>");
+                response.getWriter().write("<span class=\"lastId\">"
+                        + group.getId() + "</span>");
             } else {
-                printMessage(2,"Ошибка: нет такой группы или преподавателя.");
+                message += printMessage(2,"Ошибка: нет такой группы или преподавателя.");
+                response.getWriter().write(message);
             }
 
-            teacherDAO.closeEM();
-            groupDAO.closeEM();
+            teacherDAO.closeEntityManager();
+            groupDAO.closeEntityManager();
         }
         response.getWriter().write(message);
     }

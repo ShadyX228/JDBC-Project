@@ -4,25 +4,22 @@ import dbmodules.dao.GroupDAO;
 import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
-import dbmodules.types.Criteria;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
-import static webdebugger.WebInputDebugger.*;
 import static webdebugger.WebInputDebugger.printMessage;
+import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class TeacherDeleteGroup extends HttpServlet {
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest request,
+                          HttpServletResponse response)
+            throws IOException {
+        setQueryParametres(request,response);
 
         String teacherIdString = request.getParameter("teacherId");
         String groupIdString = request.getParameter("groupId");
@@ -39,11 +36,12 @@ public class TeacherDeleteGroup extends HttpServlet {
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
                 teacherDAO.removeTeacherFromGroup(teacher,group);
             } else {
-                printMessage(2,"Ошибка: нет такой группы или преподавателя.");
+                message += printMessage(2,"Ошибка: нет такой группы или преподавателя.");
+                response.getWriter().write(message);
             }
 
-            teacherDAO.closeEM();
-            groupDAO.closeEM();
+            teacherDAO.closeEntityManager();
+            groupDAO.closeEntityManager();
         }
         response.getWriter().write(message);
     }

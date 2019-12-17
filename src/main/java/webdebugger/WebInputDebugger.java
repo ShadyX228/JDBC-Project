@@ -1,21 +1,22 @@
 package webdebugger;
 
+import com.sun.deploy.net.HttpResponse;
 import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
-import dbmodules.tables.Table;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
-import dbmodules.types.TableType;
 
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 
 import static dbmodules.types.Criteria.*;
 
@@ -43,7 +44,6 @@ public class WebInputDebugger {
         }
         return null;
     }
-
     public static Gender checkGender(String genderInput) {
         for (Gender gender : Gender.values()) {
             if (gender.getValue().equals(genderInput)) {
@@ -52,7 +52,6 @@ public class WebInputDebugger {
         }
         return null;
     }
-
     public static Group checkGroup
             (int number, GroupDAO groupDAO) {
         try {
@@ -61,7 +60,6 @@ public class WebInputDebugger {
             return null;
         }
     }
-
     public static String parseCriteria
             (Criteria criteria, String critVal) {
         switch (criteria) {
@@ -72,7 +70,6 @@ public class WebInputDebugger {
                 } catch (InputMismatchException | NumberFormatException e) {
                     return null;
                 }
-
             }
             case NAME: {
                 return critVal;
@@ -89,7 +86,7 @@ public class WebInputDebugger {
                 try {
                     GroupDAO groupDAO = new GroupDAO();
                     Group group = groupDAO.select(Integer.parseInt(critVal));
-                    groupDAO.closeEM();
+                    groupDAO.closeEntityManager();
                     if (!Objects.isNull(group)) {
                         return Integer.toString(group.getNumber());
                     } else {
@@ -115,74 +112,140 @@ public class WebInputDebugger {
         }
         return null;
     }
-
     public static String printMessage(int status, String message) {
         switch (status) {
             case 1: {
-                return " - <span class=\"OK\">" + message + "</span><br>";
+                return "<span class=\"OK\">" + message + "</span><br>";
             }
             case 2: {
-                return " - <span class=\"error\">" + message + "</span><br>";
+                return "<span class=\"error\">" + message + "</span><br>";
             }
             default: {
-                return " - " + message + "<br>";
+                return message + "<br>";
             }
         }
     }
 
     public static String generateStudentsTable(List<Student> list) {
-        String output = "\t<tr>\n" +
+        StringBuilder output = new StringBuilder();
+        output.append("\t<tr>\n" +
                 "\t\t<td>ID</td>\n" +
                 "\t\t<td>ФИО</td>\n" +
                 "\t\t<td>День рождения</td>\n" +
                 "\t\t<td>Пол</td>\n" +
                 "\t\t<td>Группа</td>\n" +
                 "\t\t<td>Операции</td>\n" +
-                "\t</tr>\n";
+                "\t</tr>\n");
         if (!list.isEmpty()) {
             for (Student student : list) {
-                output += "<tr id=\"student" + student.getId() + "\">\n";
-                output += "<td class=\"id\">" + student.getId() + "</td>";
-                output += "<td class=\"name\">" + student.getName() + "</td>";
-                output += "<td class=\"birth\">" + student.getBirth() + "</td>";
-                output += "<td class=\"gender\">" + student.getGender() + "</td>";
-                output += "<td class=\"group\">" + student.getGroup().getNumber() + "</td>";
-                output += "<td class=\"operations\">" +
-                        "<a class=\"delete\" href=\"#deleteStudent" + student.getId() + "\">Удалить</a><br>" +
-                        "<a class=\"update\" href=\"#updateStudent" + student.getId() + "\">Изменить</a>" +
-                        "</td>";
-                output += "</tr>";
+                output.append("<tr id=\"student")
+                        .append(student.getId())
+                        .append("\">\n").append(
+                "<td class=\"id\">").append(student.getId()).append("</td>")
+                        .append("<td class=\"name\">")
+                        .append(student.getName()).append("</td>")
+                        .append("<td class=\"birth\">")
+                        .append(student.getBirth()).append("</td>")
+                        .append("<td class=\"gender\">")
+                        .append(student.getGender()).append("</td>")
+                        .append("<td class=\"group\">")
+                        .append(student.getGroup().getNumber())
+                        .append("</td>")
+                        .append("<td class=\"operations\">").append(
+                        "<a class=\"delete\" href=\"#deleteStudent")
+                        .append(student.getId())
+                        .append("\">Удалить</a><br>").append(
+                        "<a class=\"update\" href=\"#updateStudent")
+                        .append(student.getId()).append("\">Изменить</a>")
+                        .append("</td>").append("</tr>");
             }
         } else {
-            output += "<tr><td colspan=\"6\">Нет записей.</tr></td>";
+            output.append("<tr><td colspan=\"6\">Нет записей.</tr></td>");
         }
-        return output;
+        return output.toString();
     }
     public static String generateTeacherTable(List<Teacher> list) {
-        String output = "\t<tr>\n" +
+        StringBuilder output = new StringBuilder();
+        output.append("\t<tr>\n" +
                 "\t\t<td>ID</td>\n" +
                 "\t\t<td>ФИО</td>\n" +
                 "\t\t<td>День рождения</td>\n" +
                 "\t\t<td>Пол</td>\n" +
                 "\t\t<td>Операции</td>\n" +
-                "\t</tr>";
+                "\t</tr>");
         if(!list.isEmpty()) {
             for (Teacher teacher : list) {
-                output += "<tr id=\"teacher" + teacher.getId() + "\">\n";
-                output += "<td class=\"id\">" + teacher.getId() + "</td>";
-                output += "<td class=\"name\">" + teacher.getName() + "</td>";
-                output += "<td class=\"birth\">" + teacher.getBirth() + "</td>";
-                output += "<td class=\"gender\">" + teacher.getGender() + "</td>";
-                output += "<td class=\"operations\">" +
-                        "<a class=\"delete\" href=\"#deleteTeacher" + teacher.getId() + "\">Удалить</a><br>" +
-                        "<a class=\"update\" href=\"#updateTeacher" + teacher.getId() + "\">Изменить</a><br>" +
-                        "<a class=\"getInfo\" href=\"#getInfoTeacher" + teacher.getId() + "\">Информация</a>" +
-                        "</td>";
-                output += "</tr>";
+                output
+                        .append("<tr id=\"teacher")
+                        .append( teacher.getId() ).append( "\">\n" )
+                        .append("<td class=\"id\">")
+                        .append(teacher.getId())
+                        .append("</td>" )
+                        .append("<td class=\"name\">")
+                        .append(teacher.getName() )
+                        .append("</td>" )
+                        .append("<td class=\"birth\">")
+                        .append(teacher.getBirth())
+                        .append("</td>")
+                        .append("<td class=\"gender\">")
+                        .append(teacher.getGender())
+                        .append( "</td>" )
+                        .append("<td class=\"operations\">" )
+                        .append("<a class=\"delete\" href=\"#deleteTeacher")
+                        .append( teacher.getId() ).append("\">Удалить</a><br>")
+                        .append("<a class=\"update\" href=\"#updateTeacher")
+                        .append( teacher.getId() ).append( "\">Изменить</a><br>" )
+                        .append("<a class=\"getInfo\" href=\"#getInfoTeacher")
+                        .append(teacher.getId())
+                        .append("\">Информация</a>")
+                        .append("</td>")
+                        .append("</tr>");
             }
         } else {
-            output += "<tr><td colspan=\"6\">Нет записей.</tr></td>";
+            output.append("<tr><td colspan=\"6\">Нет записей.</tr></td>");
         }
-        return output;
+        return output.toString();
+    }
+    public static String generateGroupTable(List<Group> list) {
+        StringBuilder output = new StringBuilder();
+        output.append("\t<tr>\n" +
+                "\t\t<td>ID</td>\n" +
+                "\t\t<td>Группа</td>\n" +
+                "\t\t<td>Операции</td>\n" +
+                "\t</tr>");
+        if(!list.isEmpty()) {
+            for (Group group : list) {
+                output
+                        .append("<tr id=\"group")
+                        .append(group.getId())
+                        .append("\">\n")
+                        .append("<td class=\"id\">").append(group.getId()).append("</td>")
+                        .append("<td class=\"group\">").append(group.getNumber()).append( "</td>")
+                        .append("<td class=\"operations\">")
+                        .append("<a class=\"delete\" href=\"#deleteGroup")
+                        .append(group.getId()).append("\">Удалить</a><br>")
+                        .append("<a class=\"update\" href=\"#updateGroup")
+                        .append(group.getId()).append("\">Изменить</a><br>")
+                        .append("<a class=\"getInfo\" href=\"#getInfoGroup")
+                        .append(group.getId() )
+                        .append( "\">Информация</a><br>")
+                        .append("<a class=\"putTeacherInGroup\"")
+                        .append("href=\"#putTeacherInGroup")
+                        .append(group.getId())
+                        .append("\">Назначить преподавателя</a>")
+                        .append("</td>")
+                        .append("</tr>");
+            }
+        } else {
+            output.append("<tr><td colspan=\"3\">Нет записей.</tr></td>");
+        }
+        return output.toString();
+    }
+    public static void setQueryParametres(HttpServletRequest request,
+                                   HttpServletResponse response)
+            throws UnsupportedEncodingException {
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
     }
 }

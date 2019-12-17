@@ -18,7 +18,7 @@ public class JPAUtil <T extends Table> {
     public static void close(){
         entityManagerFactory.close();
     }
-    public void closeEM() {
+    public void closeEntityManager() {
         entityManager.close();
     }
 

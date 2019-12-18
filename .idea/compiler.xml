@@ -9,8 +9,8 @@
         <module name="P1" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11">
-      <module name="P1" target="1.8" />
+    <bytecodeTargetLevel target="8">
+      <module name="JDBC-Project-servlet" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

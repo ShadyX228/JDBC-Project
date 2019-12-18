@@ -80,10 +80,16 @@ public class Student extends Table {
         Student student = (Student) o;
 
         if (id != student.id) return false;
-        if (name != null ? !name.equals(student.name) : student.name != null) return false;
-        if (birthday != null ? !birthday.equals(student.birthday) : student.birthday != null) return false;
+        if (name != null ? !name.equals(student.name) : student.name != null)
+            return false;
+        if (birthday != null ?
+                !birthday.equals(student.birthday)
+                : student.birthday != null)
+            return false;
         if (gender != student.gender) return false;
-        return group != null ? group.equals(student.group) : student.group == null;
+        return group != null ?
+                group.equals(student.group)
+                : student.group == null;
     }
 
     @Override

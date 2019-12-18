@@ -3,8 +3,6 @@ package servlets.Student;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,10 +15,9 @@ import static webdebugger.WebInputDebugger.*;
 
 public class StudentSelector extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response) throws IOException {
+        setQueryParametres(request,response);
 
         String idString = request.getParameter("id");
         String name = request.getParameter("name");
@@ -66,6 +63,6 @@ public class StudentSelector extends HttpServlet {
         }
         students = studentDAO.select(map);
         response.getWriter().write(generateStudentsTable(students));
-        studentDAO.closeEM();
+        studentDAO.closeEntityManager();
     }
 }

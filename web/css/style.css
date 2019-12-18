@@ -107,8 +107,10 @@ form {
     margin: 5px;
 }
 #status {
-    text-align: center;
+    text-align: left;
     padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 #groupInfo, #teacherInfo {
     background: white;

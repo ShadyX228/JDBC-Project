@@ -1,12 +1,7 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
 import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
-import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 
 import javax.servlet.ServletException;
@@ -15,19 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
 import static dbmodules.types.Criteria.*;
 import static webdebugger.WebInputDebugger.*;
-import static webdebugger.WebInputDebugger.printMessage;
 
 public class TeacherUpdater extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-        request.setCharacterEncoding("UTF-8");
+        setQueryParametres(request,response);
 
         String idString = request.getParameter("id");
         String name = request.getParameter("name");
@@ -51,11 +42,19 @@ public class TeacherUpdater extends HttpServlet {
 
             TeacherDAO teacherDAO = new TeacherDAO();
             Teacher teacher = teacherDAO.selectById(id);
-            teacherDAO.update(teacher, name, birth, gender);
-            teacherDAO.closeEM();
-            response.getWriter().write("Запись <span class=\"lastId\">" + teacher.getId()  + "</span> обновлена.");
+            if(!Objects.isNull(teacher)) {
+                teacherDAO.update(teacher, name, birth, gender);
+                response.getWriter().write("Запись <span class=\"lastId\">"
+                        + teacher.getId()  + "</span> обновлена.");
+            } else {
+                message += "Такого преподавателя нет.." +
+                        " <span class=\"error\">-1</span>";
+                response.getWriter().write(message);
+            }
+            teacherDAO.closeEntityManager();
         } else {
-            message += "Переданы пустые параметры либо они некорректны: <span class=\"error\">-1</span>";
+            message += "Переданы пустые параметры либо они некорректны." +
+                    " <span class=\"error\">-1</span>";
             response.getWriter().write(message);
         }
     }

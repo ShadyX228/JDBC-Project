@@ -1,19 +1,11 @@
-<%@ page import="dbmodules.dao.StudentDAO" %>
-<%@ page import="dbmodules.tables.Teacher" %>
-<%@ page import="static dbmodules.types.Criteria.ALL" %>
-<%@ page import="dbmodules.tables.Student" %><%--
-  Created by IntelliJ IDEA.
-  User: MagomedovIM
-  Date: 21.11.2019
-  Time: 13:57
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="ru">
     <head>
       <title>Информационная система для работы с базой студентов, групп и преподавателей</title>
       <script src ="scripts/jquery-3.4.1.min.js"></script>
+      <script src ="scripts/functions.js"></script>
+      <script src ="scripts/handlers.js"></script>
       <script src ="scripts/index.js"></script>
       <link rel="stylesheet" type="text/css" href="css/style.css">
       <meta charset="UTF-8">

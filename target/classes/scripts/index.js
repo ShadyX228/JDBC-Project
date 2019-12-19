@@ -1,10 +1,12 @@
 $(document).ready(function(){
     var successColor = "#CACACA";
     var failColor = "red";
+    var title = "Информационная система для работы с базой студентов, групп и преподавателей";
     /** Выбор таблицы **/
 
     /** Студент **/
     $("#studentAction").click(function () {
+        $("title").html("Студенты | " + title);
         $("#status").show();
         $("#studentsTable").show();
         $("#groupsTable").hide();
@@ -17,8 +19,10 @@ $(document).ready(function(){
             $("#studentOutput .outputTable").html(data);
             $("#status").html("");
 
-            addDeleteEventHandler("#studentOutput .outputTable tr","student");
-            addUpdateEventHandler("#studentOutput .outputTable tr","student");
+            addDeleteEventHandler("#studentOutput .outputTable tr",
+                "student");
+            addUpdateEventHandler("#studentOutput .outputTable tr",
+                "student");
         });
     });
     $("#studentAdd").click(function () {
@@ -43,11 +47,21 @@ $(document).ready(function(){
                     "<td class=\"birth\">" + birth + "</td>" +
                     "<td class=\"gender\">" + gender + "</td>" +
                     "<td class=\"group\">" + group + "</td>" +
-                    "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteStudent" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateStudent" + id + "\">Изменить</a></td>" +
+                    "<td class=\"opeations\">" +
+                    "<a class=\"delete\" href=\"#deleteStudent" + id + "\">" +
+                    "Удалить" +
+                    "</a>" +
+                    "<br>" +
+                    "<a class=\"update\" href=\"#updateStudent" + id + "\">" +
+                    "Изменить" +
+                    "</a>" +
+                    "</td>" +
                     "</tr>");
                 lightOn("#student" + id,successColor);
-                addDeleteEventHandler("#student"+id, "student");
-                addUpdateEventHandler("#student"+id, "student");
+                addDeleteEventHandler("#student"+id,
+                    "student");
+                addUpdateEventHandler("#student"+id,
+                    "student");
             }
         });
     })
@@ -59,7 +73,11 @@ $(document).ready(function(){
         var birth =  $("#studentUpdateForm .birth").val();
         var gender =$("#studentUpdateForm .gender").val();
         var group = $("#studentUpdateForm .group").val();
-        $.post("studentUpdate", {"id" : id, "name" : name, "birth" : birth, "gender" : gender, "group" : group}, function(data) {
+        $.post("studentUpdate", {"id" : id,
+            "name" : name,
+            "birth" : birth,
+            "gender" : gender,
+            "group" : group}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -91,6 +109,7 @@ $(document).ready(function(){
 
     /** Группа **/
     $("#groupAction").click(function () {
+        $("title").html("Группы | " + title);
         $("#status").show();
         $("#studentsTable").hide();
         $("#groupsTable").show();
@@ -103,8 +122,10 @@ $(document).ready(function(){
             $("#groupOutput .outputTable").html(data);
             $("#status").html("");
 
-            addDeleteEventHandler("#groupOutput .outputTable tr","group");
-            addUpdateEventHandler("#groupOutput .outputTable tr","group");
+            addDeleteEventHandler("#groupOutput .outputTable tr",
+                "group");
+            addUpdateEventHandler("#groupOutput .outputTable tr",
+                "group");
             addGroupInfoEventHandler("tr");
             addGetTeachersHandler("tr");
         });
@@ -123,19 +144,34 @@ $(document).ready(function(){
             $("#status").html(data);
             var id = parseInt($("#status .lastId").html());
             if(!isNaN(id)) {
-                $("#groupOutput .outputTable").append("<tr id=\"group" + id + "\">" +
+                $("#groupOutput .outputTable").append(
+                    "<tr id=\"group" + id + "\">" +
                     "<td class=\"id\">" + id + "</td>" +
                     "<td class=\"group\">" + group + "</td>" +
                     "<td class=\"opeations\">" +
-                    "<a class=\"delete\" href=\"#deleteGroup" + id + "\">Удалить</a><br>" +
-                    "<a class=\"update\" href=\"#updateGroup" + id + "\">Изменить</a><br>" +
-                    "<a class=\"getInfo\" href=\"#getInfoGroup" + id + "\">Информация</a><br>" +
-                    "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + id + "\">Назначить преподавателя</a></td>" +
+                    "<a class=\"delete\" href=\"#deleteGroup" + id + "\">" +
+                    "Удалить" +
+                    "</a>" +
+                    "<br>" +
+                    "<a class=\"update\" href=\"#updateGroup" + id + "\">" +
+                    "Изменить" +
+                    "</a>" +
+                    "<br>" +
+                    "<a class=\"getInfo\" href=\"#getInfoGroup" + id + "\">" +
+                    "Информация" +
+                    "</a>" +
+                    "<br>" +
+                    "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + id + "\">" +
+                    "Назначить преподавателя" +
+                    "</a>" +
+                    "</td>" +
                     "</tr>");
                 lightOn("#group" + id,successColor);
 
-                addDeleteEventHandler("#group"+id, "group");
-                addUpdateEventHandler("#group"+id, "group");
+                addDeleteEventHandler("#group"+id,
+                    "group");
+                addUpdateEventHandler("#group"+id,
+                    "group");
                 addGroupInfoEventHandler("#group"+id);
                 addGetTeachersHandler("#group"+id);
             }
@@ -180,6 +216,7 @@ $(document).ready(function(){
 
     /** Преподаватель **/
     $("#teacherAction").click(function () {
+        $("title").html("Преподаватели | " + title);
         $("#status").show();
         $("#studentsTable").hide();
         $("#groupsTable").hide();
@@ -191,8 +228,10 @@ $(document).ready(function(){
             $("#teacherOutput .outputTable").html(data);
             $("#status").html("");
 
-            addDeleteEventHandler("#teacherOutput .outputTable tr","teacher");
-            addUpdateEventHandler("#teacherOutput .outputTable tr","teacher");
+            addDeleteEventHandler("#teacherOutput .outputTable tr",
+                "teacher");
+            addUpdateEventHandler("#teacherOutput .outputTable tr",
+                "teacher");
             addTeacherInfoEventHandler("tr");
             addGetTeachersHandler("tr");
         });
@@ -217,7 +256,19 @@ $(document).ready(function(){
                     "<td class=\"name\">" + name + "</td>" +
                     "<td class=\"birth\">" + birth + "</td>" +
                     "<td class=\"gender\">" + gender + "</td>" +
-                    "<td class=\"opeations\"><a class=\"delete\" href=\"#deleteTeacher" + id + "\">Удалить</a><br><a class=\"update\" href=\"#updateTeacher" + id + "\">Изменить</a><br><a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + id + "\">Информация</a></td>" +
+                    "<td class=\"opeations\">" +
+                    "<a class=\"delete\" href=\"#deleteTeacher" + id + "\">" +
+                    "Удалить" +
+                    "</a>" +
+                    "<br>" +
+                    "<a class=\"update\" href=\"#updateTeacher" + id + "\">" +
+                    "Изменить" +
+                    "</a>" +
+                    "<br>" +
+                    "<a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + id + "\">" +
+                    "Информация" +
+                    "</a>" +
+                    "</td>" +
                     "</tr>");
                 lightOn("#teacher" + id,successColor);
                 addDeleteEventHandler("#teacher"+id, "teacher");
@@ -233,7 +284,12 @@ $(document).ready(function(){
         var name =  $("#teacherUpdateForm .name").val();
         var birth =  $("#teacherUpdateForm .birth").val();
         var gender =$("#teacherUpdateForm .gender").val();
-        $.post("teacherUpdate", {"id" : id, "name" : name, "birth" : birth, "gender" : gender}, function(data) {
+        $.post("teacherUpdate", {
+            "id" : id,
+            "name" : name,
+            "birth" : birth,
+            "gender" : gender},
+            function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -267,7 +323,9 @@ $(document).ready(function(){
         var groupNumber = $("#putTeacherInGroup .group").val();
         console.log(teacherId + " " + groupNumber);
 
-        $.post("teacherPutInGroupByNumber", {"teacherId" : teacherId, "groupNumber" : groupNumber}, function(data) {
+        $.post("teacherPutInGroupByNumber", {
+            "teacherId" : teacherId,
+            "groupNumber" : groupNumber}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -281,21 +339,38 @@ $(document).ready(function(){
                         "\t\t<td>Операции</td>\n" +
                         "\t</tr>";
                     table += "\t<tr id=\"groupTeacher" + $("#status .lastId").html() + "\">\n" +
-                        "\t\t<td class=\"teacherId\" style=\"display: none;\">" + teacherId + "</td>\n" +
+                        "\t\t<td class=\"teacherId\" style=\"display: none;\">"
+                        + teacherId +
+                        "</td>\n" +
                         "\t\t<td class=\"number\">" + groupNumber + "</td>\n" +
-                        "\t\t<td><a class=\"removeTeacherFromGroup\" href=\"#removeGroupFromTeacher" + $("#status .lastId").html() + "FromGroup\">Убрать группу</a></td>\n" +
+                        "\t\t<td>" +
+                        "<a class=\"removeTeacherFromGroup\" href=\"#removeGroupFromTeacher" + $("#status .lastId").html() + "FromGroup\">" +
+                        "Убрать группу" +
+                        "</a>" +
+                        "</td>\n" +
                         "\t</tr>";
                     table += "</table>";
                     $("#groups").html(table);
                     addGroupRemovingFromTeacherHandler("#groupTeacher" + $("#status .lastId").html());
                 } else {
-                    //alert(2); // дописать к существующей таблице
-                    $("#teacherInfo table").append("\t<tr id=\"groupTeacher" + $("#status .lastId").html() + "\">\n" +
-                        "\t\t<td class=\"teacherId\" style=\"display: none;\">" + teacherId + "</td>\n" +
-                        "\t\t<td class=\"number\">" + groupNumber + "</td>\n" +
-                        "\t\t<td><a class=\"removeTeacherFromGroup\" href=\"#removeGroupFromTeacher" + $("#status .lastId").html() + "FromGroup\">Убрать группу</a></td>\n" +
+                    $("#teacherInfo table").append(
+                        "\t<tr id=\"groupTeacher" + $("#status .lastId").html() + "\">\n" +
+                        "\t\t<td class=\"teacherId\" style=\"display: none;\">"
+                        + teacherId +
+                        "</td>\n" +
+                        "\t\t<td class=\"number\">"
+                        + groupNumber +
+                        "</td>\n" +
+                        "\t\t<td>" +
+                        "<a class=\"removeTeacherFromGroup\" " +
+                        "href=\"#removeGroupFromTeacher" + $("#status .lastId").html() + "FromGroup\">" +
+                        "Убрать группу" +
+                        "</a>" +
+                        "</td>\n" +
                         "\t</tr>");
-                    addGroupRemovingFromTeacherHandler("#groupTeacher" + $("#status .lastId").html());
+                    addGroupRemovingFromTeacherHandler(
+                        "#groupTeacher" + $("#status .lastId").html()
+                    );
                 }
                 $("#status").html("");
             }

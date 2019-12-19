@@ -20,7 +20,6 @@ function addDeleteEventHandler(selector, table) {
                 break;
             }
         }
-        $("#status").html("Загрузка...");
         $.post(page, {"criteria" : "ID", "criteriaValue" : id}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
@@ -67,7 +66,8 @@ function addGroupInfoEventHandler(selector) {
     })
 }
 function addGetTeachersHandler(selector) {
-    $("#groupOutput .outputTable " + selector).on("click", ".putTeacherInGroup", function() {
+    $("#groupOutput .outputTable " + selector).on("click", ".putTeacherInGroup",
+        function() {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
@@ -91,7 +91,10 @@ function addTeacherRemovingFromGroupHandler(selector) {
 
         var groupId = $("#groupTeacher" + teacherId).find(".groupId").html();
 
-        $.post("teacherDeleteGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
+        $.post("teacherDeleteGroup", {
+            "teacherId" : teacherId,
+                "groupId" : groupId},
+            function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
@@ -113,12 +116,13 @@ function addGroupRemovingFromTeacherHandler(selector) {
         var teacherId = $("#groupTeacher" + groupId).find(".teacherId").html();
         console.log(groupId + " "+ teacherId);
 
-        $.post("teacherDeleteGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
+        $.post("teacherDeleteGroup", {
+            "teacherId" : teacherId,
+            "groupId" : groupId}, function(data) {
             $("#status").html(data);
             var error = parseInt($("#status .error").html());
             if(isNaN(error)) {
-                $("#groupTeacher"+ groupId).hide();
-                $("#groupTeacher"+ groupId).remove();
+                $("#groupTeacher"+ groupId).hide().remove();
                 $("#status").html("");
             } else {
                 lightOn("#groupTeacher" + teacherId, failColor);
@@ -167,7 +171,9 @@ function addTeacherInfoEventHandler(selector) {
                 addGroupRemovingFromTeacherHandler("#teacherInfo table tr");
                 //addTeacherAddingInGroupHandler("#teacherInfo table tr");
             } else {
-                $("#groups").html("нет. <span style=\"display: none\" class=\"error\">-1</span>");
+                $("#groups").html(
+                    "нет. <span style=\"display: none\" class=\"error\">-1</span>"
+                );
             }
             $("#status").html("");
         });

@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="JDBC-Project-servlet" />
         <module name="P1" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
-      <module name="JDBC-Project-servlet" target="8" />
+      <module name="JDBC-Project-servlet" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

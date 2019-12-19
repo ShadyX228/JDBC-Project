@@ -79,6 +79,7 @@
           <element id="library" level="project" name="Java EE 6-Java EE 6" />
         </element>
       </element>
+      <element id="javaee-facet-resources" facet="JDBC-Project-servlet/web/Web" />
     </root>
   </artifact>
 </component>

@@ -7,7 +7,9 @@
       <script src ="scripts/functions.js"></script>
       <script src ="scripts/handlers.js"></script>
       <script src ="scripts/index.js"></script>
+        <script src ="scripts/datatables.js"></script>
       <link rel="stylesheet" type="text/css" href="css/style.css">
+      <link rel="stylesheet" type="text/css" href="css/datatables.css">
       <meta charset="UTF-8">
     </head>
     <body>
@@ -67,7 +69,7 @@
                     </form>
 
                     <div id="studentOutput">
-                        <table class="outputTable"></table>
+                        <table id="studentOT" class="outputTable display"></table>
                     </div>
                 </div>
                 <div id="groupsTable">

@@ -23,6 +23,7 @@ $(document).ready(function(){
                 "student");
             addUpdateEventHandler("#studentOutput .outputTable tr",
                 "student");
+            $("#studentOT").DataTable();
         });
     });
     $("#studentAdd").click(function () {

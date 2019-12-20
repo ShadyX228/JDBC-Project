@@ -128,14 +128,14 @@ public class WebInputDebugger {
 
     public static String generateStudentsTable(List<Student> list) {
         StringBuilder output = new StringBuilder();
-        output.append("\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>ФИО</td>\n" +
-                "\t\t<td>День рождения</td>\n" +
-                "\t\t<td>Пол</td>\n" +
-                "\t\t<td>Группа</td>\n" +
-                "\t\t<td>Операции</td>\n" +
-                "\t</tr>\n");
+        output.append("\t<thead><tr>\n" +
+                "\t\t<th>ID</th>\n" +
+                "\t\t<th>ФИО</th>\n" +
+                "\t\t<th>День рождения</th>\n" +
+                "\t\t<th>Пол</th>\n" +
+                "\t\t<th>Группа</th>\n" +
+                "\t\t<th>Операции</th>\n" +
+                "\t</tr></thead><tbody>\n");
         if (!list.isEmpty()) {
             for (Student student : list) {
                 output.append("<tr id=\"student")
@@ -159,6 +159,7 @@ public class WebInputDebugger {
                         .append(student.getId()).append("\">Изменить</a>")
                         .append("</td>").append("</tr>");
             }
+            output.append("</tbody>");
         } else {
             output.append("<tr><td colspan=\"6\">Нет записей.</tr></td>");
         }

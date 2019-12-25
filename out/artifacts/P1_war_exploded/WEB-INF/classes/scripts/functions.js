@@ -180,6 +180,7 @@ function addTeacherInfoEventHandler(selector) {
 
     })
 }
+
 function lightOn(selector, color) {
     $(selector).css("background-color", color);
     setTimeout(function() {
@@ -188,4 +189,25 @@ function lightOn(selector, color) {
     }, 1000)
 
 }
-/** /Функции **/
+
+function addStudentRow(student) {
+        $("#studentOutput .outputTable").append(
+            "\t<tr id='student" + student["id"] + "'>\n" +
+            "\t\t<td class='id'>" + student["id"] + "</td>\n" +
+            "\t\t<td class='name'>" + student["name"] + "</td>\n" +
+            "\t\t<td class='birth'>" + student["birth"] + "</td>\n" +
+            "\t\t<td class='gender'>" + student["gender"] + "</td>\n" +
+            "\t\t<td class='group'>" + student["group"]["number"] + "</td>\n" +
+            "\t\t<td class='operations'>" +
+            "<a class=\"delete\" href=\"#deleteStudent" + student["id"] + "\">Удалить</a><br>" +
+            "<a class=\"update\" href=\"#updateStudent" + student["id"] + "\">Изменить</a>"
+            + "</td>\n" +
+            "\t</tr>"
+        );
+}
+/** /Функции function generateStudentsTable() {
+    $.get("test", function(data) {
+        data = JSON.parse(data);
+        alert(data.students[0]["id"]);
+    })
+}**/

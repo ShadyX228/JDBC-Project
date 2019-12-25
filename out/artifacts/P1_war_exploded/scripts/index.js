@@ -16,14 +16,30 @@ $(document).ready(function(){
 
         $.post("studentSelectAll", function(data) {
             $("#studentOutput .outputTable").show();
-            $("#studentOutput .outputTable").html(data);
+            $("#studentOutput .outputTable").html("");
+
+            data = JSON.parse(data);
+            $("#studentOutput .outputTable").append(
+                "\t<tr>\n" +
+                "\t\t<td>ID</td>\n" +
+                "\t\t<td>ФИО</td>\n" +
+                "\t\t<td>День рождения</td>\n" +
+                "\t\t<td>Пол</td>\n" +
+                "\t\t<td>Группа</td>\n" +
+                "\t\t<td>Операции</td>\n" +
+                "\t</tr>"
+            );
+            var students = data.students;
+            students.forEach(function(student, i, students) {
+                addStudentRow(student);
+            });
+
             $("#status").html("");
 
             addDeleteEventHandler("#studentOutput .outputTable tr",
                 "student");
             addUpdateEventHandler("#studentOutput .outputTable tr",
                 "student");
-            $("#studentOT").DataTable();
         });
     });
     $("#studentAdd").click(function () {

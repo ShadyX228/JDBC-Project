@@ -2,32 +2,32 @@
 <!DOCTYPE html>
 <html lang="ru">
     <head>
-      <title>Информационная система для работы с базой студентов, групп и преподавателей</title>
-      <script src ="scripts/jquery-3.4.1.min.js"></script>
-      <script src ="scripts/functions.js"></script>
-      <script src ="scripts/handlers.js"></script>
-      <script src ="scripts/index.js"></script>
-        <script src ="scripts/datatables.js"></script>
-      <link rel="stylesheet" type="text/css" href="css/style.css">
-      <link rel="stylesheet" type="text/css" href="css/datatables.css">
-      <meta charset="UTF-8">
+        <title>Информационная система для работы с базой студентов, групп и преподавателей</title>
+        <script src ="scripts/jquery-3.4.1.min.js"></script>
+        <script src ="scripts/functions.js"></script>
+        <script src ="scripts/handlers.js"></script>
+        <script src ="scripts/index.js"></script>
+        <!--<script src ="scripts/datatables.js"></script>-->
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <%--<link rel="stylesheet" type="text/css" href="css/datatables.css">--%>
+        <meta charset="UTF-8">
     </head>
     <body>
-        <div id="wrapper">
-            <nav>
-                <ul>
-                  <li><a id="studentAction" href="#student">Студенты</a></li>
-                  <li><a id="groupAction"  href="#group">Группы</a></li>
-                  <li><a id="teacherAction"  href="#teacher">Преподаватели</a></li>
+    <div id="wrapper">
+        <nav>
+            <ul>
+                <li><a id="studentAction" href="#student">Студенты</a></li>
+                <li><a id="groupAction"  href="#group">Группы</a></li>
+                <li><a id="teacherAction"  href="#teacher">Преподаватели</a></li>
+            </ul>
+        </nav>
+        <div id="status"></div>
+        <div id="content">
+            <div id="studentsTable">
+                <ul class="actions" id="studentNav">
+                    <li><a id="studentAdd" href="#studentAddForm">Добавить</a></li>
+                    <li><a id="studentSearch" href="#studentSearchForm">Поиск</a></li>
                 </ul>
-            </nav>
-            <div id="status"></div>
-            <div id="content">
-                <div id="studentsTable">
-                    <ul class="actions" id="studentNav">
-                        <li><a id="studentAdd" href="#studentAddForm">Добавить</a></li>
-                        <li><a id="studentSearch" href="#studentSearchForm">Поиск</a></li>
-                    </ul>
                     <form id="studentAddForm" name="studentAddForm" method="POST">
                         <p>Добавление студента</p>
                         <input type="text" class="name" name="name" placeholder="ФИО">
@@ -69,7 +69,7 @@
                     </form>
 
                     <div id="studentOutput">
-                        <table id="studentOT" class="outputTable display"></table>
+                        <table class="outputTable"></table>
                     </div>
                 </div>
                 <div id="groupsTable">

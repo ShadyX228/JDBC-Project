@@ -1,6 +1,6 @@
 package webdebugger;
 
-import com.sun.deploy.net.HttpResponse;
+
 import dbmodules.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
@@ -8,7 +8,7 @@ import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 
-import javax.servlet.http.HttpServlet;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;

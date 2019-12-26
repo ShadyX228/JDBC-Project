@@ -5,12 +5,16 @@ import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.types.Gender;
+import org.json.JSONObject;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static dbmodules.types.Criteria.*;
@@ -28,8 +32,10 @@ public class StudentUpdater extends HttpServlet {
         String birthString = request.getParameter("birth");
         String genderString = request.getParameter("gender");
         String groupString = request.getParameter("group");
-        String message = "Проверяю переданные параметры...<br> ";
 
+
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
 
         idString = parseCriteria(ID, idString);
         birthString = parseCriteria(BIRTH, birthString);
@@ -50,22 +56,18 @@ public class StudentUpdater extends HttpServlet {
             Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
 
             if(Objects.isNull(group)) {
-                message += "Группа не существует. " +
-                        "<span class=\"error\">-1</span>";
-                response.getWriter().write(message);
+                errors.add(0);
             } else {
                 StudentDAO studentDAO = new StudentDAO();
                 Student student = studentDAO.selectById(id);
                 studentDAO.update(student, name, birth, gender, group);
                 studentDAO.closeEntityManager();
-                response.getWriter().write("Запись <span class=\"lastId\">"
-                        + student.getId()  + "</span> обновлена.");
             }
             groupDAO.closeEntityManager();
         } else {
-            message += "Переданы пустые параметры либо они некорректны." +
-                    " <span class=\"error\">-1</span>";
-            response.getWriter().write(message);
+            errors.add(-1);
         }
+        jsonObject.accumulate("errors", errors);
+        response.getWriter().write(jsonObject.toString());
     }
 }

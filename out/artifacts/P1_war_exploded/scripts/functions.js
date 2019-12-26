@@ -1,6 +1,10 @@
 /** Функции **/
 function addDeleteEventHandler(selector, table) {
     $(selector).on("click", ".delete", function() {
+        $("#studentUpdateForm").hide();
+        $("#teacherUpdateForm").hide();
+        $("#groupUpdateForm").hide();
+
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
@@ -21,10 +25,14 @@ function addDeleteEventHandler(selector, table) {
             }
         }
         $.post(page, {"criteria" : "ID", "criteriaValue" : id}, function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
+            data = JSON.parse(data);
+            var errors = data.errors;
+
+            if(jQuery.isEmptyObject(errors)) {
                 $("#" + table + id).hide();
+                $("#status").html("");
+            } else {
+                $("#status").html("Ошибка удаления.")
             }
         });
     })
@@ -205,9 +213,26 @@ function addStudentRow(student) {
             "\t</tr>"
         );
 }
-/** /Функции function generateStudentsTable() {
-    $.get("test", function(data) {
-        data = JSON.parse(data);
-        alert(data.students[0]["id"]);
-    })
-}**/
+function addGroupRow(group) {
+        $("#groupOutput .outputTable").append(
+            "\t<tr id='group" + group["id"] + "'>\n" +
+            "\t\t<td class='id'>" + group["id"] + "</td>\n" +
+            "\t\t<td class='group'>" + group["number"] + "</td>\n" +
+            "\t\t<td class='operations'>" +
+            "<a class=\"delete\" href=\"#deleteGroup" + group["id"] + "\">" +
+            "Удалить" +
+            "</a><br>" +
+            "<a class=\"update\" href=\"#updateGroup" + group["id"] + "\">" +
+            "Изменить" +
+            "</a><br>" +
+            "<a class=\"getInfo\" href=\"#getInfoGroup" + group["id"] + "\">" +
+            "Информация" +
+            "</a><br>" +
+            "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + group["id"] + "\">" +
+            "Назначить преподаватлея" +
+            "</a><br>"
+            + "</td>\n" +
+            "\t</tr>"
+        );
+}
+/** /Функции **/

@@ -2,10 +2,14 @@ package servlets.Group;
 
 import dbmodules.dao.GroupDAO;
 import dbmodules.tables.Group;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.*;
@@ -19,47 +23,43 @@ public class GroupAdder extends HttpServlet {
 
         String group = request.getParameter("group");
 
-        String message = "Проверяю переданные параметры...<br>";
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
+
         if (group.isEmpty()) {
-            message += printMessage(2, "Переданы пустые значения.");
-            response.getWriter().write(message);
+            errors.add(0);
         } else {
             boolean check = true;
-            message += "Значения не пустые - " + printMessage(1, "OK.") +
-                    "Проверяю корректность введенных параметров...<br>";
 
-            message += "Группа: " + group + ".<br>";
             int number = 0;
             GroupDAO groupDAO = new GroupDAO();
             try {
                 number = Integer.parseInt(group);
                 Group groupObject = checkGroup(number, groupDAO);
                 if (!Objects.isNull(groupObject)) {
-                    message += printMessage(2,
-                            "Ошибка: такая группа уже сущесвует.");
+                    errors.add(-1);
                     check = false;
-                } else {
-                    message += printMessage(1, "OK.");
                 }
             } catch (NumberFormatException e) {
-                message += printMessage(2, "Ошибка ввода.");
+                errors.add(-2);
                 check = false;
             }
 
-            message += "Пытаюсь добавить... ";
             if (!check) {
-                message += printMessage(2, "Ошибка. " +
-                        "Одно или несколько полей не прошли проверку.");
-                response.getWriter().write(message);
+                errors.add(-3);
             } else {
                 Group newGroup = new Group(
                         number
                 );
                 groupDAO.add(newGroup);
-                response.getWriter().write("Запись <span class=\"lastId\">"
-                        + newGroup.getId() + "</span> добавлена.");
+
+                jsonObject.put("lastId", newGroup.getId());
+
                 groupDAO.closeEntityManager();
+
             }
         }
+        jsonObject.accumulate("errors", errors);
+        response.getWriter().write(jsonObject.toString());
     }
 }

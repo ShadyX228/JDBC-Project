@@ -8,11 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static webdebugger.WebInputDebugger.generateStudentsTable;
+import static webdebugger.WebInputDebugger.setJSONObjectState;
 import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class StudentAllSelector extends HttpServlet {
@@ -26,14 +27,12 @@ public class StudentAllSelector extends HttpServlet {
 
         List<Student> students = studentDAO.select(Criteria.ALL,"");
         Map<Integer, Integer> groups = new HashMap<>();
+        List<Integer> errors = new ArrayList<>();
 
-        jsonObject.accumulate("students", students);
-        for(Student student : students) {
-            groups.put(student.getId(), student.getGroup().getNumber());
-        }
-        jsonObject.accumulate("groups", groups);
+        setJSONObjectState(students, groups, errors, jsonObject);
+        jsonObject.accumulate("errors", errors);
+
         studentDAO.closeEntityManager();
-
         response.getWriter().write(jsonObject.toString());
     }
 }

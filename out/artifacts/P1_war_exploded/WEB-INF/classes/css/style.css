@@ -134,3 +134,9 @@ input[disabled] {
     color: white;
     border-color: #AD4E4E;
 }
+.error {
+    display: none;
+}
+#status {
+    height: 10px;
+}

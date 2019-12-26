@@ -3,6 +3,8 @@ package servlets.Student;
 import dbmodules.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +35,9 @@ public class StudentSelector extends HttpServlet {
         HashMap<Criteria, String> map = new HashMap<>();
 
         List<Student> students;
+        Map<Integer, Integer> groups = new HashMap<>();
+        List<Integer> errors = new ArrayList<>();
+
         if (!Objects.isNull(idString)) {
             map.put(ID, idString);
         } else {
@@ -62,7 +67,12 @@ public class StudentSelector extends HttpServlet {
             map.put(ALL, " ");
         }
         students = studentDAO.select(map);
-        response.getWriter().write(generateStudentsTable(students));
+
+        JSONObject jsonObject = new JSONObject();
+        setJSONObjectState(students, groups, errors, jsonObject);
+        jsonObject.accumulate("errors", errors);
+
         studentDAO.closeEntityManager();
+        response.getWriter().write(jsonObject.toString());
     }
 }

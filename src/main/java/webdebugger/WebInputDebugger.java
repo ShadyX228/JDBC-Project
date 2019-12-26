@@ -7,6 +7,7 @@ import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
+import org.json.JSONObject;
 
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import static dbmodules.types.Criteria.*;
@@ -126,45 +128,19 @@ public class WebInputDebugger {
         }
     }
 
-    public static String generateStudentsTable(List<Student> list) {
-        StringBuilder output = new StringBuilder();
-        output.append("\t<thead><tr>\n" +
-                "\t\t<th>ID</th>\n" +
-                "\t\t<th>ФИО</th>\n" +
-                "\t\t<th>День рождения</th>\n" +
-                "\t\t<th>Пол</th>\n" +
-                "\t\t<th>Группа</th>\n" +
-                "\t\t<th>Операции</th>\n" +
-                "\t</tr></thead><tbody>\n");
-        if (!list.isEmpty()) {
-            for (Student student : list) {
-                output.append("<tr id=\"student")
-                        .append(student.getId())
-                        .append("\">\n").append(
-                "<td class=\"id\">").append(student.getId()).append("</td>")
-                        .append("<td class=\"name\">")
-                        .append(student.getName()).append("</td>")
-                        .append("<td class=\"birth\">")
-                        .append(student.getBirth()).append("</td>")
-                        .append("<td class=\"gender\">")
-                        .append(student.getGender()).append("</td>")
-                        .append("<td class=\"group\">")
-                        .append(student.getGroup().getNumber())
-                        .append("</td>")
-                        .append("<td class=\"operations\">").append(
-                        "<a class=\"delete\" href=\"#deleteStudent")
-                        .append(student.getId())
-                        .append("\">Удалить</a><br>").append(
-                        "<a class=\"update\" href=\"#updateStudent")
-                        .append(student.getId()).append("\">Изменить</a>")
-                        .append("</td>").append("</tr>");
-            }
-            output.append("</tbody>");
-        } else {
-            output.append("<tr><td colspan=\"6\">Нет записей.</tr></td>");
-        }
-        return output.toString();
-    }
+   public static void setJSONObjectState(List<Student> students,
+                                         Map<Integer, Integer> groups,
+                                         List<Integer> errors, JSONObject jsonObject) {
+       if(!students.isEmpty()) {
+           jsonObject.accumulate("students", students);
+           for(Student student : students) {
+               groups.put(student.getId(), student.getGroup().getNumber());
+           }
+           jsonObject.accumulate("groups", groups);
+       } else {
+           errors.add(0);
+       }
+   }
     public static String generateTeacherTable(List<Teacher> list) {
         StringBuilder output = new StringBuilder();
         output.append("\t<tr>\n" +
@@ -207,41 +183,7 @@ public class WebInputDebugger {
         }
         return output.toString();
     }
-    public static String generateGroupTable(List<Group> list) {
-        StringBuilder output = new StringBuilder();
-        output.append("\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>Группа</td>\n" +
-                "\t\t<td>Операции</td>\n" +
-                "\t</tr>");
-        if(!list.isEmpty()) {
-            for (Group group : list) {
-                output
-                        .append("<tr id=\"group")
-                        .append(group.getId())
-                        .append("\">\n")
-                        .append("<td class=\"id\">").append(group.getId()).append("</td>")
-                        .append("<td class=\"group\">").append(group.getNumber()).append( "</td>")
-                        .append("<td class=\"operations\">")
-                        .append("<a class=\"delete\" href=\"#deleteGroup")
-                        .append(group.getId()).append("\">Удалить</a><br>")
-                        .append("<a class=\"update\" href=\"#updateGroup")
-                        .append(group.getId()).append("\">Изменить</a><br>")
-                        .append("<a class=\"getInfo\" href=\"#getInfoGroup")
-                        .append(group.getId() )
-                        .append( "\">Информация</a><br>")
-                        .append("<a class=\"putTeacherInGroup\"")
-                        .append("href=\"#putTeacherInGroup")
-                        .append(group.getId())
-                        .append("\">Назначить преподавателя</a>")
-                        .append("</td>")
-                        .append("</tr>");
-            }
-        } else {
-            output.append("<tr><td colspan=\"3\">Нет записей.</tr></td>");
-        }
-        return output.toString();
-    }
+
     public static void setQueryParametres(HttpServletRequest request,
                                    HttpServletResponse response)
             throws UnsupportedEncodingException {

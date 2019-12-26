@@ -93,7 +93,6 @@
                     <form id="groupSearchForm" name="studentSearchForm" method="GET">
                         <p>Поиск групп</p>
                         <input class="group" type="text" name="group" placeholder="Группа">
-                        <input type="submit" class="submit" value="Go">
                         <button id="groupSearchFormClose">X</button>
                     </form>
 

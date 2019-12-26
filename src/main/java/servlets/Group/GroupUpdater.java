@@ -2,10 +2,13 @@ package servlets.Group;
 
 import dbmodules.dao.GroupDAO;
 import dbmodules.tables.Group;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +23,10 @@ public class GroupUpdater extends HttpServlet {
 
         String idString = request.getParameter("id");
         String groupString = request.getParameter("group");
-        String message = "Проверяю переданные параметры...<br>";
+
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
+
         idString = parseCriteria(ID, idString);
         groupString = parseCriteria(ID, groupString);
         if((!Objects.isNull(idString)
@@ -40,17 +46,16 @@ public class GroupUpdater extends HttpServlet {
                 }
             }
             if(!check) {
-                message += "Группа уже существует: <span class=\"error\">-1</span>";
-                response.getWriter().write(message);
+                errors.add(0);
             } else {
                 groupDAO.update(group, number);
                 groupDAO.closeEntityManager();
-                response.getWriter().write("Запись <span class=\"lastId\">" + group.getId()  + "</span> обновлена.");
             }
             groupDAO.closeEntityManager();
         } else {
-            message += "Переданы пустые параметры либо они некорректны: <span class=\"error\">-1</span>";
-            response.getWriter().write(message);
+            errors.add(1);
         }
+        jsonObject.accumulate("errors", errors);
+        response.getWriter().write(jsonObject.toString());
     }
 }

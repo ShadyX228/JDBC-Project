@@ -65,10 +65,60 @@ function addGroupInfoEventHandler(selector) {
         $("#status").html("Загружаю...");
 
         $.get("groupGetInfo", {"id" : id}, function(data) {
-            $("#groupInfo").show();
-            $("#info").html(data);
-            addTeacherRemovingFromGroupHandler("#groupInfo table tr");
-            $("#status").html("");
+            data = JSON.parse(data);
+            var errors = data.errors;
+            var teachers = data.teachers;
+            var students = data.students;
+
+            if(jQuery.isEmptyObject(errors)) {
+                $("#groupInfo").show();
+                if(jQuery.isEmptyObject(students)) {
+                    $("#groupStudentsTable").html(" нет");
+                    console.log(1);
+                } else {
+                    $("#groupStudentsTable").html("");
+                    students.forEach(function (student, position) {
+                        if(position != students.length-1) {
+                            $("#groupStudentsTable").append(student + ", ");
+                        } else {
+                            $("#groupStudentsTable").append(student + ".");
+                        }
+                    })
+                }
+                if(jQuery.isEmptyObject(teachers)) {
+                    $("#groupTeachersTable").css("display", "inline");
+                    $("#groupTeachersTable").html(" нет");
+                } else {
+                    $("#groupTeachersTable").html("");
+                    $("#groupTeachersTable").css("display", "block");
+                    $("#groupTeachersTable").html("\t<table><tr>\n" +
+                        "\t\t<td style=\"display: none;\">" +
+                        "ID группы" +
+                        "</td>\n" +
+                        "\t\t<td>ФИО</td>\n" +
+                        "\t\t<td>Операции</td>\n" +
+                        "\t</tr>");
+
+                    teachers.forEach(function (teacher) {
+                        $("#groupTeachersTable table").append("\t<tr id=\"groupTeacher"
+                            + teacher["id"] + "\">\n" +
+                            "\t\t<td class=\"groupId\" style=\"display: none;\">"
+                            + id + "</td>\n" +
+                            "\t\t<td>" + teacher["name"] + "</td>\n" +
+                            "\t\t<td><a class=\"removeTeacherFromGroup\" " +
+                            "href=\"#removeTeacher"
+                            + teacher["id"]
+                            + "FromGroup\">Убрать из группы</a></td>\n" +
+                            "\t</tr>");
+                    });
+                    $("#groupTeachersTable").append("</table>")
+                }
+
+                addTeacherRemovingFromGroupHandler("#groupInfo table tr");
+                $("#status").html("");
+            } else {
+                $("#status").html("Внутренняя ошибка.");
+            }
         });
 
     })
@@ -235,4 +285,29 @@ function addGroupRow(group) {
             "\t</tr>"
         );
 }
-/** /Функции **/
+
+/*function createTableOfTeachersInGroup() {
+    $("#info").ht
+}*/
+/** /Функции
+ *
+ * response.getWriter().write("\t<table><tr>\n" +
+ "\t\t<td style=\"display: none;\">" +
+ "ID группы" +
+ "</td>\n" +
+ "\t\t<td>ФИО</td>\n" +
+ "\t\t<td>Операции</td>\n" +
+ "\t</tr>");
+ for (Teacher teacher : group.getTeachers()) {
+                        response.getWriter().write("\t<tr id=\"groupTeacher"
+                                + teacher.getId() + "\">\n" +
+                                "\t\t<td class=\"groupId\" style=\"display: none;\">"
+                                + group.getId() + "</td>\n" +
+                                "\t\t<td>" + teacher.getName() + "</td>\n" +
+                                "\t\t<td><a class=\"removeTeacherFromGroup\" " +
+                                "href=\"#removeTeacher"
+                                + teacher.getId()
+                                + "FromGroup\">Убрать из группы</a></td>\n" +
+                                "\t</tr>");
+                    }
+ * **/

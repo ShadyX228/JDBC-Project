@@ -3,6 +3,7 @@ package servlets.Teacher;
 import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Gender;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -11,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.*;
@@ -26,42 +29,32 @@ public class TeacherAdder extends HttpServlet {
         String birth = request.getParameter("birth");
         String gender = request.getParameter("gender");
 
-        String message = "Проверяю переданные параметры...<br>";
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
+
         if (name.isEmpty()
                 || birth.isEmpty()
                 || gender.isEmpty()) {
-            message += printMessage(2,"Переданы пустые значения.");
-            response.getWriter().write(message);
+            errors.add(0);
         } else {
             boolean check = true;
-            message += "Значения не пустые " + printMessage(1, " - OK.") +
-                    "Проверяю корректность введенных параметров...<br>";
-            message += "Имя: " + name + printMessage(1, "OK.");
 
-            message += "День рождения: " + birth;
             LocalDate birthday = LocalDate.of(2000, 01, 01);
             try {
                 birthday = LocalDate.parse(birth);
-                message += printMessage(1, "OK.");
             } catch (DateTimeParseException | InputMismatchException e) {
-                message += printMessage(2, "Ошибка: некорректный ввод.");
+                errors.add(-1);
                 check = false;
             }
 
-            message += "Пол: " + gender;
             Gender genderParsed = checkGender(gender);
             if (Objects.isNull(genderParsed)) {
-                message += printMessage(2, " - Ошибка: некорректный ввод.");
+                errors.add(-2);
                 check = false;
-            } else {
-                message += printMessage(1, " - OK.");
             }
 
-            message += "Пытаюсь добавить... ";
             if (!check) {
-                message += printMessage(2, "Ошибка. " +
-                        "Одно или несколько полей не прошли проверку.");
-                response.getWriter().write(message);
+                errors.add(-3);
             } else {
                 Teacher teacher = new Teacher(
                         name,
@@ -73,9 +66,10 @@ public class TeacherAdder extends HttpServlet {
                 TeacherDAO teacherDAO = new TeacherDAO();
                 teacherDAO.add(teacher);
                 teacherDAO.closeEntityManager();
-                response.getWriter().write("Запись <span class=\"lastId\">"
-                        + teacher.getId() + "</span> добавлена.");
+                jsonObject.put("lastId", teacher.getId());
             }
         }
+        jsonObject.accumulate("errors", errors);
+        response.getWriter().write(jsonObject.toString());
     }
 }

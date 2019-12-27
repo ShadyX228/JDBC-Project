@@ -69,7 +69,7 @@ public class StudentSelector extends HttpServlet {
         students = studentDAO.select(map);
 
         JSONObject jsonObject = new JSONObject();
-        setJSONObjectState(students, groups, errors, jsonObject);
+        setStudentJSONObjectState(students, groups, errors, jsonObject);
         jsonObject.accumulate("errors", errors);
 
         studentDAO.closeEntityManager();

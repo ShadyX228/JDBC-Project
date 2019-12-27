@@ -307,15 +307,38 @@ $(document).ready(function(){
         $("#status").html("Загрузка...");
         $.post("teacherSelectAll", function(data) {
             $("#teacherOutput .outputTable").show();
-            $("#teacherOutput .outputTable").html(data);
-            $("#status").html("");
+            $("#teacherOutput .outputTable").html("");
+            data = JSON.parse(data);
 
-            addDeleteEventHandler("#teacherOutput .outputTable tr",
-                "teacher");
-            addUpdateEventHandler("#teacherOutput .outputTable tr",
-                "teacher");
-            addTeacherInfoEventHandler("tr");
-            addGetTeachersHandler("tr");
+            var errors = data.errors;
+            if(jQuery.isEmptyObject(errors)) {
+                $("#teacherOutput .outputTable").append(
+                    "\t<tr>\n" +
+                    "\t\t<td>ID</td>\n" +
+                    "\t\t<td>ФИО</td>\n" +
+                    "\t\t<td>День рождения</td>\n" +
+                    "\t\t<td>Пол</td>\n" +
+                    "\t\t<td>Операции</td>\n" +
+                    "\t</tr>"
+                );
+                var teachers = data.teachers;
+
+
+                teachers.forEach(function (teacher) {
+                    addTeacherRow(teacher);
+                });
+
+                $("#status").html("");
+
+                addDeleteEventHandler("#teacherOutput .outputTable tr",
+                    "teacher");
+                addUpdateEventHandler("#teacherOutput .outputTable tr",
+                    "teacher");
+                addTeacherInfoEventHandler("tr");
+                addGetTeachersHandler("tr");
+            } else {
+                $("#status").html("Нет записей в таблице.");
+            }
         });
     });
     $("#teacherAdd").click(function () {
@@ -329,33 +352,28 @@ $(document).ready(function(){
         var name = $("#teacherAddForm .name").val();
         var birth = $("#teacherAddForm .birth").val();
         var gender = $("#teacherAddForm .gender").val();
+
         $.post("teacherAdd", $(this).serialize(), function(data) {
             $("#status").html(data);
-            var id = parseInt($("#status .lastId").html());
-            if(!isNaN(id)) {
-                $("#teacherOutput .outputTable").append("<tr id=\"teacher" + id + "\">" +
-                    "<td class=\"id\">" + id + "</td>" +
-                    "<td class=\"name\">" + name + "</td>" +
-                    "<td class=\"birth\">" + birth + "</td>" +
-                    "<td class=\"gender\">" + gender + "</td>" +
-                    "<td class=\"opeations\">" +
-                    "<a class=\"delete\" href=\"#deleteTeacher" + id + "\">" +
-                    "Удалить" +
-                    "</a>" +
-                    "<br>" +
-                    "<a class=\"update\" href=\"#updateTeacher" + id + "\">" +
-                    "Изменить" +
-                    "</a>" +
-                    "<br>" +
-                    "<a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + id + "\">" +
-                    "Информация" +
-                    "</a>" +
-                    "</td>" +
-                    "</tr>");
+
+            data = JSON.parse(data);
+            var errors = data.errors;
+            var id = data["lastId"];
+            if(jQuery.isEmptyObject(errors)) {
+                $("#status").html("");
+                var teacher = {
+                    "id": id,
+                    "name": name,
+                    "birth": birth,
+                    "gender": gender,
+                };
+                addTeacherRow(teacher);
                 lightOn("#teacher" + id,successColor);
                 addDeleteEventHandler("#teacher"+id, "teacher");
                 addUpdateEventHandler("#teacher"+id, "teacher");
                 addTeacherInfoEventHandler("#teacher"+id);
+            } else {
+                $("#status").html("Ошибка. Перепроверьте введеннные данные.");
             }
         });
     })

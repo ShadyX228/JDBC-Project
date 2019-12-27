@@ -46,7 +46,7 @@ public class StudentDeleter extends HttpServlet {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed)) {
-                errors.add(-3);
+                errors.add(-2);
             } else {
                 List<Student> list = new ArrayList<>();
                 StudentDAO studentDAO = new StudentDAO();
@@ -60,7 +60,7 @@ public class StudentDeleter extends HttpServlet {
                     if(!criteriaValueParsed.isEmpty()) {
                         list = studentDAO.select(criteria, criteriaValueParsed);
                     } else {
-                        errors.add(-4);
+                        errors.add(-3);
                     }
                 }
                 for (Student student : list) {

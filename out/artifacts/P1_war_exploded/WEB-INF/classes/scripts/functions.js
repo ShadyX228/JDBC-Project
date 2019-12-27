@@ -212,7 +212,7 @@ function addTeacherPuttingInGroupHandler(selector) {
     })
 }
 function addTeacherInfoEventHandler(selector) {
-    $("#teacherOutput .outputTable " + selector).on("click", ".getInfo", function() {
+    $("#teacherOutput .outputTable " + selector).on("click", ".getTeacherInfo", function() {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
@@ -220,6 +220,7 @@ function addTeacherInfoEventHandler(selector) {
         $("#teacherId").html(id)
         $("#status").html("Загружаю...");
 
+        console.log(id);
         $.get("teacherGetInfo", {"id" : id}, function(data) {
             $("#teacherInfo").show();
             $("#status").html(data);
@@ -285,29 +286,26 @@ function addGroupRow(group) {
             "\t</tr>"
         );
 }
+function addTeacherRow(teacher) {
+    $("#teacherOutput .outputTable").append("<tr id=\"teacher" + teacher["id"] + "\">" +
+        "<td class=\"id\">" + teacher["id"] + "</td>" +
+        "<td class=\"name\">" + teacher["name"] + "</td>" +
+        "<td class=\"birth\">" + teacher["birth"] + "</td>" +
+        "<td class=\"gender\">" + teacher["gender"] + "</td>" +
+        "<td class=\"opeations\">" +
+        "<a class=\"delete\" href=\"#deleteTeacher" + teacher["id"] + "\">" +
+        "Удалить" +
+        "</a>" +
+        "<br>" +
+        "<a class=\"update\" href=\"#updateTeacher" + teacher["id"] + "\">" +
+        "Изменить" +
+        "</a>" +
+        "<br>" +
+        "<a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + teacher["id"] + "\">" +
+        "Информация" +
+        "</a>" +
+        "</td>" +
+        "</tr>");
+}
 
-/*function createTableOfTeachersInGroup() {
-    $("#info").ht
-}*/
-/** /Функции
- *
- * response.getWriter().write("\t<table><tr>\n" +
- "\t\t<td style=\"display: none;\">" +
- "ID группы" +
- "</td>\n" +
- "\t\t<td>ФИО</td>\n" +
- "\t\t<td>Операции</td>\n" +
- "\t</tr>");
- for (Teacher teacher : group.getTeachers()) {
-                        response.getWriter().write("\t<tr id=\"groupTeacher"
-                                + teacher.getId() + "\">\n" +
-                                "\t\t<td class=\"groupId\" style=\"display: none;\">"
-                                + group.getId() + "</td>\n" +
-                                "\t\t<td>" + teacher.getName() + "</td>\n" +
-                                "\t\t<td><a class=\"removeTeacherFromGroup\" " +
-                                "href=\"#removeTeacher"
-                                + teacher.getId()
-                                + "FromGroup\">Убрать из группы</a></td>\n" +
-                                "\t</tr>");
-                    }
- * **/
+/** /Функции **/

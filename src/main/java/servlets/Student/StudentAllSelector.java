@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static webdebugger.WebInputDebugger.setJSONObjectState;
+import static webdebugger.WebInputDebugger.setStudentJSONObjectState;
 import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class StudentAllSelector extends HttpServlet {
@@ -29,7 +29,7 @@ public class StudentAllSelector extends HttpServlet {
         Map<Integer, Integer> groups = new HashMap<>();
         List<Integer> errors = new ArrayList<>();
 
-        setJSONObjectState(students, groups, errors, jsonObject);
+        setStudentJSONObjectState(students, groups, errors, jsonObject);
         jsonObject.accumulate("errors", errors);
 
         studentDAO.closeEntityManager();

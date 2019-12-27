@@ -128,9 +128,9 @@ public class WebInputDebugger {
         }
     }
 
-   public static void setJSONObjectState(List<Student> students,
-                                         Map<Integer, Integer> groups,
-                                         List<Integer> errors, JSONObject jsonObject) {
+   public static void setStudentJSONObjectState(List<Student> students,
+                                                Map<Integer, Integer> groups,
+                                                List<Integer> errors, JSONObject jsonObject) {
        if(!students.isEmpty()) {
            jsonObject.accumulate("students", students);
            for(Student student : students) {
@@ -140,7 +140,7 @@ public class WebInputDebugger {
        } else {
            errors.add(0);
        }
-   }
+    }
     public static String generateTeacherTable(List<Teacher> list) {
         StringBuilder output = new StringBuilder();
         output.append("\t<tr>\n" +

@@ -65,10 +65,60 @@ function addGroupInfoEventHandler(selector) {
         $("#status").html("Загружаю...");
 
         $.get("groupGetInfo", {"id" : id}, function(data) {
-            $("#groupInfo").show();
-            $("#info").html(data);
-            addTeacherRemovingFromGroupHandler("#groupInfo table tr");
-            $("#status").html("");
+            data = JSON.parse(data);
+            var errors = data.errors;
+            var teachers = data.teachers;
+            var students = data.students;
+
+            if(jQuery.isEmptyObject(errors)) {
+                $("#groupInfo").show();
+                if(jQuery.isEmptyObject(students)) {
+                    $("#groupStudentsTable").html(" нет");
+                    console.log(1);
+                } else {
+                    $("#groupStudentsTable").html("");
+                    students.forEach(function (student, position) {
+                        if(position != students.length-1) {
+                            $("#groupStudentsTable").append(student + ", ");
+                        } else {
+                            $("#groupStudentsTable").append(student + ".");
+                        }
+                    })
+                }
+                if(jQuery.isEmptyObject(teachers)) {
+                    $("#groupTeachersTable").css("display", "inline");
+                    $("#groupTeachersTable").html(" нет");
+                } else {
+                    $("#groupTeachersTable").html("");
+                    $("#groupTeachersTable").css("display", "block");
+                    $("#groupTeachersTable").html("\t<table><tr>\n" +
+                        "\t\t<td style=\"display: none;\">" +
+                        "ID группы" +
+                        "</td>\n" +
+                        "\t\t<td>ФИО</td>\n" +
+                        "\t\t<td>Операции</td>\n" +
+                        "\t</tr>");
+
+                    teachers.forEach(function (teacher) {
+                        $("#groupTeachersTable table").append("\t<tr id=\"groupTeacher"
+                            + teacher["id"] + "\">\n" +
+                            "\t\t<td class=\"groupId\" style=\"display: none;\">"
+                            + id + "</td>\n" +
+                            "\t\t<td>" + teacher["name"] + "</td>\n" +
+                            "\t\t<td><a class=\"removeTeacherFromGroup\" " +
+                            "href=\"#removeTeacher"
+                            + teacher["id"]
+                            + "FromGroup\">Убрать из группы</a></td>\n" +
+                            "\t</tr>");
+                    });
+                    $("#groupTeachersTable").append("</table>")
+                }
+
+                addTeacherRemovingFromGroupHandler("#groupInfo table tr");
+                $("#status").html("");
+            } else {
+                $("#status").html("Внутренняя ошибка.");
+            }
         });
 
     })
@@ -162,7 +212,7 @@ function addTeacherPuttingInGroupHandler(selector) {
     })
 }
 function addTeacherInfoEventHandler(selector) {
-    $("#teacherOutput .outputTable " + selector).on("click", ".getInfo", function() {
+    $("#teacherOutput .outputTable " + selector).on("click", ".getTeacherInfo", function() {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
@@ -170,6 +220,7 @@ function addTeacherInfoEventHandler(selector) {
         $("#teacherId").html(id)
         $("#status").html("Загружаю...");
 
+        console.log(id);
         $.get("teacherGetInfo", {"id" : id}, function(data) {
             $("#teacherInfo").show();
             $("#status").html(data);
@@ -235,4 +286,26 @@ function addGroupRow(group) {
             "\t</tr>"
         );
 }
+function addTeacherRow(teacher) {
+    $("#teacherOutput .outputTable").append("<tr id=\"teacher" + teacher["id"] + "\">" +
+        "<td class=\"id\">" + teacher["id"] + "</td>" +
+        "<td class=\"name\">" + teacher["name"] + "</td>" +
+        "<td class=\"birth\">" + teacher["birth"] + "</td>" +
+        "<td class=\"gender\">" + teacher["gender"] + "</td>" +
+        "<td class=\"opeations\">" +
+        "<a class=\"delete\" href=\"#deleteTeacher" + teacher["id"] + "\">" +
+        "Удалить" +
+        "</a>" +
+        "<br>" +
+        "<a class=\"update\" href=\"#updateTeacher" + teacher["id"] + "\">" +
+        "Изменить" +
+        "</a>" +
+        "<br>" +
+        "<a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + teacher["id"] + "\">" +
+        "Информация" +
+        "</a>" +
+        "</td>" +
+        "</tr>");
+}
+
 /** /Функции **/

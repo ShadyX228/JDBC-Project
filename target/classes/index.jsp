@@ -155,7 +155,12 @@
         <div id="groupInfo">
             Группа: <span id="groupNumber"></span>
             <a id="closeGroupInfo" href="#closeGroupInfo">X</a>
-            <div id="info"></div>
+            <div id="info">
+                Преподаватели:
+                <div id="groupTeachersTable"></div><br>
+                Студенты:
+                <span id="groupStudentsTable"></span>
+            </div>
         </div>
         <div id="teacherInfo">
             Преподаватель: <span id="teacherName"></span>, <span id="teacherId"></span>

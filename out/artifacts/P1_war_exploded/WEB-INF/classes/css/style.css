@@ -61,7 +61,8 @@ form {
 #status, #studentsTable, #teachersTable, #groupsTable,
 .outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm,
 #groupAddForm, #groupUpdateForm, #groupInfo, #groupSearchForm,
-.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm, #teacherInfo {
+.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm, #teacherInfo,
+.outputTable .birth {
     display: none;
 }
 .outputTable {
@@ -133,4 +134,7 @@ input[disabled] {
     background: #AD2B2B;
     color: white;
     border-color: #AD4E4E;
+}
+#status {
+    height: 10px;
 }

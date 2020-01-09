@@ -3,12 +3,14 @@ package servlets.Teacher;
 import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +35,11 @@ public class TeacherSelector extends HttpServlet {
 
         HashMap<Criteria, String> map = new HashMap<>();
 
+        JSONObject jsonObject = new JSONObject();
+
         List<Teacher> teachers;
+        List<Integer> errors = new ArrayList<>();
+
         if (!Objects.isNull(idString)) {
             map.put(ID, idString);
         } else {
@@ -58,7 +64,10 @@ public class TeacherSelector extends HttpServlet {
             map.put(ALL, " ");
         }
         teachers = teacherDAO.select(map);
-        response.getWriter().write(generateTeacherTable(teachers));
+        jsonObject.accumulate("teachers", teachers);
+        jsonObject.accumulate("errors", errors);
+
+        response.getWriter().write(jsonObject.toString());
         teacherDAO.closeEntityManager();
     }
 }

@@ -2,6 +2,8 @@ package servlets.Group;
 
 import dbmodules.dao.GroupDAO;
 import dbmodules.tables.Group;
+import org.json.JSONObject;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,30 +25,24 @@ public class GroupSelector extends HttpServlet {
 
         groupString = parseCriteria(ID, groupString);
         GroupDAO groupDAO = new GroupDAO();
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
 
         if(!Objects.isNull(groupString)) {
-            List<Group> list = new ArrayList<>();
+            List<Group> groups = new ArrayList<>();
             Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
             if(!Objects.isNull(group)) {
-                list.add(group);
-                response.getWriter().write(generateGroupTable(list));
+                groups.add(group);
+                jsonObject.accumulate("groups", groups);
             } else {
-                generateGroupsNullTable(response);
+                errors.add(0);
             }
             groupDAO.closeEntityManager();
         } else {
-            generateGroupsNullTable(response);
+            errors.add(0);
         }
+        jsonObject.accumulate("errors", errors);
+        response.getWriter().write(jsonObject.toString());
+    }
 
-    }
-    private void generateGroupsNullTable(HttpServletResponse response)
-            throws IOException {
-        response.getWriter().write("\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>Группа</td>\n" +
-                "\t\t<td>Операции</td>\n" +
-                "\t</tr>");
-        response.getWriter().write("<tr><td colspan=\"3\">Нет записей." +
-                " <span class=\"error\">-1</span></tr></td>");
-    }
 }

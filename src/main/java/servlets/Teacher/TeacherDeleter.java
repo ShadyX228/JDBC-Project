@@ -3,6 +3,7 @@ package servlets.Teacher;
 import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,33 +29,27 @@ public class TeacherDeleter extends HttpServlet {
 
         String criteriaString = request.getParameter("criteria");
         String criteriaValue = request.getParameter("criteriaValue");
-        String message = "Проверяю переданные параметры... <br>Критерий: ";
+
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
 
         Criteria criteria = checkCriteria(criteriaString);
         if(Objects.isNull(criteria) || criteria.equals(ALL)) {
-            message += criteriaString;
             if(!Objects.isNull(criteria) && criteria.equals(ALL)) {
-                message += printMessage(2,"Ошибка." +
-                        " Нельзя удалить всех сразу.");
+                errors.add(0);
             } else {
-                message += printMessage(2,"Ошибка. Нет такого критерия.");
+                errors.add(-1);
             }
-            response.getWriter().write(message);
         } else {
-            message += criteria + printMessage(1,"OK.");
             String criteriaValueParsed;
             if(!criteria.equals(ALL)) {
-                message += "Значение критерия: " + criteriaValue;
                 criteriaValueParsed = parseCriteria(criteria, criteriaValue);
             } else {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed)) {
-                message += printMessage(2,"Ошибка. " +
-                        "Неверное значение для введенного критерия.");
-                response.getWriter().write(message);
+                errors.add(-2);
             } else {
-                message += printMessage(1,"OK.");
                 List<Teacher> list = new ArrayList<>();
                 if(criteria.equals(ID)) {
                     Teacher teacher = teacherDAO.selectById(Integer
@@ -66,10 +61,8 @@ public class TeacherDeleter extends HttpServlet {
                     if(!criteriaValueParsed.isEmpty()) {
                         list = teacherDAO.select(criteria, criteriaValueParsed);
                     } else {
-                        message += "Статус" + printMessage(2,"Ошибка. " +
-                                "Пустое значение критерия.");
+                        errors.add(-3);
                     }
-                    response.getWriter().write(message);
                 }
                 for (Iterator<Teacher> iterator = list.iterator();
                      iterator.hasNext();) {
@@ -81,14 +74,13 @@ public class TeacherDeleter extends HttpServlet {
                     }
                 }
                 if(!list.isEmpty()) {
-                    response.getWriter().write("<br>Удалено "
-                            + list.size() + " записей");
+                    jsonObject.put("deletedSize", list.size());
                 } else {
-                    response.getWriter().write("Преподаватель " +
-                            "преподает в некоторых группах. " +
-                            "<span class=\"error\">-1</span>");
+                    errors.add(-4);
                 }
             }
         }
+        jsonObject.accumulate("errors",errors);
+        response.getWriter().write(jsonObject.toString());
     }
 }

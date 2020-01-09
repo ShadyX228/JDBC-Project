@@ -1,6 +1,17 @@
+/** Шаблоны **/
+var groupInfoTemplate = "Преподаватели: " +
+    "<div id=\"groupTeachersTable\"></div><br>" +
+    "Студенты: " +
+    "<span id=\"groupStudentsTable\"></span>";
+/** /Шаблоны **/
+
 /** Функции **/
 function addDeleteEventHandler(selector, table) {
     $(selector).on("click", ".delete", function() {
+        $("#studentUpdateForm").hide();
+        $("#teacherUpdateForm").hide();
+        $("#groupUpdateForm").hide();
+
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
@@ -21,10 +32,14 @@ function addDeleteEventHandler(selector, table) {
             }
         }
         $.post(page, {"criteria" : "ID", "criteriaValue" : id}, function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
+            data = JSON.parse(data);
+            var errors = data.errors;
+
+            if(jQuery.isEmptyObject(errors)) {
                 $("#" + table + id).hide();
+                $("#status").html("");
+            } else {
+                $("#status").html("Ошибка удаления.")
             }
         });
     })
@@ -57,10 +72,63 @@ function addGroupInfoEventHandler(selector) {
         $("#status").html("Загружаю...");
 
         $.get("groupGetInfo", {"id" : id}, function(data) {
-            $("#groupInfo").show();
-            $("#info").html(data);
-            addTeacherRemovingFromGroupHandler("#groupInfo table tr");
-            $("#status").html("");
+            data = JSON.parse(data);
+
+            var errors = data.errors;
+            var teachers = data.teachers;
+            var students = data.students;
+
+            $("#groupInfo #info").html(groupInfoTemplate);
+            $("#groupStudentsTable").show();
+
+            if(jQuery.isEmptyObject(errors)) {
+                $("#groupInfo").show();
+                if(jQuery.isEmptyObject(students)) {
+                    $("#groupStudentsTable").html(" нет");
+                } else {
+                    $("#groupStudentsTable").html("");
+                    students.forEach(function (student, position) {
+                        if(position != students.length-1) {
+                            $("#groupStudentsTable").append(student + ", ");
+                        } else {
+                            $("#groupStudentsTable").append(student + ".");
+                        }
+                    })
+                }
+                if(jQuery.isEmptyObject(teachers)) {
+                    $("#groupTeachersTable").css("display", "inline");
+                    $("#groupTeachersTable").html(" нет");
+                } else {
+                    $("#groupTeachersTable").html("");
+                    $("#groupTeachersTable").css("display", "block");
+                    $("#groupTeachersTable").html("\t<table><tr>\n" +
+                        "\t\t<td style=\"display: none;\">" +
+                        "ID группы" +
+                        "</td>\n" +
+                        "\t\t<td>ФИО</td>\n" +
+                        "\t\t<td>Операции</td>\n" +
+                        "\t</tr>");
+
+                    teachers.forEach(function (teacher) {
+                        $("#groupTeachersTable table").append("\t<tr id=\"groupTeacher"
+                            + teacher["id"] + "\">\n" +
+                            "\t\t<td class=\"groupId\" style=\"display: none;\">"
+                            + id + "</td>\n" +
+                            "\t\t<td>" + teacher["name"] + "</td>\n" +
+                            "\t\t<td><a class=\"removeTeacherFromGroup\" " +
+                            "href=\"#removeTeacher"
+                            + teacher["id"]
+                            + "FromGroup\">Убрать из группы</a></td>\n" +
+                            "\t</tr>");
+                    });
+                    $("#groupTeachersTable").append("</table>")
+                }
+
+                addTeacherRemovingFromGroupHandler("#groupInfo table tr");
+                $("#status").html("");
+            } else {
+                $("#status").html("Внутренняя ошибка.");
+            }
         });
 
     })
@@ -75,9 +143,43 @@ function addGetTeachersHandler(selector) {
         $("#status").html("Загружаю...");
 
         $.get("getTeachers", {"id" : id}, function(data) {
+            data = JSON.parse(data);
+
+            var errors = data.errors;
+            var teachers = data.teachers;
+
+            $("#info").html("<div id=\"groupTeachersTable\"></div>");
             $("#groupInfo").show();
-            $("#info").html(data);
-            addTeacherPuttingInGroupHandler("#groupInfo table tr");
+            if(jQuery.isEmptyObject(errors)) {
+                $("#groupTeachersTable").html("");
+                $("#groupTeachersTable").css("display", "block");
+                $("#groupTeachersTable").html("\t<table><tr>\n" +
+                    "\t\t<td style=\"display: none;\">" +
+                    "ID группы" +
+                    "</td>\n" +
+                    "\t\t<td>ФИО</td>\n" +
+                    "\t\t<td>Операции</td>\n" +
+                    "\t</tr>");
+
+                teachers.forEach(function (teacher) {
+                    $("#groupTeachersTable table").append("\t<tr id=\"freeTeacher"
+                        + teacher["id"] + "\">\n" +
+                        "\t\t<td class=\"groupId\" style=\"display: none;\">"
+                        + id + "</td>\n" +
+                        "\t\t<td>" + teacher["name"] + "</td>\n" +
+                        "\t\t<td><a class=\"putInGroup\" " +
+                        "href=\"#putTeacher"
+                        + teacher["id"]
+                        + "\">Назначить</a></td>\n" +
+                        "\t</tr>");
+                });
+                $("#groupTeachersTable").append("</table>")
+
+                addTeacherPuttingInGroupHandler("#groupInfo table tr");
+            } else {
+                $("#groupTeachersTable").html("Некого назначить: все " +
+                    "преподаватели заняты.");
+            }
             $("#status").html("");
         });
 
@@ -95,9 +197,11 @@ function addTeacherRemovingFromGroupHandler(selector) {
             "teacherId" : teacherId,
                 "groupId" : groupId},
             function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
+
+            data = JSON.parse(data);
+            var errors = data.erorrs;
+
+            if(jQuery.isEmptyObject(errors)) {
                 $("#groupTeacher"+ teacherId).hide();
                 $("#status").html("");
             } else {
@@ -154,7 +258,7 @@ function addTeacherPuttingInGroupHandler(selector) {
     })
 }
 function addTeacherInfoEventHandler(selector) {
-    $("#teacherOutput .outputTable " + selector).on("click", ".getInfo", function() {
+    $("#teacherOutput .outputTable " + selector).on("click", ".getTeacherInfo", function() {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
@@ -164,22 +268,57 @@ function addTeacherInfoEventHandler(selector) {
 
         $.get("teacherGetInfo", {"id" : id}, function(data) {
             $("#teacherInfo").show();
-            $("#status").html(data);
-            var error = $("#status .error").html();
-            if(isNaN(error)) {
-                $("#groups").html(data);
-                addGroupRemovingFromTeacherHandler("#teacherInfo table tr");
-                //addTeacherAddingInGroupHandler("#teacherInfo table tr");
+
+            data = JSON.parse(data);
+
+            var error = data.errors;
+            if(jQuery.isEmptyObject(error)) {
+                var groups = data.groups;
+                if(!jQuery.isEmptyObject(groups)) {
+                    $("#groups").css("display", "block");
+                    $("#groups").html("");
+
+                    $("#groups").append("\t<table><tr>\n" +
+                        "\t\t<td style=\"display: none;\">" +
+                        "ID преподавателя" +
+                        "</td>\n" +
+                        "\t\t<td>Номер</td>\n" +
+                        "\t\t<td>Операции</td>\n" +
+                        "\t</tr>");
+
+
+                    Object.keys(groups).forEach(function (groupId) {
+                        $("#groups table").append("\t<tr id=\"groupTeacher"
+                            + groupId + "\">\n" +
+                            "\t\t<td class=\"teacherId\" style=\"display: none;\">"
+                            + id + "</td>\n" +
+                            "\t\t<td class=\"number\">"
+                            + groups[groupId] + "</td>\n" +
+                            "\t\t<td><a class=\"removeTeacherFromGroup\"" +
+                            " href=\"#removeGroupFromTeacher"
+                            + groupId + "FromGroup\">" +
+                            "Убрать группу" +
+                            "</a></td>\n" +
+                            "\t</tr>");
+
+                    });
+
+                    addGroupRemovingFromTeacherHandler("#teacherInfo table tr");
+
+                    $("#groups").append("</table>");
+                } else {
+                    $("#groups").css("display", "inline");
+                    $("#groups").html("нет");
+                }
+                $("#status").html("");
             } else {
-                $("#groups").html(
-                    "нет. <span style=\"display: none\" class=\"error\">-1</span>"
-                );
+                $("#status").html("Внутренняя ошибка.");
             }
-            $("#status").html("");
         });
 
     })
 }
+
 function lightOn(selector, color) {
     $(selector).css("background-color", color);
     setTimeout(function() {
@@ -188,4 +327,78 @@ function lightOn(selector, color) {
     }, 1000)
 
 }
+
+function addStudentRow(student) {
+        var birth = student["birth"];
+        var birthViewable = new Date(birth);
+        birthViewable = birthViewable.getDate() + "."
+            + (1+birthViewable.getMonth()) + "."
+            + birthViewable.getFullYear();
+
+        $("#studentOutput .outputTable").append(
+            "\t<tr id='student" + student["id"] + "'>\n" +
+            "\t\t<td class='id'>" + student["id"] + "</td>\n" +
+            "\t\t<td class='name'>" + student["name"] + "</td>\n" +
+            "\t\t<td class='birth'>" + birth + "</td>\n" +
+            "\t\t<td class='birthViewable'>" + birthViewable + "</td>\n" +
+            "\t\t<td class='gender'>" + student["gender"] + "</td>\n" +
+            "\t\t<td class='group'>" + student["group"]["number"] + "</td>\n" +
+            "\t\t<td class='operations'>" +
+            "<a class=\"delete\" href=\"#deleteStudent" + student["id"] + "\">Удалить</a><br>" +
+            "<a class=\"update\" href=\"#updateStudent" + student["id"] + "\">Изменить</a>"
+            + "</td>\n" +
+            "\t</tr>"
+        );
+}
+function addGroupRow(group) {
+        $("#groupOutput .outputTable").append(
+            "\t<tr id='group" + group["id"] + "'>\n" +
+            "\t\t<td class='id'>" + group["id"] + "</td>\n" +
+            "\t\t<td class='group'>" + group["number"] + "</td>\n" +
+            "\t\t<td class='operations'>" +
+            "<a class=\"delete\" href=\"#deleteGroup" + group["id"] + "\">" +
+            "Удалить" +
+            "</a><br>" +
+            "<a class=\"update\" href=\"#updateGroup" + group["id"] + "\">" +
+            "Изменить" +
+            "</a><br>" +
+            "<a class=\"getInfo\" href=\"#getInfoGroup" + group["id"] + "\">" +
+            "Информация" +
+            "</a><br>" +
+            "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + group["id"] + "\">" +
+            "Назначить преподаватлея" +
+            "</a><br>"
+            + "</td>\n" +
+            "\t</tr>"
+        );
+}
+function addTeacherRow(teacher) {
+    var birth = teacher["birth"];
+    var birthViewable = new Date(birth);
+    birthViewable = birthViewable.getDate() + "."
+        + (1+birthViewable.getMonth()) + "."
+        + birthViewable.getFullYear();
+
+    $("#teacherOutput .outputTable").append("<tr id=\"teacher" + teacher["id"] + "\">" +
+        "<td class=\"id\">" + teacher["id"] + "</td>" +
+        "<td class=\"name\">" + teacher["name"] + "</td>" +
+        "<td class=\"birth\">" + birth + "</td>" +
+        "<td class=\"birthViewable\">" + birthViewable + "</td>" +
+        "<td class=\"gender\">" + teacher["gender"] + "</td>" +
+        "<td class=\"opeations\">" +
+        "<a class=\"delete\" href=\"#deleteTeacher" + teacher["id"] + "\">" +
+        "Удалить" +
+        "</a>" +
+        "<br>" +
+        "<a class=\"update\" href=\"#updateTeacher" + teacher["id"] + "\">" +
+        "Изменить" +
+        "</a>" +
+        "<br>" +
+        "<a class=\"getTeacherInfo\" href=\"#getInfoTeacher" + teacher["id"] + "\">" +
+        "Информация" +
+        "</a>" +
+        "</td>" +
+        "</tr>");
+}
+
 /** /Функции **/

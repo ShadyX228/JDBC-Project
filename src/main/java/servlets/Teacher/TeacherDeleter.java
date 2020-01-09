@@ -80,6 +80,7 @@ public class TeacherDeleter extends HttpServlet {
                 }
             }
         }
+        jsonObject.accumulate("errors",errors);
         response.getWriter().write(jsonObject.toString());
     }
 }

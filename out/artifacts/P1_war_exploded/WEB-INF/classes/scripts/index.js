@@ -2,6 +2,9 @@ $(document).ready(function(){
     var successColor = "#CACACA";
     var failColor = "red";
     var title = "Информационная система для работы с базой студентов, групп и преподавателей";
+
+
+
     /** Выбор таблицы **/
 
     /** Студент **/
@@ -106,7 +109,15 @@ $(document).ready(function(){
             if(jQuery.isEmptyObject(errors)) {
                 lightOn("#student" + id,successColor);
                 $("#student" + id + " .name").html(name);
+
+                var birthViewable = new Date(birth);
+                birthViewable = birthViewable.getDate() + "."
+                    + (1+birthViewable.getMonth()) + "."
+                    + birthViewable.getFullYear();
+
                 $("#student" + id + " .birth").html(birth);
+                $("#student" + id + " .birthViewable").html(birthViewable);
+
                 $("#student" + id + " .gender").html(gender);
                 $("#student" + id + " .group").html(group);
                 $("#status").html("");
@@ -390,15 +401,24 @@ $(document).ready(function(){
             "birth" : birth,
             "gender" : gender},
             function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
+
+            data = JSON.parse(data);
+            var errors = data.errors;
+            if(jQuery.isEmptyObject(errors)) {
                 lightOn("#teacher" + id,successColor);
                 $("#teacher" + id + " .name").html(name);
+
+                var birthViewable = new Date(birth);
+                birthViewable = birthViewable.getDate() + "."
+                    + (1+birthViewable.getMonth()) + "."
+                    + birthViewable.getFullYear();
+
                 $("#teacher" + id + " .birth").html(birth);
+                $("#teacher" + id + " .birthViewable").html(birthViewable);
                 $("#teacher" + id + " .gender").html(gender);
                 $("#status").html("");
             } else {
+                $("#status").html("Ошибка. Перепроверьте введенные данные.");
                 lightOn("#teacher" + id,failColor);
             }
         });
@@ -406,15 +426,37 @@ $(document).ready(function(){
     $("#teacherSearchForm").submit(function (event) {
         event.preventDefault();
         $.get("teacherSelect", $(this).serialize(), function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
-                $("#teacherOutput .outputTable").html(data);
+            $("#teacherOutput .outputTable").html("");
+
+            data = JSON.parse(data);
+
+            var errors = data.errors;
+
+            if(jQuery.isEmptyObject(errors)) {
+                $("#teacherOutput .outputTable").append(
+                    "\t<tr>\n" +
+                    "\t\t<td>ID</td>\n" +
+                    "\t\t<td>ФИО</td>\n" +
+                    "\t\t<td>День рождения</td>\n" +
+                    "\t\t<td>Пол</td>\n" +
+                    "\t\t<td>Операции</td>\n" +
+                    "\t</tr>"
+                );
+                var teachers = data.teachers;
+
+
+                teachers.forEach(function (teacher) {
+                    addTeacherRow(teacher);
+                });
+
                 $("#status").html("");
+
+                addDeleteEventHandler("tr", "teacher");
+                addUpdateEventHandler("tr", "teacher");
+                addTeacherInfoEventHandler("tr");
+            } else {
+                $("#status").html("Нет записей в таблице.");
             }
-            addDeleteEventHandler("tr", "teacher");
-            addUpdateEventHandler("tr", "teacher");
-            addTeacherInfoEventHandler("tr");
         });
     })
     $("#putTeacherInGroup").submit(function (event) {
@@ -426,35 +468,40 @@ $(document).ready(function(){
         $.post("teacherPutInGroupByNumber", {
             "teacherId" : teacherId,
             "groupNumber" : groupNumber}, function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
+            data = JSON.parse(data);
 
-                var emptyCheck = parseInt($("#teacherInfo .error").html());
-                if(!isNaN(emptyCheck)) {
-                    //alert(1); // создать таблицу
+            var errors = data.errors;
+            if(jQuery.isEmptyObject(errors)) {
+                var lastId = data["groupId"];
+                var emptyCheck = $( "#teacherInfo #groups" )
+                    .has( "table" ).length ? true : false;
+                console.log(emptyCheck);
+                if(!emptyCheck) {
+                    // создать таблицу
                     var table = "\t<table><tr>\n" +
                         "\t\t<td style=\"display: none;\">ID преподавателя</td>\n" +
                         "\t\t<td>Номер</td>\n" +
                         "\t\t<td>Операции</td>\n" +
                         "\t</tr>";
-                    table += "\t<tr id=\"groupTeacher" + $("#status .lastId").html() + "\">\n" +
+                    table += "\t<tr id=\"groupTeacher" + lastId + "\">\n" +
                         "\t\t<td class=\"teacherId\" style=\"display: none;\">"
                         + teacherId +
                         "</td>\n" +
                         "\t\t<td class=\"number\">" + groupNumber + "</td>\n" +
                         "\t\t<td>" +
-                        "<a class=\"removeTeacherFromGroup\" href=\"#removeGroupFromTeacher" + $("#status .lastId").html() + "FromGroup\">" +
+                        "<a class=\"removeTeacherFromGroup\" href=\"#removeGroupFromTeacher" + lastId + "FromGroup\">" +
                         "Убрать группу" +
                         "</a>" +
                         "</td>\n" +
                         "\t</tr>";
                     table += "</table>";
                     $("#groups").html(table);
-                    addGroupRemovingFromTeacherHandler("#groupTeacher" + $("#status .lastId").html());
+                    addGroupRemovingFromTeacherHandler(
+                        "#groupTeacher" + lastId
+                    );
                 } else {
                     $("#teacherInfo table").append(
-                        "\t<tr id=\"groupTeacher" + $("#status .lastId").html() + "\">\n" +
+                        "\t<tr id=\"groupTeacher" + lastId + "\">\n" +
                         "\t\t<td class=\"teacherId\" style=\"display: none;\">"
                         + teacherId +
                         "</td>\n" +
@@ -463,13 +510,13 @@ $(document).ready(function(){
                         "</td>\n" +
                         "\t\t<td>" +
                         "<a class=\"removeTeacherFromGroup\" " +
-                        "href=\"#removeGroupFromTeacher" + $("#status .lastId").html() + "FromGroup\">" +
+                        "href=\"#removeGroupFromTeacher" + lastId + "FromGroup\">" +
                         "Убрать группу" +
                         "</a>" +
                         "</td>\n" +
                         "\t</tr>");
                     addGroupRemovingFromTeacherHandler(
-                        "#groupTeacher" + $("#status .lastId").html()
+                        "#groupTeacher" + lastId
                     );
                 }
                 $("#status").html("");

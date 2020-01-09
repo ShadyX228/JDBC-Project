@@ -78,9 +78,10 @@ $(document).ready(function () {
     $("#teacherInfo #putTeacherInGroup .group").keyup(function () {
         var group = $(this).val();
         $.get("groupSelect", {"group" : group}, function(data) {
-            $("#status").html(data);
-            var error = parseInt($("#status .error").html());
-            if(isNaN(error)) {
+            data = JSON.parse(data);
+
+            var errors = data.errors;
+            if(jQuery.isEmptyObject(errors)) {
                 $("#status").html("");
                 $("#putTeacherInGroup .submit").prop("disabled", false);
             } else {

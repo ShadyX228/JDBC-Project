@@ -163,7 +163,7 @@
             </div>
         </div>
         <div id="teacherInfo">
-            Преподаватель: <span id="teacherName"></span>, <span id="teacherId"></span>
+            Преподаватели: <span id="teacherName"></span>, <span id="teacherId"></span>
             <a id="closeTeacherInfo" href="#closeTeacherInfo">X</a>
             <fieldset>
                 <legend>

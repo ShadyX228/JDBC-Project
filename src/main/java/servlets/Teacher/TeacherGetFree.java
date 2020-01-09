@@ -4,6 +4,7 @@ import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
+import org.json.JSONObject;
 
 import static webdebugger.WebInputDebugger.*;
 
@@ -12,9 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class TeacherGetFree extends HttpServlet {
     @Override
@@ -25,6 +24,9 @@ public class TeacherGetFree extends HttpServlet {
         String groupIdString = request.getParameter("id");
 
         groupIdString = parseCriteria(Criteria.ID, groupIdString);
+
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
 
         if(!Objects.isNull(groupIdString)) {
             int groupId = Integer.parseInt(groupIdString);
@@ -44,33 +46,18 @@ public class TeacherGetFree extends HttpServlet {
                     }
                 }
                 if(check) {
-                    System.out.println("Added " + teacher.getId());
                     freeTeachers.add(teacher);
                 }
                 check = true;
             }
             if(freeTeachers.isEmpty()) {
-                System.out.println(3);
-                response.getWriter().write("Некого назначить.");
+                errors.add(0);
             } else {
-                response.getWriter().write("\t<table><tr>\n" +
-                        "\t\t<td style=\"display: none;\">ID группы</td>\n" +
-                        "\t\t<td>ФИО</td>\n" +
-                        "\t\t<td>Операции</td>\n" +
-                        "\t</tr>");
-                for (Teacher teacher : freeTeachers) {
-                    response.getWriter().write("\t<tr id=\"freeTeacher"
-                            + teacher.getId() + "\">\n" +
-                            "\t\t<td class=\"groupId\" style=\"display: none;\">"
-                            + groupId + "</td>\n" +
-                            "\t\t<td>" + teacher.getName() + "</td>\n" +
-                            "\t\t<td><a class=\"putInGroup\" " +
-                            "href=\"#putTeacher"
-                            + teacher.getId() + "\">Назначить</a></td>\n" +
-                            "\t</tr>");
-                }
+                jsonObject.accumulate("teachers", freeTeachers);
             }
             teacherDAO.closeEntityManager();
         }
+        jsonObject.accumulate("errors", errors);
+        response.getWriter().write(jsonObject.toString());
     }
 }

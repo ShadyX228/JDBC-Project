@@ -4,12 +4,15 @@ import dbmodules.dao.GroupDAO;
 import dbmodules.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
+import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import static webdebugger.WebInputDebugger.printMessage;
@@ -25,10 +28,13 @@ public class TeacherPutInGroupByNumber extends HttpServlet {
         String teacherIdString = request.getParameter("teacherId");
         String groupNumberString = request.getParameter("groupNumber");
 
-        String message = "Проверяю переданные параметры...<br>";
+        JSONObject jsonObject = new JSONObject();
+        List<Integer> errors = new ArrayList<>();
+
+
         if(Objects.isNull(teacherIdString)
                 || Objects.isNull(groupNumberString) ) {
-            message += printMessage(2,"Переданы пустые значения.");
+            errors.add(0);
         } else {
             TeacherDAO teacherDAO = new TeacherDAO();
             GroupDAO groupDAO = new GroupDAO();
@@ -38,16 +44,21 @@ public class TeacherPutInGroupByNumber extends HttpServlet {
             Group group = groupDAO.select(Integer.parseInt(groupNumberString));
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
                 teacherDAO.putTeacherInGroup(teacher,group);
-                response.getWriter().write("<span class=\"lastId\">"
-                        + group.getId() + "</span>");
+
+                int id = group.getId();
+                int number = group.getNumber();
+
+                jsonObject.accumulate("errors",errors);
+                jsonObject.put("groupId", id);
+                jsonObject.put("groupNumber", number);
             } else {
-                message += printMessage(2,"Ошибка: нет такой группы или преподавателя.");
-                response.getWriter().write(message);
+                errors.add(-1);
             }
 
             teacherDAO.closeEntityManager();
             groupDAO.closeEntityManager();
+            response.getWriter().write(jsonObject.toString());
         }
-        response.getWriter().write(message);
+
     }
 }

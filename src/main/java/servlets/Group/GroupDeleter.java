@@ -65,7 +65,8 @@ public class GroupDeleter extends HttpServlet {
                 }
 
                 for (Group group : list) {
-                    if(group.getTeachers().isEmpty() && group.getStudents().isEmpty()) {
+                    if(group.getTeachers().isEmpty()
+                            && group.getStudents().isEmpty()) {
                         groupDAO.delete(group);
                     } else {
                         errors.add(-4);

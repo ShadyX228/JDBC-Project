@@ -1,8 +1,7 @@
 $(document).ready(function(){
-    var successColor = "#CACACA";
+    var successColor = "#E7E7E7";
     var failColor = "red";
     var title = "Информационная система для работы с базой студентов, групп и преподавателей";
-
 
 
     /** Выбор таблицы **/
@@ -26,14 +25,14 @@ $(document).ready(function(){
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 $("#studentOutput .outputTable").append(
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>"
+                    "\t<thead><tr>\n" +
+                    "\t\t<th>ID</th>\n" +
+                    "\t\t<th>ФИО</th>\n" +
+                    "\t\t<th>День рождения</th>\n" +
+                    "\t\t<th>Пол</th>\n" +
+                    "\t\t<th>Группа</th>\n" +
+                    "\t\t<th>Операции</th>\n" +
+                    "\t</tr></thead><tbody></tbody>"
                 );
                 var students = data.students;
 
@@ -137,14 +136,14 @@ $(document).ready(function(){
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 $("#studentOutput .outputTable").append(
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Группа</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>"
+                    "\t<thead><tr>\n" +
+                    "\t\t<th>ID</th>\n" +
+                    "\t\t<th>ФИО</th>\n" +
+                    "\t\t<th>День рождения</th>\n" +
+                    "\t\t<th>Пол</th>\n" +
+                    "\t\t<th>Группа</th>\n" +
+                    "\t\t<th>Операции</th>\n" +
+                    "\t</tr></thead><tbody></tbody>"
                 );
                 var students = data.students;
 
@@ -185,11 +184,11 @@ $(document).ready(function(){
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 $("#groupOutput .outputTable").append(
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>Номер</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>"
+                    "\t<thead><tr>\n" +
+                    "\t\t<th>ID</th>\n" +
+                    "\t\t<th>Номер</th>\n" +
+                    "\t\t<th>Операции</th>\n" +
+                    "\t</tr></thead><tbody></tbody>"
                 );
                 var groups = data.groups;
 
@@ -198,14 +197,15 @@ $(document).ready(function(){
                     addGroupRow(group);
                 });
 
+                //$("#groupOutput .outputTable").DataTable();
                 $("#status").html("");
 
-            addDeleteEventHandler("#groupOutput .outputTable tr",
+                addDeleteEventHandler("#groupOutput .outputTable tr",
                 "group");
-            addUpdateEventHandler("#groupOutput .outputTable tr",
+                addUpdateEventHandler("#groupOutput .outputTable tr",
                 "group");
-            addGroupInfoEventHandler("tr");
-            addGetTeachersHandler("tr");
+                addGroupInfoEventHandler("tr");
+                addGetTeachersHandler("tr");
         } else {
                 $("#status").html("Нет записей в таблице.");
             }
@@ -279,11 +279,11 @@ $(document).ready(function(){
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 $("#groupOutput .outputTable").append(
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>Номер</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>"
+                    "\t<thead><tr>\n" +
+                    "\t\t<th>ID</th>\n" +
+                    "\t\t<th>Номер</th>\n" +
+                    "\t\t<th>Операции</th>\n" +
+                    "\t</tr></thead><tbody></tbody>"
                 );
                 var groups = data.groups;
 
@@ -324,13 +324,13 @@ $(document).ready(function(){
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 $("#teacherOutput .outputTable").append(
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>"
+                    "\t<thead><tr>\n" +
+                    "\t\t<th>ID</th>\n" +
+                    "\t\t<th>ФИО</th>\n" +
+                    "\t\t<th>День рождения</th>\n" +
+                    "\t\t<th>Пол</th>\n" +
+                    "\t\t<th>Операции</th>\n" +
+                    "\t</tr></thead><tbody></tbody>"
                 );
                 var teachers = data.teachers;
 
@@ -434,13 +434,13 @@ $(document).ready(function(){
 
             if(jQuery.isEmptyObject(errors)) {
                 $("#teacherOutput .outputTable").append(
-                    "\t<tr>\n" +
-                    "\t\t<td>ID</td>\n" +
-                    "\t\t<td>ФИО</td>\n" +
-                    "\t\t<td>День рождения</td>\n" +
-                    "\t\t<td>Пол</td>\n" +
-                    "\t\t<td>Операции</td>\n" +
-                    "\t</tr>"
+                    "\t<thead><tr>\n" +
+                    "\t\t<th>ID</th>\n" +
+                    "\t\t<th>ФИО</th>\n" +
+                    "\t\t<th>День рождения</th>\n" +
+                    "\t\t<th>Пол</th>\n" +
+                    "\t\t<th>Операции</th>\n" +
+                    "\t</tr></thead><tbody></tbody>"
                 );
                 var teachers = data.teachers;
 

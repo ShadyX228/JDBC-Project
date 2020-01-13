@@ -64,10 +64,11 @@ public class TeacherSelector extends HttpServlet {
             map.put(ALL, " ");
         }
         teachers = teacherDAO.select(map);
+
         jsonObject.accumulate("teachers", teachers);
         jsonObject.accumulate("errors", errors);
 
-        response.getWriter().write(jsonObject.toString());
         teacherDAO.closeEntityManager();
+        response.getWriter().write(jsonObject.toString());
     }
 }

@@ -335,7 +335,7 @@ function addStudentRow(student) {
             + (1+birthViewable.getMonth()) + "."
             + birthViewable.getFullYear();
 
-        $("#studentOutput .outputTable").append(
+        $("#studentOutput .outputTable tbody").append(
             "\t<tr id='student" + student["id"] + "'>\n" +
             "\t\t<td class='id'>" + student["id"] + "</td>\n" +
             "\t\t<td class='name'>" + student["name"] + "</td>\n" +
@@ -351,7 +351,7 @@ function addStudentRow(student) {
         );
 }
 function addGroupRow(group) {
-        $("#groupOutput .outputTable").append(
+        $("#groupOutput .outputTable tbody").append(
             "\t<tr id='group" + group["id"] + "'>\n" +
             "\t\t<td class='id'>" + group["id"] + "</td>\n" +
             "\t\t<td class='group'>" + group["number"] + "</td>\n" +
@@ -379,7 +379,7 @@ function addTeacherRow(teacher) {
         + (1+birthViewable.getMonth()) + "."
         + birthViewable.getFullYear();
 
-    $("#teacherOutput .outputTable").append("<tr id=\"teacher" + teacher["id"] + "\">" +
+    $("#teacherOutput .outputTable tbody").append("<tr id=\"teacher" + teacher["id"] + "\">" +
         "<td class=\"id\">" + teacher["id"] + "</td>" +
         "<td class=\"name\">" + teacher["name"] + "</td>" +
         "<td class=\"birth\">" + birth + "</td>" +

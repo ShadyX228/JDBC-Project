@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static webdebugger.WebInputDebugger.printMessage;
 import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class TeacherDeleteGroup extends HttpServlet {

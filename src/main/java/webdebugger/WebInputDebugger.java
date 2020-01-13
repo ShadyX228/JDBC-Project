@@ -114,19 +114,6 @@ public class WebInputDebugger {
         }
         return null;
     }
-    public static String printMessage(int status, String message) {
-        switch (status) {
-            case 1: {
-                return "<span class=\"OK\">" + message + "</span><br>";
-            }
-            case 2: {
-                return "<span class=\"error\">" + message + "</span><br>";
-            }
-            default: {
-                return message + "<br>";
-            }
-        }
-    }
 
    public static void setStudentJSONObjectState(List<Student> students,
                                                 Map<Integer, Integer> groups,

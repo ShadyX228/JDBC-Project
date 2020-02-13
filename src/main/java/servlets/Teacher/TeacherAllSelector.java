@@ -1,6 +1,6 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
+import dbmodules.service.dao.TeacherDAO;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static webdebugger.WebInputDebugger.generateTeacherTable;
 import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class TeacherAllSelector extends HttpServlet {

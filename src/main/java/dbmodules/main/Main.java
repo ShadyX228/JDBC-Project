@@ -1,8 +1,14 @@
 package dbmodules.main;
 
-import dbmodules.dao.*;
+import dbmodules.config.AppInitializer;
+import dbmodules.config.DataConfig;
+import dbmodules.repository.GroupRepository;
+import dbmodules.service.dao.*;
 import dbmodules.types.*;
 import dbmodules.tables.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import utilfactories.JPAUtil;
 import java.time.*;
 import java.util.*;
@@ -25,7 +31,14 @@ public class Main {
      * enter operation code;
      * follow instructions.
      */
+    @Autowired
+    private GroupRepository groupRepository;
     public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DataConfig.class);
+
+        System.out.println();
+    }
+    /*public static void main(String[] args) {
         try {
             StudentDAO studentDAO = new StudentDAO();
             TeacherDAO teacherDAO = new TeacherDAO();
@@ -606,5 +619,5 @@ public class Main {
         } finally {
             JPAUtil.close();
         }
-    }
+    }*/
 }

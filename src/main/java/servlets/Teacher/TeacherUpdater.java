@@ -1,6 +1,6 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
+import dbmodules.service.dao.TeacherDAO;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Gender;
 import org.json.JSONObject;

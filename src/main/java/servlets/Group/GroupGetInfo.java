@@ -1,6 +1,6 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import static dbmodules.types.Criteria.ID;
@@ -51,7 +50,7 @@ public class GroupGetInfo extends HttpServlet {
                         students.add(student.getName());
                     }
                 }
-                groupDAO.closeEntityManager();
+
             }
         }
 

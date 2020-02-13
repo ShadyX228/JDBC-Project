@@ -1,9 +1,6 @@
 package servlets;
 
-import com.google.gson.*;
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
-import dbmodules.tables.Group;
+import dbmodules.service.dao.StudentDAO;
 import dbmodules.tables.Student;
 import org.json.JSONObject;
 import javax.servlet.ServletException;

@@ -1,13 +1,12 @@
 package servlets.Student;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
+import dbmodules.service.dao.GroupDAO;
+import dbmodules.service.dao.StudentDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,7 +62,7 @@ public class StudentUpdater extends HttpServlet {
                 studentDAO.update(student, name, birth, gender, group);
                 studentDAO.closeEntityManager();
             }
-            groupDAO.closeEntityManager();
+
         } else {
             errors.add(-1);
         }

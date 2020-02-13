@@ -151,6 +151,7 @@
                 Подвальчик
             </footer>
         </div>
+
         <div id="groupInfo">
             Группа: <span id="groupNumber"></span>
             <a id="closeGroupInfo" href="#closeGroupInfo">X</a>

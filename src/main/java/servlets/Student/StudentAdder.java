@@ -1,13 +1,12 @@
 package servlets.Student;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
+import dbmodules.service.dao.GroupDAO;
+import dbmodules.service.dao.StudentDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +89,6 @@ public class StudentAdder extends HttpServlet {
                 StudentDAO studentDAO = new StudentDAO();
                 studentDAO.add(student);
                 studentDAO.closeEntityManager();
-                groupDAO.closeEntityManager();
                 jsonObject.put("lastId", student.getId());
                 jsonObject.put("group", student.getGroup().getNumber());
             }

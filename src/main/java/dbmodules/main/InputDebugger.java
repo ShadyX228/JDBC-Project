@@ -1,6 +1,6 @@
 package dbmodules.main;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;

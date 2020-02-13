@@ -1,12 +1,11 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
+import dbmodules.service.dao.GroupDAO;
+import dbmodules.service.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +45,6 @@ public class TeacherPutInGroup extends HttpServlet {
             }
 
             teacherDAO.closeEntityManager();
-            groupDAO.closeEntityManager();
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());

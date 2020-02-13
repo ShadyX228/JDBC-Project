@@ -1,6 +1,6 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
+import dbmodules.service.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import static webdebugger.WebInputDebugger.*;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

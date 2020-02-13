@@ -1,12 +1,26 @@
-package dbmodules.dao;
+package dbmodules.service.dao;
 
-import dbmodules.interfaces.GroupTable;
+import dbmodules.service.GroupSerivce;
 import dbmodules.tables.Group;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import utilfactories.JPAUtil;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
-public class GroupDAO extends JPAUtil<Group> implements GroupTable {
+@Service
+@Repository
+public class GroupDAO  implements GroupSerivce {
+    @PersistenceContext
+    private EntityManager entityManager;
 
+    public void add(Group entity) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(entity);
+        entityManager.getTransaction().commit();
+    }
     public Group selectById(int id) {
         return entityManager.find(Group.class, id);
     }
@@ -23,6 +37,11 @@ public class GroupDAO extends JPAUtil<Group> implements GroupTable {
         entityManager.getTransaction().begin();
         group.setNumber(number);
         entityManager.persist(group);
+        entityManager.getTransaction().commit();
+    }
+    public void delete(Group entity) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(entity);
         entityManager.getTransaction().commit();
     }
 }

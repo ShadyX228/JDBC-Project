@@ -1,6 +1,6 @@
 package servlets.Student;
 
-import dbmodules.dao.StudentDAO;
+import dbmodules.service.dao.StudentDAO;
 import dbmodules.tables.Student;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;

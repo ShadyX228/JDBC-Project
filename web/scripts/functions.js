@@ -38,6 +38,8 @@ function addDeleteEventHandler(selector, table) {
             if(jQuery.isEmptyObject(errors)) {
                 $("#" + table + id).hide();
                 $("#status").html("");
+                console.log(3);
+                reInitTable(2);
             } else {
                 $("#status").html("Ошибка удаления.")
             }
@@ -327,6 +329,33 @@ function lightOn(selector, color) {
     }, 1000)
 
 }
+function reInitTable(table) {
+    switch(table) {
+        case 1 : {
+            $("#studentOutput .outputTable").DataTable( {
+                searching: false
+            });
+            break;
+        }
+        case 2 : {
+            if($.fn.dataTable.isDataTable("#groupOutput .outputTable")) {
+                $("#groupOutput .outputTable").DataTable().draw();
+            } else {
+                $("#groupOutput .outputTable").DataTable({
+                    searching: false
+                });
+                console.log(2);
+            }
+            break;
+        }
+        case 3 : {
+            $("#teacherOutput .outputTable").DataTable( {
+                searching: false
+            });
+            break;
+        }
+    }
+}
 
 function addStudentRow(student) {
         var birth = student["birth"];
@@ -371,6 +400,7 @@ function addGroupRow(group) {
             + "</td>\n" +
             "\t</tr>"
         );
+        console.log(group["id"] + " " + group["number"]);
 }
 function addTeacherRow(teacher) {
     var birth = teacher["birth"];

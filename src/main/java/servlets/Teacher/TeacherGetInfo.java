@@ -1,19 +1,16 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
+import dbmodules.service.dao.TeacherDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Teacher;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static dbmodules.types.Criteria.GROUP;
 import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
 

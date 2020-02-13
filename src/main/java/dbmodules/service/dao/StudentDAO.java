@@ -1,29 +1,30 @@
-package dbmodules.dao;
+package dbmodules.service.dao;
 
-import dbmodules.interfaces.PersonTable;
+import dbmodules.service.PersonSerivce;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
-import dbmodules.tables.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
 
+import static webdebugger.WebInputDebugger.*;
 import javax.persistence.Query;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static dbmodules.types.Criteria.*;
-import static webdebugger.WebInputDebugger.checkGroup;
 
-public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher> {
-    public Teacher selectById(int id) {
-        return entityManager.find(Teacher.class, id);
+public class StudentDAO extends JPAUtil implements PersonSerivce<Student> {
+    public void add(Student entity) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(entity);
+        entityManager.getTransaction().commit();
     }
-    public List<Teacher> select(Criteria criteria, String value) {
-        List<Teacher> list = new ArrayList<>();
+    public Student selectById(int id) {
+        return entityManager.find(Student.class, id);
+    }
+    public List<Student> select(Criteria criteria, String value) {
+        List<Student> list = new ArrayList<>();
 
         switch (criteria) {
             case ID : {
@@ -32,7 +33,7 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
             }
             case NAME : {
                 list = entityManager
-                        .createQuery("FROM Teacher WHERE Name LIKE :name")
+                        .createQuery("FROM Student WHERE Name LIKE :name")
                         .setParameter("name", "%" + value + "%")
                         .getResultList();
                 break;
@@ -45,7 +46,7 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                 );
 
                 list = entityManager
-                        .createQuery("FROM Teacher WHERE birthday = :birthday")
+                        .createQuery("FROM Student WHERE birthday = :birthday")
                         .setParameter("birthday", birth)
                         .getResultList()
                 ;
@@ -54,32 +55,41 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
             case GENDER : {
                 Gender gender = Gender.valueOf(value);
                 list = entityManager
-                        .createQuery("FROM Teacher WHERE gender = :gender")
+                        .createQuery("FROM Student WHERE gender = :gender")
                         .setParameter("gender", gender)
+                        .getResultList();
+                break;
+            }
+            case GROUP  : {
+                int groupNumber = Integer.parseInt(value);
+                Group group = new GroupDAO().select(groupNumber);
+                list = entityManager
+                        .createQuery("FROM Student WHERE group_id = :group_id")
+                        .setParameter("group_id", group.getId())
                         .getResultList();
                 break;
             }
             case ALL : {
                 list = entityManager
-                        .createQuery("FROM Teacher")
+                        .createQuery("FROM Student")
                         .getResultList();
                 break;
             }
         }
         return list;
     }
-    public List<Teacher> select(HashMap<Criteria, String> criteriasMap) {
-        List<Teacher> list = new ArrayList<>();
+    public List<Student> select(HashMap<Criteria, String> criteriasMap) {
+        List<Student> list = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append("FROM Teacher");
+        queryBuilder.append("FROM Student");
         if(criteriasMap.containsKey(ID)) {
-            Teacher teacher = selectById(Integer
-                    .parseInt(criteriasMap.get(ID)));
-            if(!Objects.isNull(teacher)) {
-                list.add(teacher);
+            Student student = selectById(Integer.parseInt(criteriasMap.get(ID)));
+            if(!Objects.isNull(student)) {
+                list.add(student);
             }
         } else {
             queryBuilder.append(" WHERE ");
+            Group group = null;
             for (HashMap.Entry<Criteria,
                     String> element : criteriasMap.entrySet()) {
                 switch (element.getKey()) {
@@ -93,6 +103,18 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                     }
                     case GENDER: {
                         queryBuilder.append("gender = :gender AND ");
+                        break;
+                    }
+                    case GROUP: {
+                        GroupDAO groupDAO = new GroupDAO();
+                        int groupNumber = Integer
+                                .parseInt(criteriasMap.get(GROUP));
+                        group = checkGroup(groupNumber, groupDAO);
+
+                        if(!Objects.isNull(group)) {
+                            queryBuilder.append("group_id = :group_id AND ");
+                            System.out.println(criteriasMap.get(GROUP));
+                        }
                         break;
                     }
                 }
@@ -123,22 +145,28 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                         execute.setParameter("gender", gender);
                     }
 
+                    if (criteriasMap.containsKey(GROUP)) {
+                        if(!Objects.isNull(group)) {
+                            execute.setParameter("group_id",
+                                    group.getId());
+                        }
+                    }
 
-                    System.out.println(query);
+                    System.out.println(queryBuilder);
 
                     list = execute.getResultList();
                 }
 
             } else {
-                String allQuery = "FROM Teacher";
+                String allSelect = "FROM Student";
                 list = entityManager
-                        .createQuery(allQuery)
+                        .createQuery(allSelect)
                         .getResultList();
             }
         }
         return list;
     }
-    public void update(Teacher person, Criteria criteria, String value) {
+    public void update(Student person, Criteria criteria, String value) {
         entityManager.getTransaction().begin();
 
         person = entityManager.merge(person);
@@ -161,33 +189,29 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
                 person.setGender(newGender);
                 break;
             }
+            case GROUP : {
+                GroupDAO groupDAO = new GroupDAO();
+                Group group = groupDAO.select(Integer.parseInt(value));
+                person.setGroup(group);
+                break;
+            }
         }
         entityManager.persist(person);
         entityManager.getTransaction().commit();
     }
-    public void update(Teacher person, String name, LocalDate birth, Gender gender) {
+    public void update(Student person, String name,
+                       LocalDate birth, Gender gender, Group group) {
         entityManager.getTransaction().begin();
         person.setName(name);
         person.setBirthday(birth);
         person.setGender(gender);
+        person.setGroup(group);
         entityManager.persist(person);
         entityManager.getTransaction().commit();
     }
-    public void putTeacherInGroup(Teacher teacher, Group group) {
+    public void delete(Student entity) {
         entityManager.getTransaction().begin();
-        teacher.addGroup(group);
-        entityManager.merge(teacher);
-        entityManager.getTransaction().commit();
-    }
-    public List<Group> getTeacherGroups(int id) {
-        Teacher teacher = selectById(id);
-        return teacher.getGroups();
-    }
-    public void removeTeacherFromGroup(Teacher teacher, Group group) {
-        entityManager.getTransaction().begin();
-        teacher = entityManager.merge(teacher);
-        group = entityManager.merge(group);
-        teacher.removeGroup(group);
+        entityManager.remove(entity);
         entityManager.getTransaction().commit();
     }
 }

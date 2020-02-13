@@ -1,6 +1,6 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import org.json.JSONObject;
 
@@ -49,9 +49,7 @@ public class GroupUpdater extends HttpServlet {
                 errors.add(0);
             } else {
                 groupDAO.update(group, number);
-                groupDAO.closeEntityManager();
             }
-            groupDAO.closeEntityManager();
         } else {
             errors.add(1);
         }

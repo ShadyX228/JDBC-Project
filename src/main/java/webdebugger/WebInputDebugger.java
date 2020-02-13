@@ -1,7 +1,7 @@
 package webdebugger;
 
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.tables.Student;
 import dbmodules.tables.Teacher;
@@ -88,7 +88,6 @@ public class WebInputDebugger {
                 try {
                     GroupDAO groupDAO = new GroupDAO();
                     Group group = groupDAO.select(Integer.parseInt(critVal));
-                    groupDAO.closeEntityManager();
                     if (!Objects.isNull(group)) {
                         return Integer.toString(group.getNumber());
                     } else {

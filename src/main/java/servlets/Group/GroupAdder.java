@@ -1,6 +1,6 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import org.json.JSONObject;
 
@@ -55,7 +55,6 @@ public class GroupAdder extends HttpServlet {
 
                 jsonObject.put("lastId", newGroup.getId());
 
-                groupDAO.closeEntityManager();
 
             }
         }

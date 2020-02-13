@@ -1,6 +1,6 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
@@ -72,7 +72,7 @@ public class GroupDeleter extends HttpServlet {
                         errors.add(-4);
                     }
                 }
-                groupDAO.closeEntityManager();
+
 
             }
         }

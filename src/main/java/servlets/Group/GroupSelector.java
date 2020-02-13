@@ -1,6 +1,6 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.service.dao.GroupDAO;
 import dbmodules.tables.Group;
 import org.json.JSONObject;
 
@@ -27,20 +27,21 @@ public class GroupSelector extends HttpServlet {
         GroupDAO groupDAO = new GroupDAO();
         JSONObject jsonObject = new JSONObject();
         List<Integer> errors = new ArrayList<>();
+        List<Group> groups = new ArrayList<>();
 
         if(!Objects.isNull(groupString)) {
-            List<Group> groups = new ArrayList<>();
             Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
             if(!Objects.isNull(group)) {
                 groups.add(group);
-                jsonObject.accumulate("groups", groups);
             } else {
+                groups = groupDAO.selectAll();
                 errors.add(0);
             }
-            groupDAO.closeEntityManager();
         } else {
-            errors.add(0);
+            groups = groupDAO.selectAll();
+            errors.add(1);
         }
+        jsonObject.accumulate("groups", groups);
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
     }

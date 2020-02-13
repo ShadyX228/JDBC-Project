@@ -1,11 +1,14 @@
 package utilfactories;
 
 import dbmodules.tables.Table;
+import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 
-public class JPAUtil <T extends Table> {
+public class JPAUtil{
     private static final String unitName = "JDBC";
     private static final EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory(unitName);
@@ -20,16 +23,5 @@ public class JPAUtil <T extends Table> {
     }
     public void closeEntityManager() {
         entityManager.close();
-    }
-
-    public void add(T entity) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(entity);
-        entityManager.getTransaction().commit();
-    }
-    public void delete(T entity) {
-        entityManager.getTransaction().begin();
-        entityManager.remove(entity);
-        entityManager.getTransaction().commit();
     }
 }

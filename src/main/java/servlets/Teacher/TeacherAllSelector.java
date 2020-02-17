@@ -1,7 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Teacher;
+import dbmodules.service.PersonService;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -21,7 +22,7 @@ public class TeacherAllSelector extends HttpServlet {
                           HttpServletResponse response)
             throws ServletException, IOException {
         setQueryParametres(request,response);
-        TeacherDAO teacherDAO = new TeacherDAO();
+        PersonService<Teacher> teacherDAO = new TeacherDAO();
         JSONObject jsonObject = new JSONObject();
 
         List<Teacher> list = teacherDAO.select(Criteria.ALL,"");

@@ -1,8 +1,9 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
+import dbmodules.service.PersonService;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -21,7 +22,7 @@ public class TeacherGetInfo extends HttpServlet {
             throws IOException {
         setQueryParametres(request,response);
 
-        TeacherDAO teacherDAO = new TeacherDAO();
+        PersonService<Teacher> teacherDAO = new TeacherDAO();
 
 
         String idString = request.getParameter("id");

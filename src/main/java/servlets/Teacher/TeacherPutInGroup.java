@@ -1,9 +1,11 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.GroupDAO;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
+import dbmodules.service.GroupService;
+import dbmodules.service.PersonService;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -32,19 +34,22 @@ public class TeacherPutInGroup extends HttpServlet {
         if(Objects.isNull(teacherIdString) || Objects.isNull(groupIdString) ) {
             errors.add(0);
         } else {
-            TeacherDAO teacherDAO = new TeacherDAO();
-            GroupDAO groupDAO = new GroupDAO();
+            PersonService<Teacher> teacherDAO = new TeacherDAO();
+            GroupService groupDAO = new GroupDAO();
 
             Teacher teacher = teacherDAO.selectById(Integer
                     .parseInt(teacherIdString));
             Group group = groupDAO.selectById(Integer.parseInt(groupIdString));
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
-                teacherDAO.putTeacherInGroup(teacher,group);
+                TeacherDAO putService = (TeacherDAO) teacherDAO;
+                putService.putTeacherInGroup(teacher,group);
+                putService.closeEntityManager();
             } else {
                 errors.add(-1);
             }
 
             teacherDAO.closeEntityManager();
+            groupDAO.closeEntityManager();
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());

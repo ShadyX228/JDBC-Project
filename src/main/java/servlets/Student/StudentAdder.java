@@ -1,9 +1,11 @@
 package servlets.Student;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.service.dao.StudentDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
+import dbmodules.dao.GroupDAO;
+import dbmodules.dao.StudentDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Student;
+import dbmodules.service.GroupService;
+import dbmodules.service.PersonService;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -62,7 +64,7 @@ public class StudentAdder extends HttpServlet {
 
             int number;
             Group groupObject = new Group(0);
-            GroupDAO groupDAO = new GroupDAO();
+            GroupService groupDAO = new GroupDAO();
             try {
                 number = Integer.parseInt(group);
                 groupObject = checkGroup(number, groupDAO);
@@ -86,9 +88,10 @@ public class StudentAdder extends HttpServlet {
                         genderParsed,
                         groupObject
                 );
-                StudentDAO studentDAO = new StudentDAO();
+                PersonService<Student> studentDAO = new StudentDAO();
                 studentDAO.add(student);
                 studentDAO.closeEntityManager();
+                groupDAO.closeEntityManager();
                 jsonObject.put("lastId", student.getId());
                 jsonObject.put("group", student.getGroup().getNumber());
             }

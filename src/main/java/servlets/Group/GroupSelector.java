@@ -1,7 +1,8 @@
 package servlets.Group;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.tables.Group;
+import dbmodules.dao.GroupDAO;
+import dbmodules.entity.Group;
+import dbmodules.service.GroupService;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -20,30 +21,29 @@ public class GroupSelector extends HttpServlet {
             throws IOException {
         setQueryParametres(request,response);
 
-
         String groupString = request.getParameter("group");
 
         groupString = parseCriteria(ID, groupString);
-        GroupDAO groupDAO = new GroupDAO();
+        GroupService groupDAO = new GroupDAO();
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
-        List<Group> groups = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if(!Objects.isNull(groupString)) {
+            List<Group> groups = new ArrayList<>();
             Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
             if(!Objects.isNull(group)) {
                 groups.add(group);
+                jsonObject.accumulate("groups", groups);
             } else {
-                groups = groupDAO.selectAll();
-                errors.add(0);
+                errors.add("Группы не существует.");
             }
+            groupDAO.closeEntityManager();
         } else {
-            groups = groupDAO.selectAll();
-            errors.add(1);
+            errors.add("Переданы пустые значения.");
         }
-        jsonObject.accumulate("groups", groups);
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 
 }

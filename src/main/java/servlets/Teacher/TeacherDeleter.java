@@ -1,7 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Teacher;
+import dbmodules.service.PersonService;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -25,7 +26,7 @@ public class TeacherDeleter extends HttpServlet {
             throws IOException {
         setQueryParametres(request,response);
 
-        TeacherDAO teacherDAO = new TeacherDAO();
+        PersonService<Teacher> teacherDAO = new TeacherDAO();
 
         String criteriaString = request.getParameter("criteria");
         String criteriaValue = request.getParameter("criteriaValue");
@@ -80,6 +81,7 @@ public class TeacherDeleter extends HttpServlet {
                 }
             }
         }
+        teacherDAO.closeEntityManager();
         jsonObject.accumulate("errors",errors);
         response.getWriter().write(jsonObject.toString());
     }

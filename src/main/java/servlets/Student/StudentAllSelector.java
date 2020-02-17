@@ -1,7 +1,8 @@
 package servlets.Student;
 
-import dbmodules.service.dao.StudentDAO;
-import dbmodules.tables.Student;
+import dbmodules.dao.StudentDAO;
+import dbmodules.entity.Student;
+import dbmodules.service.PersonService;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 import javax.servlet.http.HttpServlet;
@@ -18,11 +19,11 @@ import static webdebugger.WebInputDebugger.setQueryParametres;
 
 public class StudentAllSelector extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request,
+    protected void doGet(HttpServletRequest request,
                           HttpServletResponse response)
             throws IOException {
         setQueryParametres(request,response);
-        StudentDAO studentDAO = new StudentDAO();
+        PersonService<Student> studentDAO = new StudentDAO();
         JSONObject jsonObject = new JSONObject();
 
         List<Student> students = studentDAO.select(Criteria.ALL,"");

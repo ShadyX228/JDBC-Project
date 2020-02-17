@@ -1,9 +1,10 @@
 package servlets.Student;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.service.dao.StudentDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
+import dbmodules.dao.GroupDAO;
+import dbmodules.dao.StudentDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Student;
+import dbmodules.service.PersonService;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -57,9 +58,11 @@ public class StudentUpdater extends HttpServlet {
             if(Objects.isNull(group)) {
                 errors.add(0);
             } else {
-                StudentDAO studentDAO = new StudentDAO();
+                PersonService<Student> studentDAO = new StudentDAO();
                 Student student = studentDAO.selectById(id);
-                studentDAO.update(student, name, birth, gender, group);
+                StudentDAO studentUpdater = (StudentDAO) studentDAO;
+                studentUpdater .update(student, name, birth, gender, group);
+                studentUpdater.closeEntityManager();
                 studentDAO.closeEntityManager();
             }
 

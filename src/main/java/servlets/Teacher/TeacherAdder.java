@@ -1,7 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Teacher;
+import dbmodules.service.PersonService;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -62,7 +63,7 @@ public class TeacherAdder extends HttpServlet {
                         birthday.getDayOfMonth(),
                         genderParsed
                 );
-                TeacherDAO teacherDAO = new TeacherDAO();
+                PersonService<Teacher> teacherDAO = new TeacherDAO();
                 teacherDAO.add(teacher);
                 teacherDAO.closeEntityManager();
                 jsonObject.put("lastId", teacher.getId());

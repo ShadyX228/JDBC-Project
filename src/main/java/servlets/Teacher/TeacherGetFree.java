@@ -1,8 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 

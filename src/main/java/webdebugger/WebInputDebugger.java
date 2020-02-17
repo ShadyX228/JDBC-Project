@@ -1,10 +1,10 @@
 package webdebugger;
 
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.GroupDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Student;
+import dbmodules.service.GroupService;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
@@ -55,7 +55,7 @@ public class WebInputDebugger {
         return null;
     }
     public static Group checkGroup
-            (int number, GroupDAO groupDAO) {
+            (int number, GroupService groupDAO) {
         try {
             return groupDAO.select(number);
         } catch (InputMismatchException | IndexOutOfBoundsException e) {
@@ -85,8 +85,8 @@ public class WebInputDebugger {
                 }
             }
             case GROUP: {
+                GroupDAO groupDAO = new GroupDAO();
                 try {
-                    GroupDAO groupDAO = new GroupDAO();
                     Group group = groupDAO.select(Integer.parseInt(critVal));
                     if (!Objects.isNull(group)) {
                         return Integer.toString(group.getNumber());
@@ -97,6 +97,8 @@ public class WebInputDebugger {
                         | IndexOutOfBoundsException
                         | NumberFormatException e) {
                     return null;
+                } finally {
+                    groupDAO.closeEntityManager();
                 }
             }
             case BIRTH: {
@@ -127,51 +129,9 @@ public class WebInputDebugger {
            errors.add(0);
        }
     }
-    public static String generateTeacherTable(List<Teacher> list) {
-        StringBuilder output = new StringBuilder();
-        output.append("\t<tr>\n" +
-                "\t\t<td>ID</td>\n" +
-                "\t\t<td>ФИО</td>\n" +
-                "\t\t<td>День рождения</td>\n" +
-                "\t\t<td>Пол</td>\n" +
-                "\t\t<td>Операции</td>\n" +
-                "\t</tr>");
-        if(!list.isEmpty()) {
-            for (Teacher teacher : list) {
-                output
-                        .append("<tr id=\"teacher")
-                        .append( teacher.getId() ).append( "\">\n" )
-                        .append("<td class=\"id\">")
-                        .append(teacher.getId())
-                        .append("</td>" )
-                        .append("<td class=\"name\">")
-                        .append(teacher.getName() )
-                        .append("</td>" )
-                        .append("<td class=\"birth\">")
-                        .append(teacher.getBirth())
-                        .append("</td>")
-                        .append("<td class=\"gender\">")
-                        .append(teacher.getGender())
-                        .append( "</td>" )
-                        .append("<td class=\"operations\">" )
-                        .append("<a class=\"delete\" href=\"#deleteTeacher")
-                        .append( teacher.getId() ).append("\">Удалить</a><br>")
-                        .append("<a class=\"update\" href=\"#updateTeacher")
-                        .append( teacher.getId() ).append( "\">Изменить</a><br>" )
-                        .append("<a class=\"getInfo\" href=\"#getInfoTeacher")
-                        .append(teacher.getId())
-                        .append("\">Информация</a>")
-                        .append("</td>")
-                        .append("</tr>");
-            }
-        } else {
-            output.append("<tr><td colspan=\"6\">Нет записей.</tr></td>");
-        }
-        return output.toString();
-    }
 
     public static void setQueryParametres(HttpServletRequest request,
-                                   HttpServletResponse response)
+                                          HttpServletResponse response)
             throws UnsupportedEncodingException {
         response.setContentType("text/html");
         response.setCharacterEncoding("UTF-8");

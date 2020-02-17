@@ -1,26 +1,22 @@
 package utilfactories;
 
-import dbmodules.tables.Table;
-import org.springframework.stereotype.Repository;
+import dbmodules.entity.BaseEntity;
+import dbmodules.service.BaseService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
 
-public class JPAUtil{
+public class JPAUtil implements BaseService {
     private static final String unitName = "JDBC";
     private static final EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory(unitName);
     protected EntityManager entityManager = getEntityManager();
 
-    protected EntityManager getEntityManager(){
+    private EntityManager getEntityManager(){
         return entityManagerFactory.createEntityManager();
     }
 
-    public static void close(){
-        entityManagerFactory.close();
-    }
     public void closeEntityManager() {
         entityManager.close();
     }

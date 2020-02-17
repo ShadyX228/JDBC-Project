@@ -1,7 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Teacher;
+import dbmodules.service.PersonService;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -58,7 +59,7 @@ public class TeacherSelector extends HttpServlet {
                 }
             }
         }
-        TeacherDAO teacherDAO = new TeacherDAO();
+        PersonService<Teacher> teacherDAO = new TeacherDAO();
         if(map.isEmpty()) {
             map.put(ALL, " ");
         }

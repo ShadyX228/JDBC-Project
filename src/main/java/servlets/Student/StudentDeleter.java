@@ -1,7 +1,8 @@
 package servlets.Student;
 
-import dbmodules.service.dao.StudentDAO;
-import dbmodules.tables.Student;
+import dbmodules.dao.StudentDAO;
+import dbmodules.entity.Student;
+import dbmodules.service.PersonService;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -48,7 +49,7 @@ public class StudentDeleter extends HttpServlet {
                 errors.add(-2);
             } else {
                 List<Student> list = new ArrayList<>();
-                StudentDAO studentDAO = new StudentDAO();
+                PersonService<Student> studentDAO = new StudentDAO();
                 if(criteria.equals(ID)) {
                     Student student = studentDAO.selectById(Integer
                             .parseInt(criteriaValueParsed));

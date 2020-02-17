@@ -1,7 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.service.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAO;
+import dbmodules.entity.Teacher;
+import dbmodules.service.PersonService;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -46,10 +47,11 @@ public class TeacherUpdater extends HttpServlet {
             Gender gender = checkGender(genderString);
             LocalDate birth = LocalDate.parse(birthString);
 
-            TeacherDAO teacherDAO = new TeacherDAO();
+            PersonService<Teacher> teacherDAO = new TeacherDAO();
             Teacher teacher = teacherDAO.selectById(id);
             if(!Objects.isNull(teacher)) {
-                teacherDAO.update(teacher, name, birth, gender);
+                TeacherDAO updateService = (TeacherDAO) teacherDAO;
+                updateService.update(teacher, name, birth, gender);
             } else {
                 errors.add(0);
             }
@@ -58,6 +60,7 @@ public class TeacherUpdater extends HttpServlet {
             errors.add(-1);
         }
         jsonObject.accumulate("errors", errors);
+
         response.getWriter().write(jsonObject.toString());
     }
 }

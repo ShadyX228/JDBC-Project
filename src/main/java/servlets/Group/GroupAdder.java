@@ -1,7 +1,9 @@
 package servlets.Group;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.tables.Group;
+import dbmodules.dao.GroupDAO;
+import dbmodules.entity.Group;
+import dbmodules.service.BaseService;
+import dbmodules.service.GroupService;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -24,29 +26,29 @@ public class GroupAdder extends HttpServlet {
         String group = request.getParameter("group");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (group.isEmpty()) {
-            errors.add(0);
+            errors.add("Передано пустое значение.");
         } else {
             boolean check = true;
 
             int number = 0;
-            GroupDAO groupDAO = new GroupDAO();
+            GroupService groupDAO = new GroupDAO();
             try {
                 number = Integer.parseInt(group);
                 Group groupObject = checkGroup(number, groupDAO);
                 if (!Objects.isNull(groupObject)) {
-                    errors.add(-1);
+                    errors.add("Группа уже существует.");
                     check = false;
                 }
             } catch (NumberFormatException e) {
-                errors.add(-2);
+                errors.add("Передано некорректное значение.");
                 check = false;
             }
 
             if (!check) {
-                errors.add(-3);
+                errors.add("Ошибка добавления.");
             } else {
                 Group newGroup = new Group(
                         number
@@ -57,8 +59,11 @@ public class GroupAdder extends HttpServlet {
 
 
             }
+            groupDAO.closeEntityManager();
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
+
     }
 }

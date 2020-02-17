@@ -1,7 +1,7 @@
 package dbmodules.main;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.tables.Group;
+import dbmodules.dao.GroupDAO;
+import dbmodules.entity.Group;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import java.time.LocalDate;

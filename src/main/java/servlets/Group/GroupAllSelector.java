@@ -1,7 +1,8 @@
 package servlets.Group;
 
-import dbmodules.service.dao.GroupDAO;
-import dbmodules.tables.Group;
+import dbmodules.dao.GroupDAO;
+import dbmodules.entity.Group;
+import dbmodules.service.GroupService;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -20,23 +21,18 @@ public class GroupAllSelector extends HttpServlet {
             throws IOException {
         setQueryParametres(request,response);
         JSONObject jsonObject = new JSONObject();
-        GroupDAO groupDAO = new GroupDAO();
-        //String draw = request.getParameter("draw");
-
+        GroupService groupDAO = new GroupDAO();
         List<Group> groups = groupDAO.selectAll();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         if(!groups.isEmpty()) {
             jsonObject.accumulate("groups", groups);
         } else {
-            errors.add(0);
+            errors.add("Группы отсутствуют.");
         }
-
-        jsonObject.accumulate("errors", errors);
-        //jsonObject.append("draw", draw);
-        //jsonObject.append("recordsTotal", groups.size());
-        //jsonObject.append("recordsFiltered", groups.size());
-
+        jsonObject.accumulate("errors",errors);
+        groupDAO.closeEntityManager();
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 
 }

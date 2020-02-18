@@ -1,7 +1,8 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.tables.Group;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.daointerfaces.GroupDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -28,14 +29,14 @@ public class GroupDeleter extends HttpServlet {
         String criteriaValue = request.getParameter("criteriaValue");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         Criteria criteria = checkCriteria(criteriaString);
         if(Objects.isNull(criteria) || criteria.equals(ALL)) {
             if(!Objects.isNull(criteria) && criteria.equals(ALL)) {
-                errors.add(0);
+                errors.add("Переданы пустые значения.");
             } else {
-                errors.add(-1);
+                errors.add("Переданы некорректные значения.");
             }
         } else {
             String criteriaValueParsed;
@@ -45,10 +46,10 @@ public class GroupDeleter extends HttpServlet {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed)) {
-                errors.add(-2);
+                errors.add("Некорректный номер группы");
             } else {
                 List<Group> list = new ArrayList<>();
-                GroupDAO groupDAO = new GroupDAO();
+                GroupDAO groupDAO = new GroupDAOimpl();
                 if(criteria.equals(ID)) {
                     Group group = groupDAO.selectById(Integer
                             .parseInt(criteriaValueParsed));
@@ -60,7 +61,7 @@ public class GroupDeleter extends HttpServlet {
                         int number = Integer.parseInt(criteriaValueParsed);
                         list.add(groupDAO.select(number));
                     } else {
-                        errors.add(-3);
+                        errors.add("Передано пустое значение номера.");
                     }
                 }
 
@@ -69,7 +70,7 @@ public class GroupDeleter extends HttpServlet {
                             && group.getStudents().isEmpty()) {
                         groupDAO.delete(group);
                     } else {
-                        errors.add(-4);
+                        errors.add("Список пуст.");
                     }
                 }
                 groupDAO.closeEntityManager();
@@ -78,5 +79,6 @@ public class GroupDeleter extends HttpServlet {
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

@@ -1,11 +1,11 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.TeacherDAO;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,12 +30,12 @@ public class TeacherAdder extends HttpServlet {
         String gender = request.getParameter("gender");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (name.isEmpty()
                 || birth.isEmpty()
                 || gender.isEmpty()) {
-            errors.add(0);
+            errors.add("Переданы пустые параметры.");
         } else {
             boolean check = true;
 
@@ -43,18 +43,19 @@ public class TeacherAdder extends HttpServlet {
             try {
                 birthday = LocalDate.parse(birth);
             } catch (DateTimeParseException | InputMismatchException e) {
-                errors.add(-1);
+                errors.add("Дата имеет некорректный формат.");
                 check = false;
+                e.printStackTrace();
             }
 
             Gender genderParsed = checkGender(gender);
             if (Objects.isNull(genderParsed)) {
-                errors.add(-2);
+                errors.add("Пол имеет некорректный формат.");
                 check = false;
             }
 
             if (!check) {
-                errors.add(-3);
+                errors.add("Внутренняя ошибка.");
             } else {
                 Teacher teacher = new Teacher(
                         name,
@@ -63,7 +64,7 @@ public class TeacherAdder extends HttpServlet {
                         birthday.getDayOfMonth(),
                         genderParsed
                 );
-                TeacherDAO teacherDAO = new TeacherDAO();
+                TeacherDAO teacherDAO = new TeacherDAOimpl();
                 teacherDAO.add(teacher);
                 teacherDAO.closeEntityManager();
                 jsonObject.put("lastId", teacher.getId());
@@ -71,5 +72,6 @@ public class TeacherAdder extends HttpServlet {
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

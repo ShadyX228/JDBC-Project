@@ -1,9 +1,10 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.entity.Student;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.GroupDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -11,7 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import static dbmodules.types.Criteria.ID;
@@ -24,10 +24,10 @@ public class GroupGetInfo extends HttpServlet {
             throws IOException {
         setQueryParametres(request,response);
 
-        GroupDAO groupDAO = new GroupDAO();
+        GroupDAO groupDAO = new GroupDAOimpl();
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         List<Teacher> teachers = new ArrayList<>();
         List<String> students = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class GroupGetInfo extends HttpServlet {
 
 
         if(Objects.isNull(idString)) {
-            errors.add(0);
+            errors.add("Переданы пустые значения");
         } else {
             idString = parseCriteria(ID, idString);
             if(!Objects.isNull(idString)) {
@@ -59,5 +59,6 @@ public class GroupGetInfo extends HttpServlet {
         jsonObject.accumulate("students", students);
         jsonObject.accumulate("teachers", teachers);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

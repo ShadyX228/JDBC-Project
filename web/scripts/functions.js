@@ -38,6 +38,7 @@ function addDeleteEventHandler(selector, table) {
             if(jQuery.isEmptyObject(errors)) {
                 $("#" + table + id).hide();
                 $("#status").html("");
+                console.log(3);
             } else {
                 $("#status").html("Ошибка удаления.")
             }
@@ -366,11 +367,12 @@ function addGroupRow(group) {
             "Информация" +
             "</a><br>" +
             "<a class=\"putTeacherInGroup\" href=\"#putTeacherInGroup" + group["id"] + "\">" +
-            "Назначить преподаватлея" +
+            "Назначить преподавателя" +
             "</a><br>"
             + "</td>\n" +
             "\t</tr>"
         );
+        console.log(group["id"] + " " + group["number"]);
 }
 function addTeacherRow(teacher) {
     var birth = teacher["birth"];
@@ -400,5 +402,4 @@ function addTeacherRow(teacher) {
         "</td>" +
         "</tr>");
 }
-
 /** /Функции **/

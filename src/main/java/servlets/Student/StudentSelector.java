@@ -1,7 +1,8 @@
 package servlets.Student;
 
-import dbmodules.dao.StudentDAO;
-import dbmodules.tables.Student;
+import dbmodules.dao.StudentDAOimpl;
+import dbmodules.entity.Student;
+import dbmodules.daointerfaces.PersonDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -36,7 +37,7 @@ public class StudentSelector extends HttpServlet {
 
         List<Student> students;
         Map<Integer, Integer> groups = new HashMap<>();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (!Objects.isNull(idString)) {
             map.put(ID, idString);
@@ -62,7 +63,7 @@ public class StudentSelector extends HttpServlet {
             }
         }
 
-        StudentDAO studentDAO = new StudentDAO();
+        PersonDAO<Student> studentDAO = new StudentDAOimpl();
         if(map.isEmpty()) {
             map.put(ALL, " ");
         }
@@ -74,5 +75,7 @@ public class StudentSelector extends HttpServlet {
 
         studentDAO.closeEntityManager();
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
+
     }
 }

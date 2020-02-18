@@ -1,12 +1,13 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.GroupDAO;
+import dbmodules.daointerfaces.TeacherDAO;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,13 +29,13 @@ public class TeacherPutInGroup extends HttpServlet {
         String groupIdString = request.getParameter("groupId");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if(Objects.isNull(teacherIdString) || Objects.isNull(groupIdString) ) {
-            errors.add(0);
+            errors.add("Переданы пустые параметры.");
         } else {
-            TeacherDAO teacherDAO = new TeacherDAO();
-            GroupDAO groupDAO = new GroupDAO();
+            TeacherDAO teacherDAO = new TeacherDAOimpl();
+            GroupDAO groupDAO = new GroupDAOimpl();
 
             Teacher teacher = teacherDAO.selectById(Integer
                     .parseInt(teacherIdString));
@@ -42,7 +43,7 @@ public class TeacherPutInGroup extends HttpServlet {
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
                 teacherDAO.putTeacherInGroup(teacher,group);
             } else {
-                errors.add(-1);
+                errors.add("Внутреняя ошибка.");
             }
 
             teacherDAO.closeEntityManager();
@@ -50,5 +51,6 @@ public class TeacherPutInGroup extends HttpServlet {
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

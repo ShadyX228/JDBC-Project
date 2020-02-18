@@ -1,4 +1,4 @@
-package dbmodules.tables;
+package dbmodules.entity;
 
 import dbmodules.types.*;
 
@@ -7,7 +7,7 @@ import java.time.*;
 
 @Entity
 @javax.persistence.Table (catalog = "studentgroupteacher", name = "student")
-public class Student extends Table {
+public class Student extends PersonEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="student_id")

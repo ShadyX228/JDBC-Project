@@ -1,13 +1,12 @@
-package dbmodules.tables;
+package dbmodules.entity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @javax.persistence.Table (catalog= "studentgroupteacher", name = "group")
-public class Group extends Table {
+public class Group extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="group_id")

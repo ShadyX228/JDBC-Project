@@ -1,19 +1,17 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.TeacherDAO;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 
-import static dbmodules.types.Criteria.GROUP;
 import static dbmodules.types.Criteria.ID;
 import static webdebugger.WebInputDebugger.*;
 
@@ -24,17 +22,17 @@ public class TeacherGetInfo extends HttpServlet {
             throws IOException {
         setQueryParametres(request,response);
 
-        TeacherDAO teacherDAO = new TeacherDAO();
+        TeacherDAO teacherDAO = new TeacherDAOimpl();
 
 
         String idString = request.getParameter("id");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
         Map<Integer, Integer> groups = new HashMap<>();
 
         if (Objects.isNull(idString)) {
-            errors.add(0);
+            errors.add("Передан пустой параметр.");
         } else {
             idString = parseCriteria(ID, idString);
             if (!Objects.isNull(idString)) {
@@ -52,6 +50,7 @@ public class TeacherGetInfo extends HttpServlet {
         jsonObject.accumulate("errors",errors);
         jsonObject.accumulate("groups", groups);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }
 

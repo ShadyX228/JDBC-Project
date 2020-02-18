@@ -1,12 +1,13 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.GroupDAO;
+import dbmodules.daointerfaces.TeacherDAO;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,13 +28,13 @@ public class TeacherDeleteGroup extends HttpServlet {
         String groupIdString = request.getParameter("groupId");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if(teacherIdString.isEmpty() || groupIdString.isEmpty()) {
-            errors.add(0);
+            errors.add("Переданы пустые значения.");
         } else {
-            TeacherDAO teacherDAO = new TeacherDAO();
-            GroupDAO groupDAO = new GroupDAO();
+            TeacherDAO teacherDAO = new TeacherDAOimpl();
+            GroupDAO groupDAO = new GroupDAOimpl();
 
             Teacher teacher = teacherDAO
                     .selectById(Integer.parseInt(teacherIdString));
@@ -41,13 +42,15 @@ public class TeacherDeleteGroup extends HttpServlet {
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
                 teacherDAO.removeTeacherFromGroup(teacher,group);
             } else {
-                errors.add(-1);
+                errors.add("Внутреняя ошибка.");
             }
 
             teacherDAO.closeEntityManager();
             groupDAO.closeEntityManager();
+
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

@@ -1,9 +1,7 @@
 package dbmodules.dao;
 
-import dbmodules.interfaces.PersonTable;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
-import dbmodules.tables.Teacher;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
@@ -16,9 +14,13 @@ import java.util.List;
 import java.util.Objects;
 
 import static dbmodules.types.Criteria.*;
-import static webdebugger.WebInputDebugger.checkGroup;
 
-public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher> {
+public class TeacherDAOimpl extends JPAUtil implements dbmodules.daointerfaces.TeacherDAO {
+    public void add(Teacher entity) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(entity);
+        entityManager.getTransaction().commit();
+    }
     public Teacher selectById(int id) {
         return entityManager.find(Teacher.class, id);
     }
@@ -32,7 +34,7 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
             }
             case NAME : {
                 list = entityManager
-                        .createQuery("FROM Teacher WHERE Name LIKE :name")
+                        .createQuery("FROM Teacher WHERE name LIKE :name")
                         .setParameter("name", "%" + value + "%")
                         .getResultList();
                 break;
@@ -188,6 +190,11 @@ public class TeacherDAO extends JPAUtil<Teacher> implements PersonTable<Teacher>
         teacher = entityManager.merge(teacher);
         group = entityManager.merge(group);
         teacher.removeGroup(group);
+        entityManager.getTransaction().commit();
+    }
+    public void delete(Teacher entity) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(entity);
         entityManager.getTransaction().commit();
     }
 }

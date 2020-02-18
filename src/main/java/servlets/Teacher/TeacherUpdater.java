@@ -1,7 +1,8 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.TeacherDAO;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -31,7 +32,7 @@ public class TeacherUpdater extends HttpServlet {
         String genderString = request.getParameter("gender");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         idString = parseCriteria(ID, idString);
         birthString = parseCriteria(BIRTH, birthString);
@@ -46,18 +47,20 @@ public class TeacherUpdater extends HttpServlet {
             Gender gender = checkGender(genderString);
             LocalDate birth = LocalDate.parse(birthString);
 
-            TeacherDAO teacherDAO = new TeacherDAO();
+            TeacherDAO teacherDAO = new TeacherDAOimpl();
             Teacher teacher = teacherDAO.selectById(id);
             if(!Objects.isNull(teacher)) {
                 teacherDAO.update(teacher, name, birth, gender);
             } else {
-                errors.add(0);
+                errors.add("Объект пуст.");
             }
             teacherDAO.closeEntityManager();
         } else {
-            errors.add(-1);
+            errors.add("Переданы пустые параметры.");
         }
         jsonObject.accumulate("errors", errors);
+
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

@@ -1,14 +1,14 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Group;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.TeacherDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
 import static webdebugger.WebInputDebugger.*;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,11 +26,11 @@ public class TeacherGetFree extends HttpServlet {
         groupIdString = parseCriteria(Criteria.ID, groupIdString);
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if(!Objects.isNull(groupIdString)) {
             int groupId = Integer.parseInt(groupIdString);
-            TeacherDAO teacherDAO = new TeacherDAO();
+            TeacherDAO teacherDAO = new TeacherDAOimpl();
             List<Teacher> teachers = teacherDAO.select(Criteria.ALL,"");
             List<Teacher> freeTeachers = new ArrayList<>();
             boolean check = true;
@@ -51,7 +51,7 @@ public class TeacherGetFree extends HttpServlet {
                 check = true;
             }
             if(freeTeachers.isEmpty()) {
-                errors.add(0);
+                errors.add("Список пуст.");
             } else {
                 jsonObject.accumulate("teachers", freeTeachers);
             }
@@ -59,5 +59,6 @@ public class TeacherGetFree extends HttpServlet {
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

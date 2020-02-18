@@ -1,8 +1,8 @@
 package dbmodules.dao;
 
-import dbmodules.interfaces.PersonTable;
-import dbmodules.tables.Group;
-import dbmodules.tables.Student;
+import dbmodules.daointerfaces.PersonDAO;
+import dbmodules.entity.Group;
+import dbmodules.entity.Student;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import utilfactories.JPAUtil;
@@ -14,7 +14,12 @@ import java.util.*;
 
 import static dbmodules.types.Criteria.*;
 
-public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student> {
+public class StudentDAOimpl extends JPAUtil implements PersonDAO<Student> {
+    public void add(Student entity) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(entity);
+        entityManager.getTransaction().commit();
+    }
     public Student selectById(int id) {
         return entityManager.find(Student.class, id);
     }
@@ -28,7 +33,7 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
             }
             case NAME : {
                 list = entityManager
-                        .createQuery("FROM Student WHERE Name LIKE :name")
+                        .createQuery("FROM Student WHERE name LIKE :name")
                         .setParameter("name", "%" + value + "%")
                         .getResultList();
                 break;
@@ -57,7 +62,7 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
             }
             case GROUP  : {
                 int groupNumber = Integer.parseInt(value);
-                Group group = new GroupDAO().select(groupNumber);
+                Group group = new GroupDAOimpl().select(groupNumber);
                 list = entityManager
                         .createQuery("FROM Student WHERE group_id = :group_id")
                         .setParameter("group_id", group.getId())
@@ -101,7 +106,7 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
                         break;
                     }
                     case GROUP: {
-                        GroupDAO groupDAO = new GroupDAO();
+                        GroupDAOimpl groupDAO = new GroupDAOimpl();
                         int groupNumber = Integer
                                 .parseInt(criteriasMap.get(GROUP));
                         group = checkGroup(groupNumber, groupDAO);
@@ -186,9 +191,10 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
                 break;
             }
             case GROUP : {
-                GroupDAO groupDAO = new GroupDAO();
+                GroupDAOimpl groupDAO = new GroupDAOimpl();
                 Group group = groupDAO.select(Integer.parseInt(value));
                 person.setGroup(group);
+                groupDAO.closeEntityManager();
                 break;
             }
         }
@@ -203,6 +209,11 @@ public class StudentDAO extends JPAUtil<Student> implements PersonTable<Student>
         person.setGender(gender);
         person.setGroup(group);
         entityManager.persist(person);
+        entityManager.getTransaction().commit();
+    }
+    public void delete(Student entity) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(entity);
         entityManager.getTransaction().commit();
     }
 }

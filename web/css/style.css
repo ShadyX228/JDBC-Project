@@ -31,9 +31,13 @@ nav a {
     padding: 5px;
     color: black;
 }
-nav a:hover {
+nav a:hover, .currentPage {
     background: #ACACAC;
     color: white;
+}
+
+nav ul li:first-child {
+    margin-right: 90px;
 }
 input {
     width: 100px;
@@ -126,6 +130,7 @@ form {
 }
 footer {
     padding: 10px;
+    opacity: 0.3;
 }
 input[disabled] {
     background: #AD2B2B;

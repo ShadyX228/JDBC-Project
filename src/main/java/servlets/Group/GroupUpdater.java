@@ -1,7 +1,8 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.tables.Group;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.entity.Group;
+import dbmodules.daointerfaces.GroupDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -25,7 +26,7 @@ public class GroupUpdater extends HttpServlet {
         String groupString = request.getParameter("group");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         idString = parseCriteria(ID, idString);
         groupString = parseCriteria(ID, groupString);
@@ -34,7 +35,7 @@ public class GroupUpdater extends HttpServlet {
                 && (!idString.isEmpty()
                 && !groupString.isEmpty())) {
             int id = Integer.parseInt(idString);
-            GroupDAO groupDAO = new GroupDAO();
+            GroupDAO groupDAO = new GroupDAOimpl();
             Group group = groupDAO.selectById(id);
             int number = Integer.parseInt(groupString);
             List<Group> groupCheck = groupDAO.selectAll();
@@ -46,16 +47,16 @@ public class GroupUpdater extends HttpServlet {
                 }
             }
             if(!check) {
-                errors.add(0);
+                errors.add("Ошибка обновления.");
             } else {
                 groupDAO.update(group, number);
-                groupDAO.closeEntityManager();
             }
             groupDAO.closeEntityManager();
         } else {
-            errors.add(1);
+            errors.add("Переданы пустые значения.");
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

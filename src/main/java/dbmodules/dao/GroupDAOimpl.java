@@ -1,12 +1,16 @@
 package dbmodules.dao;
 
-import dbmodules.interfaces.GroupTable;
-import dbmodules.tables.Group;
+import dbmodules.entity.Group;
 import utilfactories.JPAUtil;
+
 import java.util.List;
 
-public class GroupDAO extends JPAUtil<Group> implements GroupTable {
-
+public class GroupDAOimpl extends JPAUtil implements dbmodules.daointerfaces.GroupDAO {
+    public void add(Group entity) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(entity);
+        entityManager.getTransaction().commit();
+    }
     public Group selectById(int id) {
         return entityManager.find(Group.class, id);
     }
@@ -23,6 +27,11 @@ public class GroupDAO extends JPAUtil<Group> implements GroupTable {
         entityManager.getTransaction().begin();
         group.setNumber(number);
         entityManager.persist(group);
+        entityManager.getTransaction().commit();
+    }
+    public void delete(Group entity) {
+        entityManager.getTransaction().begin();
+        entityManager.remove(entity);
         entityManager.getTransaction().commit();
     }
 }

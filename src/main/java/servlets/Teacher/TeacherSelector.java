@@ -1,11 +1,11 @@
 package servlets.Teacher;
 
-import dbmodules.dao.TeacherDAO;
-import dbmodules.tables.Teacher;
+import dbmodules.dao.TeacherDAOimpl;
+import dbmodules.entity.Teacher;
+import dbmodules.daointerfaces.TeacherDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +38,7 @@ public class TeacherSelector extends HttpServlet {
         JSONObject jsonObject = new JSONObject();
 
         List<Teacher> teachers;
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (!Objects.isNull(idString)) {
             map.put(ID, idString);
@@ -59,7 +59,7 @@ public class TeacherSelector extends HttpServlet {
                 }
             }
         }
-        TeacherDAO teacherDAO = new TeacherDAO();
+        TeacherDAO teacherDAO = new TeacherDAOimpl();
         if(map.isEmpty()) {
             map.put(ALL, " ");
         }
@@ -70,5 +70,6 @@ public class TeacherSelector extends HttpServlet {
 
         teacherDAO.closeEntityManager();
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

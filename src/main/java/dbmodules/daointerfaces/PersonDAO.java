@@ -1,14 +1,12 @@
-package dbmodules.service;
+package dbmodules.daointerfaces;
 
-import dbmodules.entity.BaseEntity;
 import dbmodules.entity.PersonEntity;
-import dbmodules.entity.Teacher;
 import dbmodules.types.Criteria;
 
 import java.util.HashMap;
 import java.util.List;
 
-public interface PersonService<T extends PersonEntity> extends BaseService {
+public interface PersonDAO<T extends PersonEntity> extends BaseDAO {
     T selectById(int id);
     void add(T entity);
     List<T> select(Criteria criteria, String value);

@@ -1,11 +1,11 @@
 package servlets.Student;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.dao.StudentDAOimpl;
 import dbmodules.entity.Group;
 import dbmodules.entity.Student;
-import dbmodules.service.GroupService;
-import dbmodules.service.PersonService;
+import dbmodules.daointerfaces.GroupDAO;
+import dbmodules.daointerfaces.PersonDAO;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -36,13 +36,13 @@ public class StudentAdder extends HttpServlet {
         String group = request.getParameter("group");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if (name.isEmpty()
                 || birth.isEmpty()
                 || gender.isEmpty()
                 || group.isEmpty()) {
-            errors.add(0);
+            errors.add("Переданы пустые значения.");
         } else {
             boolean check = true;
 
@@ -51,34 +51,36 @@ public class StudentAdder extends HttpServlet {
                 birthday = LocalDate.parse(birth);
 
             } catch (DateTimeParseException | InputMismatchException e) {
-                errors.add(-1);
+                errors.add("Дата имеет некорректный формат.");
                 check = false;
+                e.printStackTrace();
             }
 
 
             Gender genderParsed = checkGender(gender);
             if(Objects.isNull(genderParsed)) {
-                errors.add(-2);
+                errors.add("Пол имеет некорректный формат");
                 check = false;
             }
 
             int number;
             Group groupObject = new Group(0);
-            GroupService groupDAO = new GroupDAO();
+            GroupDAO groupDAO = new GroupDAOimpl();
             try {
                 number = Integer.parseInt(group);
                 groupObject = checkGroup(number, groupDAO);
                 if(Objects.isNull(groupObject)) {
-                    errors.add(-3);
+                    errors.add("Группы с указанным номером нет.");
                     check = false;
                 }
             } catch (NumberFormatException e) {
-                errors.add(-4);
+                errors.add("Номер группы некорректный.");
                 check = false;
+                e.printStackTrace();
             }
 
             if(!check) {
-                errors.add(-5);
+                errors.add("Внутренняя ошибка.");
             } else {
                 Student student = new Student(
                         name,
@@ -88,7 +90,7 @@ public class StudentAdder extends HttpServlet {
                         genderParsed,
                         groupObject
                 );
-                PersonService<Student> studentDAO = new StudentDAO();
+                PersonDAO<Student> studentDAO = new StudentDAOimpl();
                 studentDAO.add(student);
                 studentDAO.closeEntityManager();
                 groupDAO.closeEntityManager();
@@ -98,5 +100,6 @@ public class StudentAdder extends HttpServlet {
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

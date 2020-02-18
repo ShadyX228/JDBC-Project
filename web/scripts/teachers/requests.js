@@ -3,11 +3,10 @@ $(document).ready(function () {
     var failColor = "red";
 
     /** Преподаватель **/
-    $("#status").show();
+    $("#status").show().html("Загрузка...");
     $("#studentsTable").hide();
     $("#groupsTable").hide();
     $("#teachersTable").show();
-    $("#status").html("Загрузка...");
     $.post("teacherSelectAll", function(data) {
         $("#teacherOutput .outputTable").show();
         $("#teacherOutput .outputTable").html("");
@@ -81,7 +80,7 @@ $(document).ready(function () {
                 $("#status").html("Ошибка. Перепроверьте введеннные данные.");
             }
         });
-    })
+    });
     $("#teacherUpdateForm").submit(function (event) {
         event.preventDefault();
         $("#status").html("Загружаю...");

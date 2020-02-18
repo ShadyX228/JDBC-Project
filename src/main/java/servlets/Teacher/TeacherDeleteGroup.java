@@ -1,11 +1,11 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.dao.TeacherDAOimpl;
 import dbmodules.entity.Group;
 import dbmodules.entity.Teacher;
-import dbmodules.service.GroupService;
-import dbmodules.service.PersonService;
+import dbmodules.daointerfaces.GroupDAO;
+import dbmodules.daointerfaces.TeacherDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -28,23 +28,21 @@ public class TeacherDeleteGroup extends HttpServlet {
         String groupIdString = request.getParameter("groupId");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         if(teacherIdString.isEmpty() || groupIdString.isEmpty()) {
-            errors.add(0);
+            errors.add("Переданы пустые значения.");
         } else {
-            PersonService<Teacher> teacherDAO = new TeacherDAO();
-            GroupService groupDAO = new GroupDAO();
+            TeacherDAO teacherDAO = new TeacherDAOimpl();
+            GroupDAO groupDAO = new GroupDAOimpl();
 
             Teacher teacher = teacherDAO
                     .selectById(Integer.parseInt(teacherIdString));
             Group group = groupDAO.selectById(Integer.parseInt(groupIdString));
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
-                TeacherDAO removeService = (TeacherDAO) teacherDAO;
-                removeService.removeTeacherFromGroup(teacher,group);
-                removeService.closeEntityManager();
+                teacherDAO.removeTeacherFromGroup(teacher,group);
             } else {
-                errors.add(-1);
+                errors.add("Внутреняя ошибка.");
             }
 
             teacherDAO.closeEntityManager();
@@ -53,5 +51,6 @@ public class TeacherDeleteGroup extends HttpServlet {
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

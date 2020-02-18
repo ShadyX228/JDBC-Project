@@ -1,13 +1,12 @@
 package utilfactories;
 
-import dbmodules.entity.BaseEntity;
-import dbmodules.service.BaseService;
+import dbmodules.daointerfaces.BaseDAO;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class JPAUtil implements BaseService {
+public class JPAUtil implements BaseDAO {
     private static final String unitName = "JDBC";
     private static final EntityManagerFactory entityManagerFactory =
             Persistence.createEntityManagerFactory(unitName);

@@ -1,8 +1,8 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.dao.GroupDAOimpl;
 import dbmodules.entity.Group;
-import dbmodules.service.GroupService;
+import dbmodules.daointerfaces.GroupDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -35,7 +35,7 @@ public class GroupUpdater extends HttpServlet {
                 && (!idString.isEmpty()
                 && !groupString.isEmpty())) {
             int id = Integer.parseInt(idString);
-            GroupService groupDAO = new GroupDAO();
+            GroupDAO groupDAO = new GroupDAOimpl();
             Group group = groupDAO.selectById(id);
             int number = Integer.parseInt(groupString);
             List<Group> groupCheck = groupDAO.selectAll();

@@ -1,8 +1,8 @@
 package servlets.Student;
 
-import dbmodules.dao.StudentDAO;
+import dbmodules.dao.StudentDAOimpl;
 import dbmodules.entity.Student;
-import dbmodules.service.PersonService;
+import dbmodules.daointerfaces.PersonDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -29,14 +29,14 @@ public class StudentDeleter extends HttpServlet {
         String criteriaValue = request.getParameter("criteriaValue");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         Criteria criteria = checkCriteria(criteriaString);
         if(Objects.isNull(criteria) || criteria.equals(ALL)) {
             if(!Objects.isNull(criteria) && criteria.equals(ALL)) {
-                errors.add(0);
+                errors.add("Переданы не правильные параметры.");
             } else {
-                errors.add(-1);
+                errors.add("Переданы некорректные параметры.");
             }
         } else {
             String criteriaValueParsed;
@@ -46,10 +46,10 @@ public class StudentDeleter extends HttpServlet {
                 criteriaValueParsed = "";
             }
             if(Objects.isNull(criteriaValueParsed)) {
-                errors.add(-2);
+                errors.add("Критерий имеет некорректный формат.");
             } else {
                 List<Student> list = new ArrayList<>();
-                PersonService<Student> studentDAO = new StudentDAO();
+                PersonDAO<Student> studentDAO = new StudentDAOimpl();
                 if(criteria.equals(ID)) {
                     Student student = studentDAO.selectById(Integer
                             .parseInt(criteriaValueParsed));
@@ -60,7 +60,7 @@ public class StudentDeleter extends HttpServlet {
                     if(!criteriaValueParsed.isEmpty()) {
                         list = studentDAO.select(criteria, criteriaValueParsed);
                     } else {
-                        errors.add(-3);
+                        errors.add("Критерий пуст.");
                     }
                 }
                 for (Student student : list) {
@@ -73,5 +73,6 @@ public class StudentDeleter extends HttpServlet {
                 response.getWriter().write(jsonObject.toString());
             }
         }
+        System.out.println(errors);
     }
 }

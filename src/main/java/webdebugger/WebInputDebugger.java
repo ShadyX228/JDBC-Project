@@ -1,10 +1,10 @@
 package webdebugger;
 
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.dao.GroupDAOimpl;
 import dbmodules.entity.Group;
 import dbmodules.entity.Student;
-import dbmodules.service.GroupService;
+import dbmodules.daointerfaces.GroupDAO;
 import dbmodules.types.Criteria;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
@@ -55,10 +55,11 @@ public class WebInputDebugger {
         return null;
     }
     public static Group checkGroup
-            (int number, GroupService groupDAO) {
+            (int number, GroupDAO groupDAO) {
         try {
             return groupDAO.select(number);
         } catch (InputMismatchException | IndexOutOfBoundsException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -70,6 +71,7 @@ public class WebInputDebugger {
                     Integer.parseInt(critVal);
                     return critVal;
                 } catch (InputMismatchException | NumberFormatException e) {
+                    e.printStackTrace();
                     return null;
                 }
             }
@@ -81,11 +83,12 @@ public class WebInputDebugger {
                     Gender.valueOf(critVal.toUpperCase());
                     return critVal.toUpperCase();
                 } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
                     return null;
                 }
             }
             case GROUP: {
-                GroupDAO groupDAO = new GroupDAO();
+                GroupDAOimpl groupDAO = new GroupDAOimpl();
                 try {
                     Group group = groupDAO.select(Integer.parseInt(critVal));
                     if (!Objects.isNull(group)) {
@@ -96,6 +99,7 @@ public class WebInputDebugger {
                 } catch (InputMismatchException
                         | IndexOutOfBoundsException
                         | NumberFormatException e) {
+                    e.printStackTrace();
                     return null;
                 } finally {
                     groupDAO.closeEntityManager();
@@ -106,6 +110,7 @@ public class WebInputDebugger {
                     LocalDate.parse(critVal);
                     return critVal;
                 } catch (DateTimeParseException e) {
+                    e.printStackTrace();
                     return null;
                 }
             }
@@ -118,7 +123,7 @@ public class WebInputDebugger {
 
    public static void setStudentJSONObjectState(List<Student> students,
                                                 Map<Integer, Integer> groups,
-                                                List<Integer> errors, JSONObject jsonObject) {
+                                                List<String> errors, JSONObject jsonObject) {
        if(!students.isEmpty()) {
            jsonObject.accumulate("students", students);
            for(Student student : students) {
@@ -126,7 +131,7 @@ public class WebInputDebugger {
            }
            jsonObject.accumulate("groups", groups);
        } else {
-           errors.add(0);
+           errors.add("Список пуст.");
        }
     }
 

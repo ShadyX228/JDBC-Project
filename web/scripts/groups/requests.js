@@ -16,8 +16,7 @@ $(document).ready(function () {
     $("#teachersTable").hide();
     $("#status").html("Загрузка...");
     $.get("groupSelectAll", function (data) {
-        $("#groupOutput .outputTable").show();
-        $("#groupOutput .outputTable").html("");
+        $("#groupOutput .outputTable").show().html("");
 
         data = JSON.parse(data);
         var errors = data.errors;
@@ -107,8 +106,8 @@ $(document).ready(function () {
     $("#groupSearchForm .group").keyup(function () {
         var group = $(this).val();
         $.get("groupSelect", {"group": group}, function (data) {
-            $("#groupOutput .outputTable").show();
-            $("#groupOutput .outputTable").html("");
+            var table = $("#groupOutput .outputTable");
+            table.show().html("");
 
             data = JSON.parse(data);
 
@@ -119,7 +118,7 @@ $(document).ready(function () {
                 $("#status").html("Нет записей в таблице. Выбраны все записи.");
             }
 
-            $("#groupOutput .outputTable").append(groupTableHead);
+            table.append(groupTableHead);
 
             var groups = data.groups;
 

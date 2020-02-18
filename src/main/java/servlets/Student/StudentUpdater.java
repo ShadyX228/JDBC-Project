@@ -1,10 +1,10 @@
 package servlets.Student;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.StudentDAO;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.dao.StudentDAOimpl;
 import dbmodules.entity.Group;
 import dbmodules.entity.Student;
-import dbmodules.service.PersonService;
+import dbmodules.daointerfaces.PersonDAO;
 import dbmodules.types.Gender;
 import org.json.JSONObject;
 
@@ -35,7 +35,7 @@ public class StudentUpdater extends HttpServlet {
 
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         idString = parseCriteria(ID, idString);
         birthString = parseCriteria(BIRTH, birthString);
@@ -52,24 +52,25 @@ public class StudentUpdater extends HttpServlet {
             int id = Integer.parseInt(idString);
             Gender gender = checkGender(genderString);
             LocalDate birth = LocalDate.parse(birthString);
-            GroupDAO groupDAO = new GroupDAO();
+            GroupDAOimpl groupDAO = new GroupDAOimpl();
             Group group = checkGroup(Integer.parseInt(groupString), groupDAO);
 
             if(Objects.isNull(group)) {
-                errors.add(0);
+                errors.add("Группа не существует.");
             } else {
-                PersonService<Student> studentDAO = new StudentDAO();
+                PersonDAO<Student> studentDAO = new StudentDAOimpl();
                 Student student = studentDAO.selectById(id);
-                StudentDAO studentUpdater = (StudentDAO) studentDAO;
+                StudentDAOimpl studentUpdater = (StudentDAOimpl) studentDAO;
                 studentUpdater .update(student, name, birth, gender, group);
                 studentUpdater.closeEntityManager();
                 studentDAO.closeEntityManager();
             }
 
         } else {
-            errors.add(-1);
+            errors.add("Переданы пустые параметры.");
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

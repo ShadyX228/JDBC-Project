@@ -1,8 +1,8 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.dao.GroupDAOimpl;
 import dbmodules.entity.Group;
-import dbmodules.service.GroupService;
+import dbmodules.daointerfaces.GroupDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 
@@ -49,7 +49,7 @@ public class GroupDeleter extends HttpServlet {
                 errors.add("Некорректный номер группы");
             } else {
                 List<Group> list = new ArrayList<>();
-                GroupService groupDAO = new GroupDAO();
+                GroupDAO groupDAO = new GroupDAOimpl();
                 if(criteria.equals(ID)) {
                     Group group = groupDAO.selectById(Integer
                             .parseInt(criteriaValueParsed));

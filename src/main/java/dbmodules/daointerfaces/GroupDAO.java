@@ -1,10 +1,10 @@
-package dbmodules.service;
+package dbmodules.daointerfaces;
 
 import dbmodules.entity.Group;
 
 import java.util.List;
 
-public interface GroupService extends BaseService {
+public interface GroupDAO extends BaseDAO {
     Group selectById(int id);
     void add(Group entity);
     Group select(int number);

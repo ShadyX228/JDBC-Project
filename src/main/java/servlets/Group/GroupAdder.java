@@ -1,9 +1,8 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.dao.GroupDAOimpl;
 import dbmodules.entity.Group;
-import dbmodules.service.BaseService;
-import dbmodules.service.GroupService;
+import dbmodules.daointerfaces.GroupDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -34,7 +33,7 @@ public class GroupAdder extends HttpServlet {
             boolean check = true;
 
             int number = 0;
-            GroupService groupDAO = new GroupDAO();
+            GroupDAO groupDAO = new GroupDAOimpl();
             try {
                 number = Integer.parseInt(group);
                 Group groupObject = checkGroup(number, groupDAO);
@@ -45,6 +44,7 @@ public class GroupAdder extends HttpServlet {
             } catch (NumberFormatException e) {
                 errors.add("Передано некорректное значение.");
                 check = false;
+                e.printStackTrace();
             }
 
             if (!check) {

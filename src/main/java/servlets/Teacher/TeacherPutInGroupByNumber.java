@@ -1,11 +1,11 @@
 package servlets.Teacher;
 
-import dbmodules.dao.GroupDAO;
-import dbmodules.dao.TeacherDAO;
+import dbmodules.dao.GroupDAOimpl;
+import dbmodules.dao.TeacherDAOimpl;
 import dbmodules.entity.Group;
 import dbmodules.entity.Teacher;
-import dbmodules.service.GroupService;
-import dbmodules.service.PersonService;
+import dbmodules.daointerfaces.GroupDAO;
+import dbmodules.daointerfaces.TeacherDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -29,22 +29,22 @@ public class TeacherPutInGroupByNumber extends HttpServlet {
         String groupNumberString = request.getParameter("groupNumber");
 
         JSONObject jsonObject = new JSONObject();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
 
         if(Objects.isNull(teacherIdString)
                 || Objects.isNull(groupNumberString) ) {
-            errors.add(0);
+            errors.add("Переданы пустые параметры.");
         } else {
-            PersonService<Teacher> teacherDAO = new TeacherDAO();
-            GroupService groupDAO = new GroupDAO();
+            TeacherDAO teacherDAO = new TeacherDAOimpl();
+            GroupDAO groupDAO = new GroupDAOimpl();
 
             Teacher teacher = teacherDAO.selectById(Integer
                     .parseInt(teacherIdString));
             Group group = groupDAO.select(Integer.parseInt(groupNumberString));
             if(!Objects.isNull(teacher) && !Objects.isNull(group)) {
-                TeacherDAO putService = (TeacherDAO) teacherDAO;
-                putService.putTeacherInGroup(teacher,group);
+
+                teacherDAO.putTeacherInGroup(teacher,group);
 
                 int id = group.getId();
                 int number = group.getNumber();
@@ -52,14 +52,14 @@ public class TeacherPutInGroupByNumber extends HttpServlet {
                 jsonObject.accumulate("errors",errors);
                 jsonObject.put("groupId", id);
                 jsonObject.put("groupNumber", number);
-                putService.closeEntityManager();
             } else {
-                errors.add(-1);
+                errors.add("Внутреняя ошибка.");
             }
 
             teacherDAO.closeEntityManager();
             groupDAO.closeEntityManager();
             response.getWriter().write(jsonObject.toString());
+            System.out.println(errors);
         }
 
     }

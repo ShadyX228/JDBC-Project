@@ -1,13 +1,11 @@
 package dbmodules.dao;
 
-import dbmodules.entity.BaseEntity;
-import dbmodules.service.GroupService;
 import dbmodules.entity.Group;
 import utilfactories.JPAUtil;
 
 import java.util.List;
 
-public class GroupDAO extends JPAUtil implements GroupService {
+public class GroupDAOimpl extends JPAUtil implements dbmodules.daointerfaces.GroupDAO {
     public void add(Group entity) {
         entityManager.getTransaction().begin();
         entityManager.persist(entity);

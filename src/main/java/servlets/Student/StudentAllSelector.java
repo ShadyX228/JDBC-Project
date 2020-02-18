@@ -1,8 +1,8 @@
 package servlets.Student;
 
-import dbmodules.dao.StudentDAO;
+import dbmodules.dao.StudentDAOimpl;
 import dbmodules.entity.Student;
-import dbmodules.service.PersonService;
+import dbmodules.daointerfaces.PersonDAO;
 import dbmodules.types.Criteria;
 import org.json.JSONObject;
 import javax.servlet.http.HttpServlet;
@@ -23,17 +23,18 @@ public class StudentAllSelector extends HttpServlet {
                           HttpServletResponse response)
             throws IOException {
         setQueryParametres(request,response);
-        PersonService<Student> studentDAO = new StudentDAO();
+        PersonDAO<Student> studentDAO = new StudentDAOimpl();
         JSONObject jsonObject = new JSONObject();
 
         List<Student> students = studentDAO.select(Criteria.ALL,"");
         Map<Integer, Integer> groups = new HashMap<>();
-        List<Integer> errors = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
 
         setStudentJSONObjectState(students, groups, errors, jsonObject);
         jsonObject.accumulate("errors", errors);
 
         studentDAO.closeEntityManager();
         response.getWriter().write(jsonObject.toString());
+        System.out.println(errors);
     }
 }

@@ -1,8 +1,8 @@
 package servlets.Group;
 
-import dbmodules.dao.GroupDAO;
+import dbmodules.dao.GroupDAOimpl;
 import dbmodules.entity.Group;
-import dbmodules.service.GroupService;
+import dbmodules.daointerfaces.GroupDAO;
 import org.json.JSONObject;
 
 import javax.servlet.http.HttpServlet;
@@ -24,7 +24,7 @@ public class GroupSelector extends HttpServlet {
         String groupString = request.getParameter("group");
 
         groupString = parseCriteria(ID, groupString);
-        GroupService groupDAO = new GroupDAO();
+        GroupDAO groupDAO = new GroupDAOimpl();
         JSONObject jsonObject = new JSONObject();
         List<String> errors = new ArrayList<>();
 

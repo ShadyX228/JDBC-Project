@@ -3,11 +3,10 @@ $(document).ready(function () {
     var failColor = "red";
 
     /** Студент **/
-    $("#status").show();
+    $("#status").show().html("Загрузка...");
     $("#studentsTable").show();
     $("#groupsTable").hide();
     $("#teachersTable").hide();
-    $("#status").html("Загрузка...");
     $.get("studentSelectAll", function(data) {
         $("#studentOutput .outputTable").show();
         $("#studentOutput .outputTable").html("");

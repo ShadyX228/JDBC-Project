@@ -54,6 +54,14 @@ public class WebInputDebugger {
         }
         return null;
     }
+    public static LocalDate checkBirth(String birth) {
+        try {;
+            return LocalDate.parse(birth);
+        } catch (DateTimeParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public static Group checkGroup
             (int number, GroupDAO groupDAO) {
         try {
@@ -101,8 +109,6 @@ public class WebInputDebugger {
                         | NumberFormatException e) {
                     e.printStackTrace();
                     return null;
-                } finally {
-                    groupDAO.closeEntityManager();
                 }
             }
             case BIRTH: {

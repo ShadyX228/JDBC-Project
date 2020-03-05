@@ -1,6 +1,4 @@
 package dbmodules.daointerfaces;
 
 
-public interface BaseDAO {
-    void closeEntityManager();
-}
+public interface BaseDAO {}

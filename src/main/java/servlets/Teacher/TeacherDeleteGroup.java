@@ -45,9 +45,6 @@ public class TeacherDeleteGroup extends HttpServlet {
                 errors.add("Внутреняя ошибка.");
             }
 
-            teacherDAO.closeEntityManager();
-            groupDAO.closeEntityManager();
-
         }
         jsonObject.accumulate("errors", errors);
         response.getWriter().write(jsonObject.toString());

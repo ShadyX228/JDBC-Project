@@ -250,7 +250,7 @@ function addTeacherPuttingInGroupHandler(selector) {
         $.post("group/putTeacherInGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
             data = JSON.parse(data);
             var errors = data.errors;
-            console.log("daaa")
+
             if(jQuery.isEmptyObject(errors)) {
                 $("#freeTeacher"+ teacherId).hide();
                 $("#status").html("");

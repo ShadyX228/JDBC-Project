@@ -1,10 +1,16 @@
 package controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dbmodules.entity.Group;
 import dbmodules.entity.Student;
+import dbmodules.entity.Teacher;
 import dbmodules.service.GroupService;
 import dbmodules.service.StudentService;
 import dbmodules.types.Gender;
+import gson.StudentSerialize;
+import gson.TeacherSerialize;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +26,8 @@ import static webdebugger.WebInputDebugger.checkGender;
 
 @Controller
 public class StudentController {
+    private GroupService groupService;
+    private StudentService studentService;
     @Autowired
     public StudentController(GroupService groupService,
                            StudentService studentService) {
@@ -28,81 +36,102 @@ public class StudentController {
     }
 
     @RequestMapping(value="student/selectAllStudents",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String getAllStudents() {
         List<Student> students = studentService.selectAll();
         List<String> errors = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Student.class, new StudentSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
 
         if(!students.isEmpty()) {
-            jsonObject.accumulate("students", students);
+            jsonObject.add("students", gson.toJsonTree(students));
         } else {
             errors.add("#S1: список студентов пуст.");
-            jsonObject.accumulate("errors", errors);
+        }
+        jsonObject.add("errors", gson.toJsonTree(errors));
+        return jsonObject.toString();
+    }
+
+    @RequestMapping(value="student/selectStudentById",
+            produces={"application/json; charset=UTF-8"})
+    @ResponseBody
+    public String getStudentById(@RequestParam(name="id") int id) {
+        Student student = studentService.selectById(id);
+        List<String> errors = new ArrayList<>();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Student.class, new StudentSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
+        if(!Objects.isNull(student)) {
+            List<Student> list = new ArrayList<>();
+            list.add(student);
+            jsonObject.add("students", gson.toJsonTree(list));
+        } else {
+            errors.add("#S5: нет такого студента.");
         }
 
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
 
     @RequestMapping(value="student/addStudent",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
-    public String addStudent(
-            @RequestParam(name="name") String name,
-            @RequestParam(name="birth") String birth,
-            @RequestParam(name="gender") String gender,
-            @RequestParam(name="group") int group
-            ) {
-        LocalDate birthParsed = checkBirth(birth);
-        Gender genderParsed = checkGender(gender);
-        Group groupParsed = groupService.select(group);
+    public String addStudent(@RequestParam Student student) {
+
 
         List<String> errors = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
 
-        if(!Objects.isNull(name)
-                && !Objects.isNull(birthParsed)
-                && !Objects.isNull(genderParsed)
-                && !Objects.isNull(groupParsed)
-                ) {
-            Student student = new Student(name,
-                    birthParsed.getYear(),
-                    birthParsed.getMonthValue(),
-                    birthParsed.getDayOfMonth(),
-                    genderParsed,
-                    groupParsed);
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Student.class, new StudentSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
+
             studentService.add(student);
-            jsonObject.put("lastId", student.getId());
-            jsonObject.put("group", student.getGroup().getNumber());
-        } else {
-            errors.add("#S2: переданы некорректные параметры.");
-        }
-        jsonObject.accumulate("errors", errors);
+            jsonObject.addProperty("lastId", student.getId());
+            jsonObject.addProperty("group", student.getGroup().getNumber());
+
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
 
     }
 
     @RequestMapping(value="student/deleteStudent",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String deleteStudent(
             @RequestParam(name="id") int id
             ) {
         List<String> errors = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Student.class, new StudentSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         Student student = studentService.selectById(id);
         if(!Objects.isNull(student)) {
             studentService.delete(student);
         } else {
             errors.add("#S3: некорректный id студента.");
         }
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
 
     @RequestMapping(value="student/updateStudent",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String updateStudent(
             @RequestParam(name="id") int id,
@@ -112,7 +141,13 @@ public class StudentController {
             @RequestParam(name="group") int group
     ) {
         List<String> errors = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Student.class, new StudentSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         Student student = studentService.selectById(id);
 
         LocalDate birthParsed = checkBirth(birth);
@@ -129,27 +164,30 @@ public class StudentController {
         } else {
             errors.add("#S4: некорректный id студента или переданные параметры.");
         }
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
 
     @RequestMapping(value="student/selectStudent",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String selectStudent(
-            @RequestParam(name="id", required = false) Integer id,
             @RequestParam(name="name", required = false) String name,
             @RequestParam(name="birth", required = false) String birth,
             @RequestParam(name="gender", required = false) String gender,
             @RequestParam(name="group", required = false) Integer group
     ) {
         List<String> errors = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Student.class, new StudentSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         Set<Student> students = new HashSet<>();
 
-        if(!Objects.isNull(id)) {
-            students.add(studentService.selectById(id));
-        } else if(name.isEmpty()
+      if(name.isEmpty()
                 && birth.isEmpty()
                 && gender.isEmpty()
                 && Objects.isNull(group)) {
@@ -174,11 +212,8 @@ public class StudentController {
             students.addAll(studentService.select(name, birthParsed, genderParsed, groupParsed));
         }
 
-        jsonObject.accumulate("students", students);
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("students", gson.toJsonTree(students));
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
-
-    private GroupService groupService;
-    private StudentService studentService;
 }

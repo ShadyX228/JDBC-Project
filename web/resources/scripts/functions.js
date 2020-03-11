@@ -32,7 +32,6 @@ function addDeleteEventHandler(selector, table) {
             }
         }
         $.post(page, {"id" : id}, function(data) {
-            data = JSON.parse(data);
             var errors = data.errors;
 
             if(jQuery.isEmptyObject(errors)) {
@@ -55,8 +54,11 @@ function addUpdateEventHandler(selector, table) {
 
         $("#" + table + "UpdateForm").show();
         var name = $("#" + table + id + " .name").html();
-        var birth = $("#" + table + id + " .birth").html();;
-        var gender = $("#" + table + id + " .gender").html();;
+
+        var birth = $("#" + table + id + " .birth").html();
+        birth = birth.replace(/(\d{2}).(\d{2}).(\d{4})/, "$3-$2-$1");
+
+        var gender = $("#" + table + id + " .gender").html();
         var group = $("#" + table + id + " .group").html();
         $("#" + table + "UpdateForm .id").val(id);
         $("#" + table + "UpdateForm .name").val(name);
@@ -71,13 +73,11 @@ function addGroupInfoEventHandler(selector) {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
-        $("#groupNumber").html($("#group" + id).find(".group").html())
+        $("#groupNumber").html($("#group" + id).find(".group").html());
         $("#status").html("Загружаю...");
 
         $.get("group/getGroupInfo", {"id" : id}, function(data) {
             console.log(id);
-            data = JSON.parse(data);
-
             var errors = data.errors;
             var teachers = data.teachers;
             var students = data.students;
@@ -145,12 +145,10 @@ function addGetTeachersHandler(selector) {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
-        $("#groupNumber").html($("#group" + id).find(".group").html())
+        $("#groupNumber").html($("#group" + id).find(".group").html());
         $("#status").html("Загружаю...");
 
         $.get("group/getFreeTeachers", {"id" : id}, function(data) {
-            data = JSON.parse(data);
-
             var errors = data.errors;
             var teachers = data.teachers;
 
@@ -179,7 +177,7 @@ function addGetTeachersHandler(selector) {
                         + "\">Назначить</a></td>\n" +
                         "\t</tr>");
                 });
-                $("#groupTeachersTable").append("</table>")
+                $("#groupTeachersTable").append("</table>");
 
                 addTeacherPuttingInGroupHandler("#groupInfo table tr");
             } else {
@@ -221,12 +219,9 @@ function addGroupRemovingFromTeacherHandler(selector) {
         $.post("teacher/removeTeacherFromGroup", {
             "teacherId" : teacherId,
             "groupId" : groupId}, function(data) {
-
-            data = JSON.parse(data);
             var errors = data.errors;
 
             if(jQuery.isEmptyObject(errors)) {
-                console.log("ddaaaa");
                 $("#groupTeacher"+ groupId).hide().remove();
                 $("#status").html("");
             } else {
@@ -248,7 +243,6 @@ function addTeacherPuttingInGroupHandler(selector) {
         console.log(teacherId + " " + groupId);
 
         $.post("group/putTeacherInGroup", {"teacherId" : teacherId, "groupId" : groupId}, function(data) {
-            data = JSON.parse(data);
             var errors = data.errors;
 
             if(jQuery.isEmptyObject(errors)) {
@@ -268,15 +262,12 @@ function addTeacherInfoEventHandler(selector) {
         var a = $(this);
         var href = a.attr("href");
         var id = parseInt(href.match(/\d+/));
-        $("#teacherName").html($("#teacher" + id).find(".name").html())
-        $("#teacherId").html(id)
+        $("#teacherName").html($("#teacher" + id).find(".name").html());
+        $("#teacherId").html(id);
         $("#status").html("Загружаю...");
 
         $.get("teacher/getTeacherInfo", {"id" : id}, function(data) {
             $("#teacherInfo").show();
-
-            data = JSON.parse(data);
-
             var error = data.errors;
             if(jQuery.isEmptyObject(error)) {
                 var groups = data.groups;
@@ -335,20 +326,13 @@ function lightOn(selector, color) {
 }
 
 function addStudentRow(student) {
-        var birth = student["birth"];
-        var birthViewable = new Date(birth);
-        birthViewable = birthViewable.getDate() + "."
-            + (1+birthViewable.getMonth()) + "."
-            + birthViewable.getFullYear();
-
         $("#studentOutput .outputTable tbody").append(
             "\t<tr id='student" + student["id"] + "'>\n" +
             "\t\t<td class='id'>" + student["id"] + "</td>\n" +
             "\t\t<td class='name'>" + student["name"] + "</td>\n" +
-            "\t\t<td class='birth'>" + birth + "</td>\n" +
-            "\t\t<td class='birthViewable'>" + birthViewable + "</td>\n" +
+            "\t\t<td class='birth'>" + student["birthday"] + "</td>\n" +
             "\t\t<td class='gender'>" + student["gender"] + "</td>\n" +
-            "\t\t<td class='group'>" + student["group"]["number"] + "</td>\n" +
+            "\t\t<td class='group'>" + student["group"] + "</td>\n" +
             "\t\t<td class='operations'>" +
             "<a class=\"delete\" href=\"#deleteStudent" + student["id"] + "\">Удалить</a><br>" +
             "<a class=\"update\" href=\"#updateStudent" + student["id"] + "\">Изменить</a>"
@@ -382,17 +366,10 @@ function addGroupRow(group) {
 }
 
 function addTeacherRow(teacher) {
-    var birth = teacher["birth"];
-    var birthViewable = new Date(birth);
-    birthViewable = birthViewable.getDate() + "."
-        + (1+birthViewable.getMonth()) + "."
-        + birthViewable.getFullYear();
-
     $("#teacherOutput .outputTable tbody").append("<tr id=\"teacher" + teacher["id"] + "\">" +
         "<td class=\"id\">" + teacher["id"] + "</td>" +
         "<td class=\"name\">" + teacher["name"] + "</td>" +
-        "<td class=\"birth\">" + birth + "</td>" +
-        "<td class=\"birthViewable\">" + birthViewable + "</td>" +
+        "<td class=\"birth\">" + teacher["birthday"] + "</td>" +
         "<td class=\"gender\">" + teacher["gender"] + "</td>" +
         "<td class=\"opeations\">" +
         "<a class=\"delete\" href=\"#deleteTeacher" + teacher["id"] + "\">" +

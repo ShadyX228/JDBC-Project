@@ -16,7 +16,7 @@
                 <ul>
                     <li><a id="homeAction" href="/">H</a></li>
                     <li><a id="studentAction" href="student">Студенты</a></li>
-                    <li><a class="currentPage" id="groupAction"  href="group">Группы</a></li>
+                    <li><a class="currentPage" id="groupAction" href="group">Группы</a></li>
                     <li><a id="teacherAction"  href="teacher">Преподаватели</a></li>
                 </ul>
             </nav>

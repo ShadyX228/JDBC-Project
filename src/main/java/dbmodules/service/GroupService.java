@@ -18,13 +18,11 @@ import java.util.List;
 public class GroupService implements BaseService {
     private GroupDAO groupDAO;
     private StudentDAO studentDAO;
-    private TeacherDAO teacherDAO;
 
     @Autowired
     public GroupService(GroupDAO groupDAO, StudentDAO studentDAO, TeacherDAO teacherDAO) {
         this.groupDAO = groupDAO;
         this.studentDAO = studentDAO;
-        this.teacherDAO = teacherDAO;
     }
 
     @Transactional

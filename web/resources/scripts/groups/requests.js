@@ -19,7 +19,6 @@ $(document).ready(function () {
     $.get("group/selectAllGroups", function (data) {
         table.show().html("");
 
-        data = JSON.parse(data);
         var errors = data.errors;
 
         if (jQuery.isEmptyObject(errors)) {
@@ -50,7 +49,7 @@ $(document).ready(function () {
         $("#groupAddForm").show();
         $("#groupUpdateForm").hide();
         $("#groupSearchForm").hide();
-    })
+    });
 
     $("#groupAddForm").submit(function (event) {
         event.preventDefault();
@@ -59,7 +58,6 @@ $(document).ready(function () {
         $.post("group/addGroup", {
             "group": number
         }, function (data) {
-            data = JSON.parse(data);
             var errors = data.errors;
 
             if (jQuery.isEmptyObject(errors)) {
@@ -83,7 +81,7 @@ $(document).ready(function () {
                 $("#status").html(errors);
             }
         });
-    })
+    });
 
     $("#groupUpdateForm").submit(function (event) {
         event.preventDefault();
@@ -93,7 +91,6 @@ $(document).ready(function () {
         var group = $("#groupUpdateForm .group").val();
 
         $.post("group/updateGroup", {"id": id, "group": group}, function (data) {
-            data = JSON.parse(data);
             var errors = data.errors;
 
             if (jQuery.isEmptyObject(errors)) {
@@ -111,8 +108,6 @@ $(document).ready(function () {
         var group = $(this).val();
         $.get("group/selectGroup", {"group": group}, function (data) {
             table.show().html("");
-
-            data = JSON.parse(data);
 
             var errors = data.errors;
             if (jQuery.isEmptyObject(errors)) {
@@ -136,6 +131,6 @@ $(document).ready(function () {
             addGroupInfoEventHandler("tr");
             addGetTeachersHandler("tr");
         });
-    })
+    });
     /** /Группа **/
-})
+});

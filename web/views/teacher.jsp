@@ -14,9 +14,9 @@
         <div id="wrapper">
             <nav>
                 <ul>
-                    <li><a id="homeAction" href="/home">H</a></li>
+                    <li><a id="homeAction" href="/">H</a></li>
                     <li><a id="studentAction" href="/student">Студенты</a></li>
-                    <li><a id="groupAction"  href="/group">Группы</a></li>
+                    <li><a id="groupAction" href="/group">Группы</a></li>
                     <li><a class="currentPage" id="/teacher"  href="teacher">Преподаватели</a></li>
                 </ul>
             </nav>

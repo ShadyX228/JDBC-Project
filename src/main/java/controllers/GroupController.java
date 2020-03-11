@@ -1,5 +1,8 @@
 package controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import dbmodules.entity.Group;
 import dbmodules.entity.Student;
 import dbmodules.entity.Teacher;
@@ -7,6 +10,8 @@ import dbmodules.service.GroupService;
 import dbmodules.service.StudentService;
 import dbmodules.service.TeacherService;
 import dbmodules.types.Criteria;
+import gson.GroupSerialize;
+import gson.TeacherSerialize;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,6 +27,8 @@ import java.util.Objects;
 
 @Controller
 public class GroupController {
+    private GroupService groupService;
+    private TeacherService teacherService;
     @Autowired
     public GroupController(GroupService groupService,
                            TeacherService teacherService) {
@@ -30,29 +37,40 @@ public class GroupController {
     }
 
     @RequestMapping(value="group/selectAllGroups",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String getAllGroups() {
         List<Group> groups = groupService.selectAll();
         List<String> errors = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
 
         if(!groups.isEmpty()) {
-            jsonObject.accumulate("groups", groups);
+            jsonObject.add("groups", gson.toJsonTree(groups));
         } else {
             errors.add("#G1: список групп пуст.");
-            jsonObject.accumulate("errors", errors);
         }
 
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
 
     @RequestMapping(value="group/selectGroup",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String getGroup(@RequestParam(name = "group") int number) {
         Group group = groupService.select(number);
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         List<String> errors = new ArrayList<>();
         List<Group> groups = new ArrayList<>();
 
@@ -62,8 +80,8 @@ public class GroupController {
             errors.add("#G2: нет группы с выбранным номером.");
             groups.addAll(groupService.selectAll());
         }
-        jsonObject.accumulate("groups", groups);
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("groups", gson.toJsonTree(groups));
+        jsonObject.add("errors", gson.toJsonTree(errors));
 
         System.out.print(errors);
 
@@ -71,30 +89,42 @@ public class GroupController {
     }
 
     @RequestMapping(value="group/addGroup",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String addGroup(@RequestParam(name = "group") int number) {
         Group group = groupService.select(number);
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         List<String> errors = new ArrayList<>();
 
         if(Objects.isNull(group)) {
             group = new Group(number);
             groupService.add(group);
-            jsonObject.put("lastId", group.getId());
+            jsonObject.addProperty("lastId", group.getId());
         } else {
             errors.add("#G3: группа с таким номером уже существует");
         }
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
 
     @RequestMapping(value="group/deleteGroup",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String deleteGroup(@RequestParam(name = "id") int id) {
         Group group = groupService.selectById(id);
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         List<String> errors = new ArrayList<>();
 
         if(!Objects.isNull(group)
@@ -104,18 +134,24 @@ public class GroupController {
         } else {
             errors.add("#G4: невозможно удалить группу. Нет группы с таким номером или в группе есть преподаватели/студенты.");
         }
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("errors", gson.toJsonTree(errors));
         return jsonObject.toString();
     }
 
     @RequestMapping(value="group/updateGroup",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String updateGroup(@RequestParam(name="id") int id,
                               @RequestParam(name="group") int newNumber) {
         Group group = groupService.selectById(id);
         Group check = groupService.select(newNumber);
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         List<String> errors = new ArrayList<>();
 
         if(Objects.isNull(check)) {
@@ -123,17 +159,25 @@ public class GroupController {
         } else {
             errors.add("G5: невозможно обновить группу. Возможно, группа с таким номером уже существует.");
         }
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("errors", gson.toJsonTree(errors));
 
         return jsonObject.toString();
     }
 
     @RequestMapping(value="group/getGroupInfo",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String getGroupInfo(@RequestParam(name="id") int id) {
         Group group = groupService.selectById(id);
-        JSONObject jsonObject = new JSONObject();
+
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .registerTypeAdapter
+                        (Teacher.class, new TeacherSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         List<String> errors = new ArrayList<>();
         List<String> students = new ArrayList<>();
         List<Teacher> teachers = new ArrayList<>();
@@ -146,15 +190,15 @@ public class GroupController {
         } else {
             errors.add("G6: нет группы с таким номером.");
         }
-        jsonObject.accumulate("errors", errors);
-        jsonObject.accumulate("students", students);
-        jsonObject.accumulate("teachers", teachers);
+        jsonObject.add("errors", gson.toJsonTree(errors));
+        jsonObject.add("students", gson.toJsonTree(students));
+        jsonObject.add("teachers", gson.toJsonTree(teachers));
 
         return jsonObject.toString();
     }
 
     @RequestMapping(value="group/deleteTeacherFromGroup",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public void deleteTeacherFromGroup(
             @RequestParam(name="teacherId") int teacherId,
@@ -166,12 +210,17 @@ public class GroupController {
     }
 
     @RequestMapping(value="group/getFreeTeachers",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String getFreeTeachers(
             @RequestParam(name="id") int id
     ) {
-        JSONObject jsonObject = new JSONObject();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter
+                        (Group.class, new GroupSerialize())
+                .create();
+        JsonObject jsonObject = new JsonObject();
+
         List<String> errors = new ArrayList<>();
         List<Teacher> freeTeachers = teacherService.selectFree(id);
 
@@ -179,14 +228,14 @@ public class GroupController {
         if(freeTeachers.isEmpty()) {
             errors.add("G7: нет свободных преподаватлей.");
         }
-        jsonObject.accumulate("teachers", freeTeachers);
-        jsonObject.accumulate("errors", errors);
+        jsonObject.add("teachers", gson.toJsonTree(freeTeachers));
+        jsonObject.add("errors", gson.toJsonTree(errors));
 
         return jsonObject.toString();
     }
 
     @RequestMapping(value="group/putTeacherInGroup",
-            produces={"text/html; charset=UTF-8"})
+            produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public void putTeacherInGroup(
             @RequestParam(name="teacherId") int teacherId,
@@ -196,8 +245,4 @@ public class GroupController {
         Group group = groupService.selectById(groupId);
         teacherService.putTeacherInGroup(teacher, group);
     }
-
-
-    private GroupService groupService;
-    private TeacherService teacherService;
 }

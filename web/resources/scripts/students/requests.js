@@ -12,8 +12,6 @@ $(document).ready(function () {
         table.show();
         table.html("");
 
-        data = JSON.parse(data);
-
         var errors = data.errors;
         if(jQuery.isEmptyObject(errors)) {
             table.append(
@@ -48,7 +46,7 @@ $(document).ready(function () {
         $("#studentAddForm").show();
         $("#studentUpdateForm").hide();
         $("#studentSearchForm").hide();
-    })
+    });
 
     $("#studentAddForm").submit(function (event) {
         event.preventDefault();
@@ -57,8 +55,13 @@ $(document).ready(function () {
         var birth = $("#studentAddForm .birth").val();
         var gender = $("#studentAddForm .gender").val();
         var group = $("#studentAddForm .group").val();
-        $.post("student/addStudent", $(this).serialize(), function(data) {
-            data = JSON.parse(data);
+        var addedStudent = {
+            "name": name,
+            "birthday": birth,
+            "gender": gender,
+            "group": group
+        };
+        $.post("student/addStudent", {"student" : addedStudent}, function(data) {
             var errors = data.errors;
 
             if(jQuery.isEmptyObject(errors)) {
@@ -67,9 +70,9 @@ $(document).ready(function () {
                 var student = {
                     "id": lastId,
                     "name": name,
-                    "birth": birth,
+                    "birthday": birth.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1"),
                     "gender": gender,
-                    "group": {"number" : group}
+                    "group": group
                 };
                 addStudentRow(student);
                 lightOn("#student" + lastId,successColor);
@@ -81,7 +84,7 @@ $(document).ready(function () {
                 $("#status").html(errors);
             }
         });
-    })
+    });
 
     $("#studentUpdateForm").submit(function (event) {
         event.preventDefault();
@@ -97,19 +100,12 @@ $(document).ready(function () {
             "gender" : gender,
             "group" : group}, function(data) {
 
-            data = JSON.parse(data);
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 lightOn("#student" + id,successColor);
                 $("#student" + id + " .name").html(name);
 
-                var birthViewable = new Date(birth);
-                birthViewable = birthViewable.getDate() + "."
-                    + (1+birthViewable.getMonth()) + "."
-                    + birthViewable.getFullYear();
-
-                $("#student" + id + " .birth").html(birth);
-                $("#student" + id + " .birthViewable").html(birthViewable);
+                $("#student" + id + " .birth").html(birth.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1"));
 
                 $("#student" + id + " .gender").html(gender);
                 $("#student" + id + " .group").html(group);
@@ -123,10 +119,13 @@ $(document).ready(function () {
 
     $("#studentSearchForm").submit(function (event) {
         event.preventDefault();
-        $.get("student/selectStudent", $("#studentSearchForm").serialize(), function(data) {
+        var id = $("#studentSearchForm .id").val();
+        var page = "selectStudent";
+        if(!jQuery.isEmptyObject(id)) {
+            page += "ById";
+        }
+        $.get("student/" + page, $("#studentSearchForm").serialize(), function(data) {
             table.html("");
-
-            data = JSON.parse(data);
 
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
@@ -154,9 +153,9 @@ $(document).ready(function () {
                 addUpdateEventHandler("#studentOutput .outputTable tr",
                     "student");
             } else {
-                $("#status").html("Нет записей в таблице.");
+                $("#status").html(errors);
             }
         });
-    })
+    });
     /** /Студент **/
-})
+});

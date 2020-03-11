@@ -35,12 +35,18 @@ public class TeacherDAOimpl implements TeacherDAO {
                 "from Teacher t left join fetch t.groups " +
                 "where t.id = :id", Teacher.class);
         query.setParameter("id", id);
-        return query.getResultList().get(0);
+
+        try {
+            return query.getResultList().get(0);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     @Override
     public List<Teacher> select(String name, LocalDate birth, Gender gender) {
         TypedQuery<Teacher> query = entityManager.createQuery("select t " +
-                "from Teacher t join fetch t.groups " +
+                "from Teacher t left join fetch t.groups " +
                 "where ((:name is not null and t.name like :name) or :name is null) " +
                 "and ((:birthday is not null and t.birthday = :birthday) or :birthday is null) " +
                 "and ((:gender is not null and t.gender = :gender) or :gender is null)", Teacher.class);

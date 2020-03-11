@@ -11,8 +11,6 @@ $(document).ready(function () {
     $.post("teacher/selectAllTeachers", function(data) {
         table.show();
         table.html("");
-        data = JSON.parse(data);
-
         var errors = data.errors;
         if(jQuery.isEmptyObject(errors)) {
             table.append(
@@ -48,7 +46,7 @@ $(document).ready(function () {
         $("#teacherAddForm").show();
         $("#teacherUpdateForm").hide();
         $("#teacherSearchForm").hide();
-    })
+    });
 
     $("#teacherAddForm").submit(function (event) {
         event.preventDefault();
@@ -59,16 +57,15 @@ $(document).ready(function () {
 
         $.post("teacher/addTeacher", $(this).serialize(), function(data) {
             $("#status").html(data);
-
-            data = JSON.parse(data);
             var errors = data.errors;
             var id = data["lastId"];
             if(jQuery.isEmptyObject(errors)) {
                 $("#status").html("");
+
                 var teacher = {
                     "id": id,
                     "name": name,
-                    "birth": birth,
+                    "birthday": birth.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1"),
                     "gender": gender
                 };
                 addTeacherRow(teacher);
@@ -88,6 +85,7 @@ $(document).ready(function () {
         var id =  $("#teacherUpdateForm .id").val();
         var name =  $("#teacherUpdateForm .name").val();
         var birth =  $("#teacherUpdateForm .birth").val();
+
         var gender =$("#teacherUpdateForm .gender").val();
         $.post("teacher/updateTeacher", {
                 "id" : id,
@@ -95,20 +93,11 @@ $(document).ready(function () {
                 "birth" : birth,
                 "gender" : gender},
             function(data) {
-
-                data = JSON.parse(data);
                 var errors = data.errors;
                 if(jQuery.isEmptyObject(errors)) {
                     lightOn("#teacher" + id,successColor);
                     $("#teacher" + id + " .name").html(name);
-
-                    var birthViewable = new Date(birth);
-                    birthViewable = birthViewable.getDate() + "."
-                        + (1+birthViewable.getMonth()) + "."
-                        + birthViewable.getFullYear();
-
-                    $("#teacher" + id + " .birth").html(birth);
-                    $("#teacher" + id + " .birthViewable").html(birthViewable);
+                    $("#teacher" + id + " .birth").html(birth.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1"));
                     $("#teacher" + id + " .gender").html(gender);
                     $("#status").html("");
                 } else {
@@ -120,11 +109,13 @@ $(document).ready(function () {
 
     $("#teacherSearchForm").submit(function (event) {
         event.preventDefault();
-        $.get("teacher/selectTeacher", $(this).serialize(), function(data) {
+        var id = $("#teacherSearchForm .id").val();
+        var page = "selectTeacher";
+        if(!jQuery.isEmptyObject(id)) {
+            page += "ById";
+        }
+        $.get("teacher/" + page, $(this).serialize(), function(data) {
             table.html("");
-
-            data = JSON.parse(data);
-
             var errors = data.errors;
 
             if(jQuery.isEmptyObject(errors)) {
@@ -150,10 +141,10 @@ $(document).ready(function () {
                 addUpdateEventHandler("tr", "teacher");
                 addTeacherInfoEventHandler("tr");
             } else {
-                $("#status").html("Нет записей в таблице.");
+                $("#status").html(errors);
             }
         });
-    })
+    });
 
     $("#putTeacherInGroup").submit(function (event) {
         event.preventDefault();
@@ -164,8 +155,6 @@ $(document).ready(function () {
         $.post("teacher/putTeacherInGroup", {
             "teacherId" : teacherId,
             "groupNumber" : groupNumber}, function(data) {
-            data = JSON.parse(data);
-
             var errors = data.errors;
             if(jQuery.isEmptyObject(errors)) {
                 var lastId = data["groupId"];
@@ -221,4 +210,4 @@ $(document).ready(function () {
         });
     });
     /** /Преподаватель **/
-})
+});

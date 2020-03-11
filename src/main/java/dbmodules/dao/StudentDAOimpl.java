@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import static webdebugger.WebInputDebugger.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -34,7 +31,12 @@ public class StudentDAOimpl implements StudentDAO {
                 "from Student s join fetch s.group " +
                 "where s.id = :id", Student.class);
         query.setParameter("id", id);
-        return query.getResultList().get(0);
+        try {
+            return query.getResultList().get(0);
+        } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     @Override
     public List<Student> select(String name,

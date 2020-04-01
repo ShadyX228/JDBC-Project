@@ -39,9 +39,18 @@ public class TeacherController {
     @RequestMapping(value="teacher/selectAllTeachers",
             produces={"application/json; charset=UTF-8"})
     @ResponseBody
-    public String getAllTeachers() {
-        List<Teacher> teachers = teacherService.selectAll();
-        List<String> errors = new ArrayList<>();
+    public String getAllTeachers(
+            @RequestParam(name = "start") int first,
+            @RequestParam(name = "length") int last,
+            @RequestParam(name = "search[value]") String search
+    ) {
+        List<Teacher> teachers;
+
+        if(search.isEmpty()) {
+            teachers = teacherService.selectAll(first, last);
+        } else {
+            teachers = teacherService.select(first, last, search);
+        }
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter
@@ -49,52 +58,20 @@ public class TeacherController {
                 .create();
         JsonObject jsonObject = new JsonObject();
 
-        if(!teachers.isEmpty()) {
-            jsonObject.add("teachers", gson.toJsonTree(teachers));
-        } else {
-            errors.add("#T1: список преподавателей пуст.");
-            jsonObject.add("errors", gson.toJsonTree(errors));
-        }
 
+        jsonObject.add("teachers", gson.toJsonTree(teachers));
+        jsonObject.addProperty("length", last);
+        jsonObject.addProperty("start", first);
+        jsonObject.addProperty("recordsTotal", teachers.size());
+        jsonObject.addProperty("recordsFiltered", teacherService.selectAll().size());
         return jsonObject.toString();
     }
 
-    @RequestMapping(value="teacher/selectTeacherById",
-            produces={"application/json; charset=UTF-8"})
-    @ResponseBody
-    public String getTeacherById(@RequestParam(name="id") int id) {
-        Teacher teacher = teacherService.selectById(id);
-        List<String> errors = new ArrayList<>();
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter
-                        (Teacher.class, new TeacherSerialize())
-                .create();
-        JsonObject jsonObject = new JsonObject();
-
-        if(!Objects.isNull(teacher)) {
-            List<Teacher> list = new ArrayList<>();
-            list.add(teacher);
-            jsonObject.add("teachers", gson.toJsonTree(list));
-        } else {
-            errors.add("#T9: нет такого преподавателя.");
-            jsonObject.add("errors", gson.toJsonTree(errors));
-        }
-
-        return jsonObject.toString();
-    }
 
     @RequestMapping(value="teacher/addTeacher",
             produces={"application/json; charset=UTF-8"})
     @ResponseBody
-    public String addTeacher (
-            @RequestParam(name="name") String name,
-            @RequestParam(name="birth") String birth,
-            @RequestParam(name="gender") String gender
-    ) {
-        LocalDate birthParsed = checkBirth(birth);
-        Gender genderParsed = checkGender(gender);
-
+    public String addTeacher (Teacher teacher) {
         List<String> errors = new ArrayList<>();
 
         Gson gson = new GsonBuilder()
@@ -103,15 +80,10 @@ public class TeacherController {
                 .create();
         JsonObject jsonObject = new JsonObject();
 
-        if(!Objects.isNull(name)
-                && !Objects.isNull(birthParsed)
-                && !Objects.isNull(genderParsed)
+        if(!teacher.getName().isEmpty()
+                && !Objects.isNull(teacher.getBirth())
+                && !Objects.isNull(teacher.getGender())
                 ) {
-            Teacher teacher = new Teacher(name,
-                    birthParsed.getYear(),
-                    birthParsed.getMonthValue(),
-                    birthParsed.getDayOfMonth(),
-                    genderParsed);
             teacherService.add(teacher);
             jsonObject.addProperty("lastId", teacher.getId());
         } else {
@@ -125,7 +97,7 @@ public class TeacherController {
             produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String deleteTeacher (
-            @RequestParam(name="id") int id
+            @RequestParam(name="id") Teacher teacher
     ) {
         List<String> errors = new ArrayList<>();
 
@@ -136,9 +108,8 @@ public class TeacherController {
                 .create();
         JsonObject jsonObject = new JsonObject();
 
-        Teacher teacher = teacherService.selectById(id);
-        System.out.print(id + " " + teacher);
-        if(!Objects.isNull(teacher) && teacher.getGroups().isEmpty()) {
+        System.out.print(teacher.getId() + " " + teacher);
+        if(teacher.getGroups().isEmpty()) {
             teacherService.delete(teacher);
         } else {
             errors.add("#T3: некорректный id преподавателя или у него есть группы, в которых он преподает.");
@@ -151,7 +122,7 @@ public class TeacherController {
             produces={"application/json; charset=UTF-8"})
     @ResponseBody
     public String updateTeacher(
-            @RequestParam(name="id") int id,
+            @RequestParam(name="id") Teacher teacher,
             @RequestParam(name="name") String name,
             @RequestParam(name="birth") String birth,
             @RequestParam(name="gender") String gender
@@ -163,8 +134,6 @@ public class TeacherController {
                         (Teacher.class, new TeacherSerialize())
                 .create();
         JsonObject jsonObject = new JsonObject();
-
-        Teacher teacher = teacherService.selectById(id);
 
         LocalDate birthParsed = checkBirth(birth);
         Gender genderParsed = checkGender(gender);
@@ -182,40 +151,6 @@ public class TeacherController {
         return jsonObject.toString();
     }
 
-    @RequestMapping(value="teacher/selectTeacher",
-            produces={"application/json; charset=UTF-8"})
-    @ResponseBody
-    public String selectTeacher(
-            @RequestParam(name="name", required = false) String name,
-            @RequestParam(name="birth", required = false) String birth,
-            @RequestParam(name="gender", required = false) String gender
-    ) {
-        List<String> errors = new ArrayList<>();
-
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter
-                        (Teacher.class, new TeacherSerialize())
-                .create();
-        JsonObject jsonObject = new JsonObject();
-
-        Set<Teacher> teachers = new HashSet<>();
-
-        LocalDate birthParsed = null;
-        Gender genderParsed = null;
-
-        if (!Objects.isNull(birth)) {
-            birthParsed = checkBirth(birth);
-        }
-        if (!Objects.isNull(gender)) {
-            genderParsed = checkGender(gender);
-        }
-        teachers.addAll(teacherService.select(name, birthParsed, genderParsed));
-
-
-        jsonObject.add("teachers", gson.toJsonTree(teachers));
-        jsonObject.add("errors", gson.toJsonTree(errors));
-        return jsonObject.toString();
-    }
 
     @RequestMapping(value="teacher/getTeacherInfo",
             produces={"application/json; charset=UTF-8"})
@@ -234,13 +169,11 @@ public class TeacherController {
         JsonObject jsonObject = new JsonObject();
 
 
-        Map<Integer, Integer> groups = new HashMap<>();
+        Set<Group> groups = new HashSet<>();
 
         Teacher teacher = teacherService.selectById(id);
         if(!Objects.isNull(teacher)) {
-            for(Group group : teacher.getGroups()) {
-                groups.put(group.getId(), group.getNumber());
-            }
+            groups.addAll(teacher.getGroups());
         } else {
             errors.add("T5: некорректный id.");
         }

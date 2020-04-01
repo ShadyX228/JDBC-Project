@@ -37,6 +37,11 @@ public class GroupDAOimpl implements GroupDAO {
         }
     }
     @Override
+    public List<Group> selectAll(int first, int last) {
+        return  entityManager.createQuery("FROM Group")
+                .setFirstResult(first).setMaxResults(last).getResultList();
+    }
+    @Override
     public List<Group> selectAll() {
         return  entityManager.createQuery("FROM Group").getResultList();
     }

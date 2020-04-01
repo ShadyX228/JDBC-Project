@@ -17,7 +17,6 @@
                     <li><a id="teacherAction"  href="teacher">Преподаватели</a></li>
                 </ul>
             </nav>
-            <div id="status"></div>
             <div id="content" style="padding: 10px; border-bottom: 1px solid black;">Выберите один из пунктов сверху, чтобы начать работу</div>
             <footer>
                 Подвальчик

@@ -38,6 +38,10 @@ public class GroupService implements BaseService {
         return groupDAO.select(number);
     }
     @Transactional
+    public List<Group> selectAll(int first, int last) {
+        return groupDAO.selectAll(first, last);
+    }
+    @Transactional
     public List<Group> selectAll() {
         return groupDAO.selectAll();
     }

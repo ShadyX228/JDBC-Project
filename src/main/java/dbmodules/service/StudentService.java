@@ -40,8 +40,16 @@ public class StudentService implements BaseService {
         return studentDAO.select(name, birth, gender, group);
     }
     @Transactional
+    public List<Student> select(int first, int last, String search) {
+        return studentDAO.select(first, last, search);
+    }
+    @Transactional
     public List<Student> selectAll() {
         return studentDAO.selectAll();
+    }
+    @Transactional
+    public List<Student> selectAll(int first, int last) {
+        return studentDAO.selectAll(first, last);
     }
     @Transactional
     public List<Student> selectByGroup(Group group) {

@@ -55,11 +55,29 @@ public class TeacherDAOimpl implements TeacherDAO {
         query.setParameter("gender", gender);
         return query.getResultList();
     }
+    @Override
+    public List<Teacher> select(int first, int last, String search) {
+        System.out.print(search);
+        TypedQuery<Teacher> query = entityManager.createQuery("select t " +
+                "from Teacher t left join fetch t.groups " +
+                "where t.name like :filter " +
+                "or t.birthday like :filter " +
+                "or t.gender like :filter", Teacher.class);
+        query.setParameter("filter", "%" + search + "%");
+        return query.setFirstResult(first).setMaxResults(last).getResultList();
+    }
 
     @Override
     public List<Teacher> selectAll() {
         TypedQuery<Teacher> query = entityManager
                 .createQuery("FROM Teacher", Teacher.class);
+        return query.getResultList();
+    }
+    @Override
+    public List<Teacher> selectAll(int first, int last) {
+        TypedQuery<Teacher> query = entityManager
+                .createQuery("FROM Teacher", Teacher.class)
+                .setFirstResult(first).setMaxResults(last);
         return query.getResultList();
     }
     @Override

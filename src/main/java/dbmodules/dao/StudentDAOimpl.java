@@ -28,7 +28,7 @@ public class StudentDAOimpl implements StudentDAO {
     @Override
     public Student selectById(int id) {
         TypedQuery<Student> query = entityManager.createQuery("select s " +
-                "from Student s join fetch s.group " +
+                "from Student s left join fetch s.group " +
                 "where s.id = :id", Student.class);
         query.setParameter("id", id);
         try {
@@ -56,6 +56,17 @@ public class StudentDAOimpl implements StudentDAO {
         return query.getResultList();
     }
     @Override
+    public List<Student> select(int first, int last, String search) {
+        TypedQuery<Student> query = entityManager.createQuery("select s " +
+                "from Student s left join fetch s.group " +
+                "where s.name like :filter " +
+                "or s.birthday like :filter " +
+                "or s.gender like :filter " +
+                "or s.group.number like :filter", Student.class)
+                .setParameter("filter", "%" + search + "%");
+        return query.setFirstResult(first).setMaxResults(last).getResultList();
+    }
+    @Override
     public List<Student> selectByGroup(Group group) {
         TypedQuery<Student> query = entityManager.createQuery("select s " +
                 "from Student s join fetch s.group " +
@@ -66,7 +77,15 @@ public class StudentDAOimpl implements StudentDAO {
     @Override
     public List<Student> selectAll() {
         TypedQuery<Student> query = entityManager
-                .createQuery("select s FROM Student s join fetch s.group", Student.class);
+                .createQuery("select s FROM Student s left join fetch s.group", Student.class);
+        return query.getResultList();
+    }
+    @Override
+    public List<Student> selectAll(int first, int last) {
+        TypedQuery<Student> query = entityManager
+                .createQuery("select s FROM Student s left join fetch s.group",
+                        Student.class)
+                .setFirstResult(first).setMaxResults(last);
         return query.getResultList();
     }
     @Override

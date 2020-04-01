@@ -7,17 +7,10 @@ $(document).ready(function () {
         event.preventDefault();
         $("#teacherAddForm").hide();
     });
-    $("#teacherSearchFormClose").click(function (event) {
-        event.preventDefault();
-        $("#teacherSearchForm").hide();
-    });
-    $("#teacherSearch").click(function () {
-        $("#teacherSearchForm").show();
-        $("#teacherUpdateForm").hide();
-        $("#teacherAddForm").hide();
-    });
     $("#closeTeacherInfo").click(function (event) {
         event.preventDefault();
+        $("#groups .display").DataTable().destroy();
+        $("#putTeacherInGroup")[0].reset();
         $("#teacherInfo").hide();
     });
     $("#teacherInfo #putTeacherInGroup .group").keyup(function () {

@@ -27,7 +27,8 @@ public class Group extends BaseEntity {
     private List<Teacher> teachers = new ArrayList<>();
 
     public Group() {}
-    public Group(int number) {
+    public Group(int id, int number) {
+        this.id = id;
         this.number = number;
     }
 
@@ -44,6 +45,9 @@ public class Group extends BaseEntity {
         return students;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setNumber(int number) {
         this.number = number;
     }

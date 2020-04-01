@@ -36,6 +36,10 @@ public class TeacherService implements BaseService {
         return teacherDAO.select(name, birth, gender);
     }
     @Transactional
+    public List<Teacher> select(int first, int last, String search) {
+        return teacherDAO.select(first, last, search);
+    }
+    @Transactional
     public void update(Teacher person, Criteria criteria, String value) {
         teacherDAO.update(person, criteria, value);
     }
@@ -60,7 +64,7 @@ public class TeacherService implements BaseService {
         teacherDAO.delete(entity);
     }
     @Transactional
-    public List<Teacher> selectFree(int groupId){
+    public List<Teacher> selectFree(Group group){
         List<Teacher> freeTeachers = new ArrayList<>();
         List<Teacher> allTeachers = teacherDAO.selectAll();
 
@@ -72,8 +76,8 @@ public class TeacherService implements BaseService {
                 freeTeachers.add(teacher);
                 System.out.println("No groups found. " + teacher.getName() + " added.");
             } else {
-                for(Group group : teacher.getGroups()) {
-                    if(group.getId() == groupId) {
+                for(Group groupChcck : teacher.getGroups()) {
+                    if(groupChcck.getId() == group.getId()) {
                         System.out.println("Found group. Cant add " + teacher.getName());
                         System.out.println(teacher.getGroups());
                         check = false;
@@ -93,5 +97,8 @@ public class TeacherService implements BaseService {
     @Transactional
     public List<Teacher> selectAll() {
         return teacherDAO.selectAll();
+    }
+    public List<Teacher> selectAll(int first, int last) {
+        return teacherDAO.selectAll(first, last);
     }
 }

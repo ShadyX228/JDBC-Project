@@ -28,10 +28,10 @@ public class Student extends PersonEntity {
     private Group group;
 
     public Student() {}
-    public Student(String name, int year, int month, int day,
+    public Student(String name, LocalDate birthday,
             Gender gender, Group group) {
         this.name = name;
-        birthday = LocalDate.of(year,month,day);
+        this.birthday = birthday;
         this.gender = gender;
         this.group = group;
     }

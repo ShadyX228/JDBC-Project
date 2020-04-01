@@ -9,6 +9,7 @@ public interface GroupDAO extends BaseDAO {
     Group selectById(int id);
     void add(Group entity);
     Group select(int number);
+    List<Group> selectAll(int first, int last);
     List<Group> selectAll();
     List<Teacher> selectGroupTeachers(Group group);
     void update(Group group, int number);

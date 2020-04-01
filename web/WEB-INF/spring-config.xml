@@ -21,7 +21,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
-        <property name="url" value="jdbc:mysql://10.0.16.31/studentgroupteacher" />
+        <property name="url" value="jdbc:mysql://localhost/studentgroupteacher?characterEncoding=utf8" />
         <property name="username" value="root" />
         <property name="password" value="12345" />
     </bean>

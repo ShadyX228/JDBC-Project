@@ -1,148 +1,189 @@
 $(document).ready(function () {
-    var successColor = "#E7E7E7";
-    var failColor = "red";
-    var table = $("#teacherOutput .outputTable");
+    var teacherInfoTemplate = "<div id=\"info\">" +
+        "<fieldset>" +
+        "<legend>Группы</legend>" +
+        "<div id=\"groups\">" +
+        "<table class=\"display\">" +
+        "<thead>" +
+        "<tr>" +
+        "<th>Номер</th>" +
+        "<th>Операции</th>" +
+        "</tr>" +
+        "</thead>" +
+        "<tbody>" +
+        "</tbody>" +
+        "</table>" +
+        "</div>" +
+        "</fieldset>" +
+        "</div>";
 
     /** Преподаватель **/
-    $("#status").show().html("Загрузка...");
-    $("#studentsTable").hide();
-    $("#groupsTable").hide();
-    $("#teachersTable").show();
-    $.post("teacher/selectAllTeachers", function(data) {
-        table.show();
-        table.html("");
-        var errors = data.errors;
-        if(jQuery.isEmptyObject(errors)) {
-            table.append(
-                "\t<thead><tr>\n" +
-                "\t\t<th>ID</th>\n" +
-                "\t\t<th>ФИО</th>\n" +
-                "\t\t<th>День рождения</th>\n" +
-                "\t\t<th>Пол</th>\n" +
-                "\t\t<th>Операции</th>\n" +
-                "\t</tr></thead><tbody></tbody>"
-            );
-            var teachers = data.teachers;
-
-
-            teachers.forEach(function (teacher) {
-                addTeacherRow(teacher);
-            });
-
-            $("#status").html("");
-
-            addDeleteEventHandler("#teacherOutput .outputTable tr",
-                "teacher");
-            addUpdateEventHandler("#teacherOutput .outputTable tr",
-                "teacher");
-            addTeacherInfoEventHandler("tr");
-            addGetTeachersHandler("tr");
-        } else {
-            $("#status").html(errors);
-        }
+    var table = $("#teacherOutput .outputTable").DataTable({
+        language : {
+            url : "/resources/scripts/datatables/locale/Russian.json"
+        },
+        serverSide : true,
+        ajax: {
+            url: "teacher/selectAllTeachers",
+            type: "GET",
+            dataSrc : "teachers"
+        },
+        stateSave: true,
+        columns : [
+            {
+                "className" : "name",
+                "data" : "name"
+            },
+            {
+                "className" : "birthday",
+                "data" : "birthday"
+            },
+            {
+                "className" : "gender",
+                "data" : "gender"
+            },
+            {
+                "className" : "operations",
+                "data": "id",
+                "render": function (data) {
+                    return "<a class=\"delete\" href=\"#deleteTeacher" + data + "\">Удалить</a> | " +
+                        "<a class=\"update\" href=\"#updateTeacher" + data + "\">Изменить</a> | " +
+                        "<a class=\"getInfo\" href=\"#getInfoTeacher" + data + "\">Информация</a>";
+                }
+            }
+        ]
     });
 
     $("#teacherAdd").click(function () {
         $("#teacherAddForm").show();
         $("#teacherUpdateForm").hide();
-        $("#teacherSearchForm").hide();
     });
 
     $("#teacherAddForm").submit(function (event) {
         event.preventDefault();
-        $("#status").html("Загрузка...");
-        var name = $("#teacherAddForm .name").val();
-        var birth = $("#teacherAddForm .birth").val();
-        var gender = $("#teacherAddForm .gender").val();
-
-        $.post("teacher/addTeacher", $(this).serialize(), function(data) {
-            $("#status").html(data);
+        $.post("teacher/addTeacher", $(this).serialize(),
+            function (data) {
             var errors = data.errors;
-            var id = data["lastId"];
-            if(jQuery.isEmptyObject(errors)) {
-                $("#status").html("");
+            $("#status").html(errors);
 
-                var teacher = {
-                    "id": id,
-                    "name": name,
-                    "birthday": birth.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1"),
-                    "gender": gender
-                };
-                addTeacherRow(teacher);
-                lightOn("#teacher" + id,successColor);
-                addDeleteEventHandler("#teacher"+id, "teacher");
-                addUpdateEventHandler("#teacher"+id, "teacher");
-                addTeacherInfoEventHandler("#teacher"+id);
-            } else {
-                $("#status").html(errors);
-            }
+            table.page("last").draw("page");
         });
     });
 
     $("#teacherUpdateForm").submit(function (event) {
         event.preventDefault();
-        $("#status").html("Загружаю...");
-        var id =  $("#teacherUpdateForm .id").val();
-        var name =  $("#teacherUpdateForm .name").val();
-        var birth =  $("#teacherUpdateForm .birth").val();
 
-        var gender =$("#teacherUpdateForm .gender").val();
-        $.post("teacher/updateTeacher", {
-                "id" : id,
-                "name" : name,
-                "birth" : birth,
-                "gender" : gender},
-            function(data) {
-                var errors = data.errors;
-                if(jQuery.isEmptyObject(errors)) {
-                    lightOn("#teacher" + id,successColor);
-                    $("#teacher" + id + " .name").html(name);
-                    $("#teacher" + id + " .birth").html(birth.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3.$2.$1"));
-                    $("#teacher" + id + " .gender").html(gender);
-                    $("#status").html("");
-                } else {
-                    $("#status").html(errors);
-                    lightOn("#teacher" + id,failColor);
-                }
-            });
+        $.post("teacher/updateTeacher", $(this).serialize(), function (data) {
+            var errors = data.errors;
+            $("#status").html(errors);
+            table.draw(false);
+        });
     });
 
-    $("#teacherSearchForm").submit(function (event) {
-        event.preventDefault();
-        var id = $("#teacherSearchForm .id").val();
-        var page = "selectTeacher";
-        if(!jQuery.isEmptyObject(id)) {
-            page += "ById";
-        }
-        $.get("teacher/" + page, $(this).serialize(), function(data) {
-            table.html("");
+    table.on("click", ".delete", function() {
+        $("#teacherUpdateForm").hide();
+
+        var a = $(this);
+        var href = a.attr("href");
+        var id = parseInt(href.match(/\d+/));
+
+        $.post("teacher/deleteTeacher", {"id" : id}, function(data) {
             var errors = data.errors;
+            $("#status").html(errors);
 
-            if(jQuery.isEmptyObject(errors)) {
-                table.append(
-                    "\t<thead><tr>\n" +
-                    "\t\t<th>ID</th>\n" +
-                    "\t\t<th>ФИО</th>\n" +
-                    "\t\t<th>День рождения</th>\n" +
-                    "\t\t<th>Пол</th>\n" +
-                    "\t\t<th>Операции</th>\n" +
-                    "\t</tr></thead><tbody></tbody>"
-                );
-                var teachers = data.teachers;
-
-
-                teachers.forEach(function (teacher) {
-                    addTeacherRow(teacher);
-                });
-
-                $("#status").html("");
-
-                addDeleteEventHandler("tr", "teacher");
-                addUpdateEventHandler("tr", "teacher");
-                addTeacherInfoEventHandler("tr");
-            } else {
-                $("#status").html(errors);
+            if(table.page.info().recordsTotal == 1) {
+                table.page("previous").draw("page")
             }
+            table.draw(false);
+        });
+    });
+
+    table.on("click", ".update", function() {
+        $("#teacherAddForm").hide();
+
+        var a = $(this);
+        var href = a.attr("href");
+        var id = parseInt(href.match(/\d+/));
+        var name = a.parent().parent().find(".name").html();
+        var birthday = a.parent().parent().find(".birthday").html();
+        var gender = a.parent().parent().find(".gender").html();
+
+        $("#teacherUpdateForm").show();
+
+        $("#teacherUpdateForm .id").val(id);
+        $("#teacherUpdateForm .name").val(name);
+        $("#teacherUpdateForm .birth").val(birthday
+            .replace(/(\d{2}).(\d{2}).(\d{4})/, "$3-$2-$1"));
+        $("#teacherUpdateForm .gender").val(gender);
+    });
+
+    table.on("click", ".getInfo", function() {
+        $("#info").html(teacherInfoTemplate);
+        var a = $(this);
+        var href = a.attr("href");
+        var teacherId = parseInt(href.match(/\d+/));
+        var teacherName = a.parent().parent().find(".name").html();
+
+        console.log(teacherId + " " + teacherName);
+        $("#teacherId").html(teacherId);
+        $("#teacherName").html(teacherName);
+        $("#teacherInfo").show();
+        var tableGroups = $("#groups .display").DataTable({
+            language : {
+                url : "/resources/scripts/datatables/locale/Russian.json"
+            },
+            serverSide : true,
+            ajax: {
+                url: "teacher/getTeacherInfo",
+                type: "GET",
+                data : function(param) {
+                    param.id = teacherId;
+                },
+                dataSrc : "groups"
+            },
+            paging: false,
+            searching: false,
+            info: false,
+            columns : [
+                {
+                    "data" : "number"
+                },
+                {
+                    "data" : "id",
+                    "render" : function (data) {
+                        return "<a class=\"removeTeacherFromGroup\" "
+                            + "href=\"#removeTeacher"
+                            + data + "FromGroup\">Убрать группу</a>";
+                    }
+                }
+            ]
+        });
+
+        tableGroups.on("click", ".removeTeacherFromGroup", function() {
+            var a = $(this);
+            var href = a.attr("href");
+            var groupId = parseInt(href.match(/\d+/));
+
+            $.post("teacher/removeTeacherFromGroup", {"groupId" : groupId, "teacherId" : teacherId}, function(data) {
+                var errors = data.errors;
+                $("#status").html(errors);
+                tableGroups.draw();
+            });
+        });
+
+        $("#putTeacherInGroup").unbind("submit").submit(function (event) {
+            event.preventDefault();
+            var teacherId = $("#teacherInfo #teacherId").html();
+            var groupNumber = $("#putTeacherInGroup .group").val();
+            console.log(teacherId + " " + groupNumber);
+
+            $.post("teacher/putTeacherInGroup", {
+                "teacherId" : teacherId,
+                "groupNumber" : groupNumber}, function(data) {
+                var errors = data.errors;
+                $("#status").html(errors);
+                tableGroups.draw();
+            });
         });
     });
 
@@ -156,58 +197,9 @@ $(document).ready(function () {
             "teacherId" : teacherId,
             "groupNumber" : groupNumber}, function(data) {
             var errors = data.errors;
-            if(jQuery.isEmptyObject(errors)) {
-                var lastId = data["groupId"];
-                var emptyCheck = $( "#teacherInfo #groups" )
-                    .has( "table" ).length ? true : false;
-                console.log(emptyCheck);
-                if(!emptyCheck) {
-                    // создать таблицу
-                    var table = "\t<table><tr>\n" +
-                        "\t\t<td style=\"display: none;\">ID преподавателя</td>\n" +
-                        "\t\t<td>Номер</td>\n" +
-                        "\t\t<td>Операции</td>\n" +
-                        "\t</tr>";
-                    table += "\t<tr id=\"groupTeacher" + lastId + "\">\n" +
-                        "\t\t<td class=\"teacherId\" style=\"display: none;\">"
-                        + teacherId +
-                        "</td>\n" +
-                        "\t\t<td class=\"number\">" + groupNumber + "</td>\n" +
-                        "\t\t<td>" +
-                        "<a class=\"removeTeacherFromGroup\" href=\"#removeGroupFromTeacher" + lastId + "FromGroup\">" +
-                        "Убрать группу" +
-                        "</a>" +
-                        "</td>\n" +
-                        "\t</tr>";
-                    table += "</table>";
-                    $("#groups").html(table);
-                    addGroupRemovingFromTeacherHandler(
-                        "#groupTeacher" + lastId
-                    );
-                } else {
-                    $("#teacherInfo table").append(
-                        "\t<tr id=\"groupTeacher" + lastId + "\">\n" +
-                        "\t\t<td class=\"teacherId\" style=\"display: none;\">"
-                        + teacherId +
-                        "</td>\n" +
-                        "\t\t<td class=\"number\">"
-                        + groupNumber +
-                        "</td>\n" +
-                        "\t\t<td>" +
-                        "<a class=\"removeTeacherFromGroup\" " +
-                        "href=\"#removeGroupFromTeacher" + lastId + "FromGroup\">" +
-                        "Убрать группу" +
-                        "</a>" +
-                        "</td>\n" +
-                        "\t</tr>");
-                    addGroupRemovingFromTeacherHandler(
-                        "#groupTeacher" + lastId
-                    );
-                }
-            }
             $("#status").html(errors);
-
         });
     });
+
     /** /Преподаватель **/
 });

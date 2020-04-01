@@ -33,9 +33,9 @@ public class Teacher extends PersonEntity {
 
     public Teacher() {
     }
-    public Teacher(String name, int year, int month, int day, Gender gender) {
+    public Teacher(String name, LocalDate birthday, Gender gender) {
         this.name = name;
-        birthday = LocalDate.of(year,month,day);
+        this.birthday = birthday;
         this.gender = gender;
     }
 

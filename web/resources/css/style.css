@@ -62,24 +62,25 @@ form {
     -webkit-box-shadow: 1px 1px 10px 2px #000000;
     box-shadow: 1px 1px 10px 2px #000000;
 }
-#status, #studentsTable, #teachersTable, #groupsTable,
-.outputTable, #studentAddForm, #studentUpdateForm, #studentSearchForm,
-#groupAddForm, #groupUpdateForm, #groupInfo, #groupSearchForm,
-.outputTable, #teacherAddForm, #teacherUpdateForm, #teacherSearchForm, #teacherInfo,
-.outputTable {
+#studentAddForm,
+#studentUpdateForm,
+#groupAddForm, #groupUpdateForm, #groupInfo,
+#teacherAddForm, #teacherUpdateForm, #teacherInfo,
+#teacherId {
     display: none;
 }
-.outputTable {
-    width: 100%;
-    border: 1px solid black;
-    border-spacing: 0;
-    border-right: 0;
-    border-left: 0;
+#studentAddForm fieldset,
+#studentUpdateForm fieldset,
+#teacherAddForm fieldset,
+#teacherUpdateForm fieldset,
+#groupAddForm fieldset,
+#groupUpdateForm fieldset {
+    padding: 5px;
 }
 td,th {
     border-bottom: 1px solid black;
     border-right: 1px solid black;
-    padding: 3px;
+    padding: 3px !important;
 }
 tr {
     -webkit-transition: background 300ms ease-in-out;
@@ -137,4 +138,23 @@ input[disabled] {
 }
 #status {
     height: 10px;
+}
+.outputTable {
+    width: 100% !important;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.operations {
+    font-size: 11pt;
+}
+th:last-child {
+    border-right: 0;
+}
+fieldset {
+    margin-top: 10px;
+}
+legend {
+    padding: 2px;
+    border: 1px solid black;
+    margin-left: 5px;
 }

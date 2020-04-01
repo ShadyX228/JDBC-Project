@@ -9,15 +9,10 @@ $(document).ready(function () {
     });
     $("#closeGroupInfo").click(function (event) {
         event.preventDefault();
+        $("#groupTeachersTable .display").DataTable().destroy();
+        $("#freeTeachersTable .display").DataTable().destroy();
+        $("#groupTeachersTable").remove();
+        $("#freeTeachersTable").remove();
         $("#groupInfo").hide();
     });
-    $("#groupSearchFormClose").click(function (event) {
-        event.preventDefault();
-        $("#groupSearchForm").hide();
-    });
-    $("#groupSearch").click(function () {
-        $("#groupSearchForm").show();
-        $("#groupUpdateForm").hide();
-        $("#groupAddForm").hide();
-    })
 });
